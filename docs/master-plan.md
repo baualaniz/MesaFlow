@@ -85,7 +85,7 @@ usuario.
 | Etapa | Estado | Evidencia |
 |---:|---|---|
 | 1 | Completa | `docs/stage-01-environment.md` |
-| 2 | Completa localmente; remoto GitHub opcional pendiente | `docs/stage-02-repository.md` |
+| 2 | Completa; remoto público configurado, protecciones de GitHub pendientes de verificación manual | `docs/stage-02-repository.md` |
 | 3 | Próxima | Ambientes Firebase dev/prod |
 
 ## Acciones manuales inmediatas — Etapa 1

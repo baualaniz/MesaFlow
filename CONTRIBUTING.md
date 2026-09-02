@@ -11,6 +11,10 @@ El MVP usa un flujo deliberadamente simple:
    para colaboración, se requiere pull request.
 5. Los despliegues de producción se etiquetan como `v0.x.y` durante el MVP.
 
+El repositorio es público. No se deben incluir datos reales de clientes,
+credenciales, capturas con información privada ni exportaciones de producción en
+issues, pull requests, commits o fixtures.
+
 Nombres recomendados de ramas:
 
 - `feat/customer-menu`
@@ -57,4 +61,3 @@ Cada cambio debe confirmar:
 - que las operaciones privilegiadas sigan detrás de reglas o backend;
 - que incluya pruebas proporcionales al riesgo;
 - que actualice la documentación cuando cambie una decisión.
-

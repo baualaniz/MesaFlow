@@ -12,6 +12,7 @@ const requiredPaths = [
   ".gitignore",
   "CONTRIBUTING.md",
   "README.md",
+  "SECURITY.md",
   "apps/customer",
   "apps/admin",
   "apps/landing",
@@ -126,4 +127,3 @@ try {
   console.error(error instanceof Error ? error.message : error);
   process.exitCode = 1;
 }
-

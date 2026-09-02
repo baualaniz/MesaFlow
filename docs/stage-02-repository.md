@@ -16,6 +16,7 @@ un flujo Git sencillo para un MVP estudiantil mantenible.
 - Finales de línea y formato básico consistentes entre Windows y CI.
 - Convenciones de ramas, commits, revisión y secretos documentadas.
 - Comprobación automática de estructura y nombres de archivos sensibles.
+- Repositorio remoto público configurado en `https://github.com/baualaniz/MesaFlow`.
 
 ## Estructura
 
@@ -67,7 +68,7 @@ npm run check
 git status --short --branch
 ```
 
-## ACCIÓN MANUAL: crear el repositorio remoto en GitHub
+## ACCIÓN MANUAL COMPLETADA: crear el repositorio remoto en GitHub
 
 **Objetivo:** conservar una copia remota y habilitar colaboración/CI más adelante.
 
@@ -78,8 +79,7 @@ git status --short --branch
 1. Iniciá sesión en GitHub.
 2. Abrí el menú para crear un repositorio nuevo.
 3. Usá `MesaFlow` como nombre.
-4. Elegí visibilidad privada para el desarrollo inicial, salvo que quieras mostrar
-   públicamente el código.
+4. Elegí visibilidad pública, según la decisión vigente del proyecto.
 5. No agregues README, `.gitignore` ni licencia desde GitHub: ya existen localmente.
 6. Creá el repositorio y copiá la URL HTTPS mostrada.
 7. En PowerShell, dentro de MesaFlow, ejecutá:
@@ -94,7 +94,7 @@ git status --short --branch
 8. Si GitHub solicita autenticación, utilizá el inicio de sesión del navegador o
    Git Credential Manager. No pegues un token dentro de ningún archivo del repo.
 
-**Qué opción seleccionar:** repositorio privado, sin inicialización automática.
+**Qué opción seleccionar:** repositorio público, sin inicialización automática.
 
 **Qué valor copiar/guardar:** URL HTTPS del repositorio. Git la guarda como remote;
 no es un secreto.
@@ -104,7 +104,43 @@ no es un secreto.
 **Cómo verificar:** `git remote -v` muestra `origin` y GitHub muestra la rama
 `main` con los archivos del monorepo.
 
-Esta acción puede posponerse hasta la Etapa 46 si se desea trabajar solo en local.
+El remote local `origin` ya apunta a `https://github.com/baualaniz/MesaFlow.git`.
+
+## ACCIÓN MANUAL: activar protecciones del repositorio público
+
+**Objetivo:** reducir filtraciones de secretos y cambios accidentales en `main`.
+
+**Dónde hacerlo:** GitHub → repositorio MesaFlow → Settings. Si la interfaz cambia,
+buscá los conceptos **Advanced Security**, **Secret Protection**, **Push
+protection** y **Rulesets**.
+
+**Pasos exactos:**
+
+1. En **Settings → Advanced Security**, confirmá que Secret Protection/secret
+   scanning esté habilitado.
+2. Habilitá **Push protection** para bloquear credenciales conocidas antes de que
+   entren al repositorio.
+3. Habilitá **Private vulnerability reporting** si aparece disponible, para que
+   `SECURITY.md` pueda dirigir reportes a un canal privado.
+4. En **Settings → Rules → Rulesets**, creá un ruleset para la rama por defecto
+   `main`.
+5. Activá bloqueo de force pushes y eliminación de la rama.
+6. Cuando la CI exista en la Etapa 46, agregá sus checks como obligatorios antes
+   de integrar. No selecciones checks inexistentes ahora.
+7. Si trabajás solo y todavía necesitás commits directos, no exijas pull request en
+   esta fase; podremos activarlo cuando haya colaboradores.
+
+**Qué opción seleccionar:** enforcement activo para `main`; sin excepciones
+innecesarias y sin checks obligatorios hasta que existan.
+
+**Qué valor copiar/guardar:** ninguno. Estas son configuraciones del repositorio,
+no secretos.
+
+**Dónde se utilizará después:** protección continua del código público y CI.
+
+**Cómo verificar:** la pestaña Security no muestra configuración pendiente de
+Secret Protection y `https://github.com/baualaniz/MesaFlow/rules` muestra el
+ruleset activo para `main`.
 
 ## Cómo ejecutar y probar
 
@@ -136,9 +172,9 @@ y escaneo de CI.
 - [x] `npm run check` finaliza correctamente.
 - [x] Git usa la rama `main`.
 - [x] No hay secretos ni artefactos generados en el estado versionable.
-- [ ] Remoto GitHub configurado, opcional hasta la CI.
+- [x] Remoto GitHub público configurado.
+- [ ] Secret Protection, push protection y ruleset de `main` verificados en GitHub.
 
 ## Commit sugerido
 
 `chore(repo): establish monorepo structure and conventions`
-

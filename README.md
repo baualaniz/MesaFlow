@@ -4,6 +4,11 @@ MesaFlow es un MVP SaaS multiestablecimiento para digitalizar la atención de
 mesas: menú web por QR, pedidos y seguimiento para clientes, operación en tiempo
 real para el personal, pagos y métricas para administración.
 
+Repositorio público: [github.com/baualaniz/MesaFlow](https://github.com/baualaniz/MesaFlow).
+
+Que el código sea visible públicamente no convierte las credenciales en públicas:
+tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
+
 ## Estado
 
 Las **Etapas 1 y 2 — entorno y estructura del monorepo** están terminadas
@@ -15,6 +20,7 @@ encuentran en:
 - `docs/master-plan.md`
 - `docs/stage-01-environment.md`
 - `docs/stage-02-repository.md`
+- `SECURITY.md`
 
 ## Estructura prevista
 
