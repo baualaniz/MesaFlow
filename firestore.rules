@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Closed baseline for emulator setup. Tenant permissions arrive in Stage 14.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

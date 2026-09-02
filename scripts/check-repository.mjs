@@ -3,6 +3,7 @@ import { constants } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { validateFirebaseProjects } from "./lib/firebase-projects.mjs";
+import { validateEmulatorConfig } from "./lib/emulator-config.mjs";
 
 const root = process.cwd();
 
@@ -10,6 +11,9 @@ const requiredPaths = [
   ".editorconfig",
   ".env.example",
   ".firebaserc",
+  "firebase.json",
+  "firestore.rules",
+  "firestore.indexes.json",
   ".gitattributes",
   ".gitignore",
   "CONTRIBUTING.md",
@@ -115,6 +119,7 @@ try {
 
   const firebaseConfig = JSON.parse(await readFile(path.join(root, ".firebaserc"), "utf8"));
   const firebaseProjects = validateFirebaseProjects(firebaseConfig);
+  validateEmulatorConfig(JSON.parse(await readFile(path.join(root, "firebase.json"), "utf8")));
 
   const forbiddenFiles = await findForbiddenFiles(root);
   if (forbiddenFiles.length > 0) {
@@ -127,6 +132,7 @@ try {
   console.log("[OK] Metadatos y workspaces npm");
   console.log(`[OK] Firebase: dev=${firebaseProjects.dev}, prod=${firebaseProjects.prod}`);
   console.log("[OK] Proyecto predeterminado: desarrollo (validación local)");
+  console.log("[OK] Emuladores limitados a loopback");
   console.log("[OK] No se detectaron nombres de archivos secretos");
   console.log("Repositorio MesaFlow válido.");
 } catch (error) {

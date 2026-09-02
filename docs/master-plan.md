@@ -12,7 +12,7 @@ usuario.
 | 1 | Entorno | Auditar/instalar Git, Flutter, Android SDK opcional, Node LTS, Java y Firebase CLI | Ninguna | Sí: instaladores y PATH | Sí: `scripts/check-environment.ps1`, README | Todas las herramientas responden y `flutter doctor` no tiene bloqueos web |
 | 2 | Repositorio | Inicializar Git, convenciones, ramas simples y monorepo | 1 | Opcional: crear remoto GitHub | Sí: `.gitignore`, estructura | `git status` limpio y primer commit reproducible |
 | 3 | Ambientes | Definir IDs Firebase dev/prod y archivos de alias | 2 | Sí: crear dos proyectos | Sí: `.firebaserc`, validación y tests | Los aliases `dev`/`prod` apuntan a proyectos distintos |
-| 4 | Firebase CLI | Login, asociación y Emulator Suite | 1,3 | Sí: login OAuth | Sí: `firebase.json` | `firebase emulators:start` inicia servicios configurados |
+| 4 | Firebase CLI | Login, asociación y Emulator Suite inicial (Auth, Firestore, UI) | 1,3 | Sí: login OAuth | Sí: `firebase.json`, reglas cerradas, scripts/tests | `npm.cmd run test:emulators` pasa con ID demo; otros emuladores llegan con sus módulos |
 | 5 | Authentication | Activar Email/Password y Anonymous; plantillas y dominios | 3 | Sí: consola | Sí: adaptadores y pruebas posteriores | Ambos proveedores funcionan en emulador/dev |
 | 6 | Firestore | Crear base, región, esquema raíz y converters | 3 | Sí: crear base | Sí: reglas/esquema/modelos | Escritura/lectura dev validada y región documentada |
 | 7 | Storage | Activar bucket y rutas de imágenes por tenant | 3 | Sí: consola si lo pide | Sí: `storage.rules` | Solo miembros autorizados escriben imágenes de su tenant |
@@ -26,7 +26,7 @@ usuario.
 |---:|---|---|---|---|---|---|
 | 11 | Contratos | Enums, validaciones, dinero, timestamps y contratos TS/Dart | 6 | No | Sí: `packages/contracts`, modelos Flutter | Contratos compilan y fixtures coinciden |
 | 12 | Modelo de datos | Implementar colecciones, repositorios y consultas por tenant | 11 | No | Sí: repositorios/converters | CRUD del emulador conserva tipos y aislamiento lógico |
-| 13 | Índices | Diseñar consultas e índices compuestos | 12 | No | Sí: `firestore.indexes.json` | Suite de consultas no pide índices adicionales |
+| 13 | Índices | Diseñar consultas e índices compuestos | 12 | Validación controlada en dev | Sí: `firestore.indexes.json` | Consultas verificadas en desarrollo real; el emulador no exige índices compuestos |
 | 14 | Reglas Firestore | Autorización por membresía/sesión y campos inmutables | 12 | No | Sí: `firestore.rules` | Tests positivos/negativos pasan |
 | 15 | Reglas Storage | Límites MIME/tamaño y membresía | 7,14 | No | Sí: `storage.rules`, tests | Carga cruzada y archivos inválidos se deniegan |
 | 16 | Seed seguro | Datos demo, usuarios/roles, 10 mesas, 18 productos, pedidos/pagos | 11–14 | No en emulador; credencial dev solo si se solicita | Sí: `firebase/seeds` | Se niega producción y carga dataset idempotente |
@@ -87,7 +87,8 @@ usuario.
 | 1 | Completa | `docs/stage-01-environment.md` |
 | 2 | Completa; remoto público configurado, protecciones de GitHub pendientes de verificación manual | `docs/stage-02-repository.md` |
 | 3 | Completa localmente; proyectos confirmados por el usuario, acceso CLI pendiente de Etapa 4 | `docs/stage-03-firebase-environments.md` |
-| 4 | Próxima | Login de Firebase CLI y Emulator Suite |
+| 4 | Completa: 17 tests, smoke test, UI HTTP 200 y apagado comprobados; acceso CLI confirmado por el usuario | `docs/stage-04-emulators.md` |
+| 5 | Próxima | Authentication en Firebase Console |
 
 ## Acciones manuales inmediatas — Etapa 1
 

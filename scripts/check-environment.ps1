@@ -2,15 +2,17 @@
 param()
 
 $ErrorActionPreference = 'Continue'
+$localFirebase = Join-Path $PSScriptRoot '..\node_modules\.bin\firebase.cmd'
+$firebaseCommand = if (Test-Path -LiteralPath $localFirebase) { $localFirebase } else { 'firebase.cmd' }
 
 $requirements = @(
     @{ Name = 'Git'; Command = 'git'; Args = @('--version'); Required = $true },
     @{ Name = 'Flutter'; Command = 'flutter'; Args = @('--version'); Required = $true },
     @{ Name = 'Dart'; Command = 'dart'; Args = @('--version'); Required = $true },
     @{ Name = 'Node.js'; Command = 'node'; Args = @('--version'); Required = $true },
-    @{ Name = 'npm'; Command = 'npm'; Args = @('--version'); Required = $true },
-    @{ Name = 'Firebase CLI'; Command = 'firebase'; Args = @('--version'); Required = $true },
-    @{ Name = 'Java'; Command = 'java'; Args = @('-version'); Required = $false }
+    @{ Name = 'npm'; Command = 'npm.cmd'; Args = @('--version'); Required = $true },
+    @{ Name = 'Firebase CLI'; Command = $firebaseCommand; Args = @('--version'); Required = $true },
+    @{ Name = 'Java'; Command = 'java'; Args = @('-version'); Required = $true }
 )
 
 $failed = $false
@@ -30,7 +32,9 @@ foreach ($requirement in $requirements) {
     }
 
     try {
-        $version = & $requirement.Command @($requirement.Args) 2>&1 | Select-Object -First 2
+        $versionOutput = & $requirement.Command @($requirement.Args) 2>&1
+        if ($LASTEXITCODE -ne 0) { throw "El comando termino con codigo $LASTEXITCODE." }
+        $version = $versionOutput | Select-Object -First 2
         Write-Host ('[OK] {0}: {1}' -f $requirement.Name, ($version -join ' ')) -ForegroundColor Green
     }
     catch {
@@ -53,4 +57,3 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host 'Entorno listo para comenzar MesaFlow.' -ForegroundColor Green
-

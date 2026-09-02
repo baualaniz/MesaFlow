@@ -11,6 +11,16 @@ Se versiona `.firebaserc` con IDs públicos porque este es el repositorio de una
 aplicación concreta. Sustituye al archivo de ejemplo previsto inicialmente; no
 cambia la arquitectura. Más detalles en `stage-03-firebase-environments.md`.
 
+## Entorno local — Etapa 4
+
+Los emuladores usan exclusivamente `demo-mesaflow` y loopback. Auth y Firestore
+están implementados; Functions, Storage y Hosting se incorporan al existir sus
+módulos. Las reglas iniciales deniegan todos los accesos cliente y se ampliarán
+en la Etapa 14. No se han desplegado estas reglas en ninguno de los proyectos.
+
+Firebase CLI queda fijada como dependencia local en 15.28.2 con correcciones
+transitivas documentadas en `tooling-security.md`. No cambia el stack del MVP.
+
 ## Stack elegido
 
 | Componente | Tecnología | Función | Motivo |
@@ -157,9 +167,10 @@ una membresía o sesión validada.
 | Pagos de sesión | `payments` | `sessionId ==`, `createdAt desc` | `sessionId, createdAt` |
 | Miembros por rol | `members` | `active ==`, `role ==`, `createdAt desc` | `active, role, createdAt` |
 
-`firestore.indexes.json` se generará en la Etapa 13 al existir las consultas
-reales, evitando índices especulativos. Los tests del emulador deberán demostrar
-que no falta ninguno antes de cerrar esa etapa.
+`firestore.indexes.json` tiene inicialmente listas vacías para configurar el
+emulador; se completará en la Etapa 13 al existir consultas reales. Corrección de
+verificación: el emulador no exige índices compuestos. Las consultas deberán
+verificarse también en el proyecto de desarrollo real antes de cerrar esa etapa.
 
 ## Matriz resumida de permisos
 

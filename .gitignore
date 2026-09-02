@@ -18,6 +18,7 @@ service-account*.json
 firebase-debug.log*
 firestore-debug.log*
 ui-debug.log*
+firebase-debug.*.log*
 
 # Node / TypeScript
 node_modules/
@@ -44,4 +45,3 @@ firebase-export/
 # Test artifacts
 test-results/
 playwright-report/
-

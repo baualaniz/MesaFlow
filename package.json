@@ -23,9 +23,29 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "npm run check:repo && npm run test:config",
+    "check": "npm run check:repo && npm run test:config && npm run test:tooling",
     "check:repo": "node ./scripts/check-repository.mjs",
-    "test:config": "node --test ./scripts/firebase-projects.test.mjs",
-    "check:env": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-environment.ps1"
+    "test:config": "node --test ./scripts/firebase-projects.test.mjs ./scripts/emulator-config.test.mjs",
+    "test:tooling": "node --test ./scripts/tooling-dependencies.test.mjs",
+    "check:env": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-environment.ps1",
+    "emulators": "node ./scripts/run-emulators.mjs start",
+    "test:emulators": "node ./scripts/run-emulators.mjs test",
+    "firebase:login": "firebase login",
+    "firebase:projects": "firebase projects:list",
+    "firebase:use:dev": "firebase use dev"
+  },
+  "devDependencies": {
+    "firebase-tools": "15.28.2"
+  },
+  "overrides": {
+    "firebase-tools": {
+      "qs": "6.16.0",
+      "gaxios@6.7.1": {
+        "uuid": "11.1.1"
+      },
+      "@google-cloud/pubsub": {
+        "@opentelemetry/core": "2.8.0"
+      }
+    }
   }
 }

@@ -11,8 +11,10 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 3 — entorno, monorepo y alias Firebase** están terminadas
-localmente. El acceso remoto por CLI y los emuladores se comprobarán en la Etapa 4.
+Las **Etapas 1 a 3 — entorno, monorepo y alias Firebase** están terminadas.
+La **Etapa 4** incorpora emuladores locales probados; el usuario confirmó acceso
+con Firebase CLI a ambos proyectos reales. Todavía no hay aplicaciones de negocio
+ni despliegues.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -22,6 +24,8 @@ encuentran en:
 - `docs/stage-01-environment.md`
 - `docs/stage-02-repository.md`
 - `docs/stage-03-firebase-environments.md`
+- `docs/stage-04-emulators.md`
+- `docs/tooling-security.md`
 - `SECURITY.md`
 
 ## Estructura prevista
@@ -42,6 +46,7 @@ scripts/          Automatización local segura
 ## Validación rápida
 
 ```powershell
+npm.cmd ci --ignore-scripts
 npm.cmd run check
 ```
 
@@ -50,7 +55,29 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
 y la ausencia de nombres de archivos que normalmente contienen secretos. Además,
-ejecuta ocho pruebas de configuración de ambientes.
+ejecuta 14 pruebas de configuración y tres de compatibilidad de herramientas.
+
+## Emuladores locales
+
+```powershell
+npm.cmd run emulators
+```
+
+Abrí `http://127.0.0.1:4000` después de que indique que está listo. Incluye Auth y
+Firestore, con reglas cerradas y proyecto local fijo `demo-mesaflow`. No se
+necesita crear ese proyecto en Firebase. La primera ejecución descarga binarios.
+Detenelo con Ctrl+C antes de ejecutar el smoke test:
+
+```powershell
+npm.cmd run test:emulators
+```
+
+El test inicia/apaga los servicios y elimina solo los usuarios/documentos que
+creó. Nunca usa desarrollo ni producción. No exponer la UI fuera de esta máquina.
+
+La CLI local se invoca también con `npm.cmd run firebase:login`,
+`npm.cmd run firebase:projects` y `npm.cmd run firebase:use:dev`. Son comandos de
+autenticación/listado/selección, no de despliegue.
 
 ## Ambientes Firebase
 
