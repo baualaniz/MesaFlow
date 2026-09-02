@@ -1,0 +1,23 @@
+{
+  "name": "mesaflow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monorepo del MVP SaaS multiestablecimiento MesaFlow",
+  "packageManager": "npm@11.17.0",
+  "engines": {
+    "node": ">=22 <25",
+    "npm": ">=10 <12"
+  },
+  "workspaces": [
+    "apps/admin",
+    "apps/landing",
+    "functions",
+    "packages/*"
+  ],
+  "scripts": {
+    "check": "npm run check:repo",
+    "check:repo": "node ./scripts/check-repository.mjs",
+    "check:env": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-environment.ps1"
+  }
+}
+
