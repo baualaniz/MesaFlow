@@ -11,7 +11,7 @@ usuario.
 |---:|---|---|---|---|---|---|
 | 1 | Entorno | Auditar/instalar Git, Flutter, Android SDK opcional, Node LTS, Java y Firebase CLI | Ninguna | Sí: instaladores y PATH | Sí: `scripts/check-environment.ps1`, README | Todas las herramientas responden y `flutter doctor` no tiene bloqueos web |
 | 2 | Repositorio | Inicializar Git, convenciones, ramas simples y monorepo | 1 | Opcional: crear remoto GitHub | Sí: `.gitignore`, estructura | `git status` limpio y primer commit reproducible |
-| 3 | Ambientes | Definir IDs Firebase dev/prod y archivos de alias | 2 | Sí: crear dos proyectos | Sí: `.firebaserc.example`, config | Los aliases `dev`/`prod` apuntan a proyectos distintos |
+| 3 | Ambientes | Definir IDs Firebase dev/prod y archivos de alias | 2 | Sí: crear dos proyectos | Sí: `.firebaserc`, validación y tests | Los aliases `dev`/`prod` apuntan a proyectos distintos |
 | 4 | Firebase CLI | Login, asociación y Emulator Suite | 1,3 | Sí: login OAuth | Sí: `firebase.json` | `firebase emulators:start` inicia servicios configurados |
 | 5 | Authentication | Activar Email/Password y Anonymous; plantillas y dominios | 3 | Sí: consola | Sí: adaptadores y pruebas posteriores | Ambos proveedores funcionan en emulador/dev |
 | 6 | Firestore | Crear base, región, esquema raíz y converters | 3 | Sí: crear base | Sí: reglas/esquema/modelos | Escritura/lectura dev validada y región documentada |
@@ -86,7 +86,8 @@ usuario.
 |---:|---|---|
 | 1 | Completa | `docs/stage-01-environment.md` |
 | 2 | Completa; remoto público configurado, protecciones de GitHub pendientes de verificación manual | `docs/stage-02-repository.md` |
-| 3 | Próxima | Ambientes Firebase dev/prod |
+| 3 | Completa localmente; proyectos confirmados por el usuario, acceso CLI pendiente de Etapa 4 | `docs/stage-03-firebase-environments.md` |
+| 4 | Próxima | Login de Firebase CLI y Emulator Suite |
 
 ## Acciones manuales inmediatas — Etapa 1
 

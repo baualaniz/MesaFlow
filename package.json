@@ -23,8 +23,9 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "npm run check:repo",
+    "check": "npm run check:repo && npm run test:config",
     "check:repo": "node ./scripts/check-repository.mjs",
+    "test:config": "node --test ./scripts/firebase-projects.test.mjs",
     "check:env": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-environment.ps1"
   }
 }

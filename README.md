@@ -11,8 +11,9 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 y 2 — entorno y estructura del monorepo** están terminadas
-localmente. La especificación consolidada, las decisiones y el plan completo se
+Las **Etapas 1 a 3 — entorno, monorepo y alias Firebase** están terminadas
+localmente. El acceso remoto por CLI y los emuladores se comprobarán en la Etapa 4.
+La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
 - `docs/product-spec.md`
@@ -20,6 +21,7 @@ encuentran en:
 - `docs/master-plan.md`
 - `docs/stage-01-environment.md`
 - `docs/stage-02-repository.md`
+- `docs/stage-03-firebase-environments.md`
 - `SECURITY.md`
 
 ## Estructura prevista
@@ -40,11 +42,25 @@ scripts/          Automatización local segura
 ## Validación rápida
 
 ```powershell
-npm run check
+npm.cmd run check
 ```
 
-La validación confirma la estructura canónica, los workspaces y la ausencia de
-nombres de archivos que normalmente contienen secretos.
+En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
+`npm.ps1` por la política de PowerShell sin modificarla.
+
+La validación confirma la estructura canónica, los workspaces, los alias Firebase
+y la ausencia de nombres de archivos que normalmente contienen secretos. Además,
+ejecuta ocho pruebas de configuración de ambientes.
+
+## Ambientes Firebase
+
+- `dev` → `mesaflow-desarrollo`.
+- `prod` → `mesaflow-produccion`.
+- `default` → desarrollo.
+
+Los alias están en `.firebaserc` y no son credenciales. Una selección activa de
+Firebase CLI puede prevalecer sobre `default`; los futuros comandos operativos
+especificarán siempre `--project`. No ejecutar despliegues en esta etapa.
 
 ## Comprobar el entorno en Windows
 

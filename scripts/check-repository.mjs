@@ -2,12 +2,14 @@ import { access, readFile, readdir } from "node:fs/promises";
 import { constants } from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { validateFirebaseProjects } from "./lib/firebase-projects.mjs";
 
 const root = process.cwd();
 
 const requiredPaths = [
   ".editorconfig",
   ".env.example",
+  ".firebaserc",
   ".gitattributes",
   ".gitignore",
   "CONTRIBUTING.md",
@@ -111,6 +113,9 @@ try {
   await assertRequiredPaths();
   await assertPackageMetadata();
 
+  const firebaseConfig = JSON.parse(await readFile(path.join(root, ".firebaserc"), "utf8"));
+  const firebaseProjects = validateFirebaseProjects(firebaseConfig);
+
   const forbiddenFiles = await findForbiddenFiles(root);
   if (forbiddenFiles.length > 0) {
     throw new Error(
@@ -120,6 +125,8 @@ try {
 
   console.log("[OK] Estructura canónica del monorepo");
   console.log("[OK] Metadatos y workspaces npm");
+  console.log(`[OK] Firebase: dev=${firebaseProjects.dev}, prod=${firebaseProjects.prod}`);
+  console.log("[OK] Proyecto predeterminado: desarrollo (validación local)");
   console.log("[OK] No se detectaron nombres de archivos secretos");
   console.log("Repositorio MesaFlow válido.");
 } catch (error) {

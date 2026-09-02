@@ -1,5 +1,16 @@
 # Arquitectura del MVP
 
+## Ambientes confirmados — Etapa 3
+
+Desarrollo usa `mesaflow-desarrollo` y producción usa `mesaflow-produccion`.
+`.firebaserc` define `dev`, `prod` y `default` (desarrollo). La configuración de
+alias no es un control de autorización ni selecciona automáticamente el backend
+de los SDK frontend. Las cuentas, datos y secretos se separan por proyecto.
+
+Se versiona `.firebaserc` con IDs públicos porque este es el repositorio de una
+aplicación concreta. Sustituye al archivo de ejemplo previsto inicialmente; no
+cambia la arquitectura. Más detalles en `stage-03-firebase-environments.md`.
+
 ## Stack elegido
 
 | Componente | Tecnología | Función | Motivo |

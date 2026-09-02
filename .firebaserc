@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "mesaflow-desarrollo",
+    "dev": "mesaflow-desarrollo",
+    "prod": "mesaflow-produccion"
+  }
+}
