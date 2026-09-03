@@ -13,7 +13,7 @@ usuario.
 | 2 | Repositorio | Inicializar Git, convenciones, ramas simples y monorepo | 1 | Opcional: crear remoto GitHub | Sí: `.gitignore`, estructura | `git status` limpio y primer commit reproducible |
 | 3 | Ambientes | Definir IDs Firebase dev/prod y archivos de alias | 2 | Sí: crear dos proyectos | Sí: `.firebaserc`, validación y tests | Los aliases `dev`/`prod` apuntan a proyectos distintos |
 | 4 | Firebase CLI | Login, asociación y Emulator Suite inicial (Auth, Firestore, UI) | 1,3 | Sí: login OAuth | Sí: `firebase.json`, reglas cerradas, scripts/tests | `npm.cmd run test:emulators` pasa con ID demo; otros emuladores llegan con sus módulos |
-| 5 | Authentication | Activar Email/Password y Anonymous; plantillas y dominios | 3 | Sí: consola | Sí: adaptadores y pruebas posteriores | Ambos proveedores funcionan en emulador/dev |
+| 5 | Authentication | Activar Email/Password y Anonymous; privacidad, contraseñas, plantillas y dominios | 3,4 | Sí: consola | Sí: política/verificador; SDKs en Etapas 17/31 | Configuración remota verificada y flujo local probado; login real al integrar apps |
 | 6 | Firestore | Crear base, región, esquema raíz y converters | 3 | Sí: crear base | Sí: reglas/esquema/modelos | Escritura/lectura dev validada y región documentada |
 | 7 | Storage | Activar bucket y rutas de imágenes por tenant | 3 | Sí: consola si lo pide | Sí: `storage.rules` | Solo miembros autorizados escriben imágenes de su tenant |
 | 8 | Functions | Proyecto TypeScript, emulador y cuentas de servicio administradas | 4–7 | Sí: habilitar facturación solo al desplegar Functions | Sí: `functions/**` | Build, lint y función health local pasan |
@@ -86,9 +86,9 @@ usuario.
 |---:|---|---|
 | 1 | Completa | `docs/stage-01-environment.md` |
 | 2 | Completa; remoto público configurado, protecciones de GitHub pendientes de verificación manual | `docs/stage-02-repository.md` |
-| 3 | Completa localmente; proyectos confirmados por el usuario, acceso CLI pendiente de Etapa 4 | `docs/stage-03-firebase-environments.md` |
+| 3 | Completa; proyectos y acceso CLI confirmados por el usuario en Etapa 4 | `docs/stage-03-firebase-environments.md` |
 | 4 | Completa: 17 tests, smoke test, UI HTTP 200 y apagado comprobados; acceso CLI confirmado por el usuario | `docs/stage-04-emulators.md` |
-| 5 | Próxima | Authentication en Firebase Console |
+| 5 | En curso: 26 tests locales pasan; lectura remota detectó Anonymous, contraseñas y dominios prod pendientes; plantillas requieren revisión | `docs/stage-05-authentication.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

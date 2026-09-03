@@ -23,6 +23,14 @@ transitivas documentadas en `tooling-security.md`. No cambia el stack del MVP.
 
 ## Stack elegido
 
+Nota incremental de Etapa 5: Firebase Auth identifica al personal por
+Email/Password y al consumidor de mesa por Anonymous Auth. Ninguna identidad
+concede permisos sin membresía/sesión autorizada. No se usarán tenants de Identity
+Platform por restaurante. La política de contraseñas mínima propuesta es 12
+caracteres con privacidad de correos activa; el detalle y su verificación están en
+`stage-05-authentication.md`. La lectura de configuración no equivale a probar el
+login de las aplicaciones, que se integrará en sus etapas.
+
 | Componente | Tecnología | Función | Motivo |
 |---|---|---|---|
 | Cliente | Flutter 3 / Dart, Flutter Web PWA | Menú, carrito, pedidos, cuenta y pago desde QR | Requisito obligatorio y una base compatible con web/móvil |

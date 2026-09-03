@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "minimumPasswordLength": 12,
+  "passwordPolicyEnforcementState": "ENFORCE",
+  "emailEnumerationProtection": true,
+  "emailTemplateLanguage": "es",
+  "environments": {
+    "dev": { "allowLocalhost": true, "senderDisplayName": "MesaFlow (desarrollo)" },
+    "prod": { "allowLocalhost": false, "senderDisplayName": "MesaFlow" }
+  }
+}

@@ -14,7 +14,9 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 Las **Etapas 1 a 3 — entorno, monorepo y alias Firebase** están terminadas.
 La **Etapa 4** incorpora emuladores locales probados; el usuario confirmó acceso
 con Firebase CLI a ambos proyectos reales. Todavía no hay aplicaciones de negocio
-ni despliegues.
+ni despliegues. La Etapa 5 prepara Authentication real y su verificador de solo
+lectura; los ajustes manuales se detallan en su guía y no se consideran completos
+hasta verificarlos.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -25,6 +27,7 @@ encuentran en:
 - `docs/stage-02-repository.md`
 - `docs/stage-03-firebase-environments.md`
 - `docs/stage-04-emulators.md`
+- `docs/stage-05-authentication.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -55,7 +58,22 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
 y la ausencia de nombres de archivos que normalmente contienen secretos. Además,
-ejecuta 14 pruebas de configuración y tres de compatibilidad de herramientas.
+ejecuta 26 pruebas (14 de configuración, tres de herramientas y nueve de la
+política/verificador Auth). Este comando no consulta servicios remotos.
+
+## Configuración Authentication en la nube
+
+Después de configurar proveedores, privacidad, contraseñas y dominios según la
+guía de la Etapa 5:
+
+```powershell
+npm.cmd run auth:check -- all
+```
+
+El comando usa la sesión Firebase CLI existente y consulta solo la configuración
+de `dev` y `prod`. No escribe recursos ni obtiene usuarios; las plantillas se
+revisan manualmente. La política esperada vive en `firebase/auth-policy.json` y
+no se aplica automáticamente a la nube.
 
 ## Emuladores locales
 

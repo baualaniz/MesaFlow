@@ -4,6 +4,7 @@ import path from "node:path";
 import process from "node:process";
 import { validateFirebaseProjects } from "./lib/firebase-projects.mjs";
 import { validateEmulatorConfig } from "./lib/emulator-config.mjs";
+import { validateAuthPolicy } from "./lib/auth-config.mjs";
 
 const root = process.cwd();
 
@@ -26,6 +27,7 @@ const requiredPaths = [
   "docs/master-plan.md",
   "docs/product-spec.md",
   "firebase/seeds",
+  "firebase/auth-policy.json",
   "firebase/tests",
   "functions",
   "packages/contracts",
@@ -120,6 +122,7 @@ try {
   const firebaseConfig = JSON.parse(await readFile(path.join(root, ".firebaserc"), "utf8"));
   const firebaseProjects = validateFirebaseProjects(firebaseConfig);
   validateEmulatorConfig(JSON.parse(await readFile(path.join(root, "firebase.json"), "utf8")));
+  validateAuthPolicy(JSON.parse(await readFile(path.join(root, "firebase/auth-policy.json"), "utf8")));
 
   const forbiddenFiles = await findForbiddenFiles(root);
   if (forbiddenFiles.length > 0) {
