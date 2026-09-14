@@ -88,7 +88,8 @@ usuario.
 | 2 | Completa; remoto público configurado, protecciones de GitHub pendientes de verificación manual | `docs/stage-02-repository.md` |
 | 3 | Completa; proyectos y acceso CLI confirmados por el usuario en Etapa 4 | `docs/stage-03-firebase-environments.md` |
 | 4 | Completa: 17 tests, smoke test, UI HTTP 200 y apagado comprobados; acceso CLI confirmado por el usuario | `docs/stage-04-emulators.md` |
-| 5 | En curso: 26 tests locales pasan; lectura remota detectó Anonymous, contraseñas y dominios prod pendientes; plantillas requieren revisión | `docs/stage-05-authentication.md` |
+| 5 | Completa: 26 tests locales, configuración remota y plantillas aprobadas | `docs/stage-05-authentication.md` |
+| 6 | Completa: bases Standard nativas en São Paulo, 8 tests y smoke cloud dev con limpieza aprobados | `docs/stage-06-firestore.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

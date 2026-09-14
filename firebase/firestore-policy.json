@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "databaseId": "(default)",
+  "edition": "STANDARD",
+  "type": "FIRESTORE_NATIVE",
+  "locationId": "southamerica-east1",
+  "initialRulesMode": "deny-all",
+  "environments": ["dev", "prod"]
+}

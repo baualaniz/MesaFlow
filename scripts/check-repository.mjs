@@ -5,6 +5,7 @@ import process from "node:process";
 import { validateFirebaseProjects } from "./lib/firebase-projects.mjs";
 import { validateEmulatorConfig } from "./lib/emulator-config.mjs";
 import { validateAuthPolicy } from "./lib/auth-config.mjs";
+import { validateFirestorePolicy, validateFirestoreSchema } from "./lib/firestore-config.mjs";
 
 const root = process.cwd();
 
@@ -28,6 +29,8 @@ const requiredPaths = [
   "docs/product-spec.md",
   "firebase/seeds",
   "firebase/auth-policy.json",
+  "firebase/firestore-policy.json",
+  "firebase/schema/firestore-schema.json",
   "firebase/tests",
   "functions",
   "packages/contracts",
@@ -123,6 +126,8 @@ try {
   const firebaseProjects = validateFirebaseProjects(firebaseConfig);
   validateEmulatorConfig(JSON.parse(await readFile(path.join(root, "firebase.json"), "utf8")));
   validateAuthPolicy(JSON.parse(await readFile(path.join(root, "firebase/auth-policy.json"), "utf8")));
+  validateFirestorePolicy(JSON.parse(await readFile(path.join(root, "firebase/firestore-policy.json"), "utf8")));
+  validateFirestoreSchema(JSON.parse(await readFile(path.join(root, "firebase/schema/firestore-schema.json"), "utf8")));
 
   const forbiddenFiles = await findForbiddenFiles(root);
   if (forbiddenFiles.length > 0) {
@@ -136,6 +141,7 @@ try {
   console.log(`[OK] Firebase: dev=${firebaseProjects.dev}, prod=${firebaseProjects.prod}`);
   console.log("[OK] Proyecto predeterminado: desarrollo (validación local)");
   console.log("[OK] Emuladores limitados a loopback");
+  console.log("[OK] Política y esquema raíz de Firestore");
   console.log("[OK] No se detectaron nombres de archivos secretos");
   console.log("Repositorio MesaFlow válido.");
 } catch (error) {

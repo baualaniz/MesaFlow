@@ -31,6 +31,13 @@ caracteres con privacidad de correos activa; el detalle y su verificación está
 `stage-05-authentication.md`. La lectura de configuración no equivale a probar el
 login de las aplicaciones, que se integrará en sus etapas.
 
+Nota incremental de Etapa 6: Firestore usa la base `(default)`, edición Standard,
+modo nativo y región regional `southamerica-east1` (São Paulo) en ambos ambientes.
+El proyecto real de desarrollo permitirá pruebas integradas; el emulador seguirá
+siendo obligatorio para pruebas destructivas y repetibles. Producción no recibe
+datos de prueba. La configuración canónica está en `firebase/firestore-policy.json`
+y el manifiesto de rutas en `firebase/schema/firestore-schema.json`.
+
 | Componente | Tecnología | Función | Motivo |
 |---|---|---|---|
 | Cliente | Flutter 3 / Dart, Flutter Web PWA | Menú, carrito, pedidos, cuenta y pago desde QR | Requisito obligatorio y una base compatible con web/móvil |
@@ -86,7 +93,8 @@ globales accidentales. Los documentos globales solo resuelven identidad o slugs.
 | `establishments/{eid}` | `name`, `slug`, `timezone`, `currency`, `active`, timestamps | Tenant raíz |
 | `.../members/{uid}` | `role`, `permissions`, `active`, timestamps | Autorización del personal |
 | `.../tables/{tableId}` | `number`, `name`, `qrTokenHash`, `qrVersion`, `active`, `currentSessionId` | Mesa y credencial QR rotatoria |
-| `.../tableSessions/{sessionId}` | `tableId`, `status`, `guestUids`, `openedAt`, `closedAt`, `totals` | Ocupación y cuenta aislada |
+| `.../tableSessions/{sessionId}` | `tableId`, `status`, `openedAt`, `closedAt`, `totals` | Ocupación y cuenta aislada |
+| `.../tableSessions/{sessionId}/participants/{uid}` | `establishmentId`, `sessionId`, `uid`, `active`, timestamps | Acceso acotado de clientes anónimos a la sesión |
 | `.../categories/{categoryId}` | `name`, `description`, `sortOrder`, `active`, timestamps | Organización del menú |
 | `.../products/{productId}` | `categoryId`, `name`, `description`, `priceMinor`, `currency`, `imagePath`, `available`, `active`, timestamps | Producto vendible |
 | `.../orders/{orderId}` | `sessionId`, `tableId`, `customerUid`, `status`, `items`, `totals`, `statusTimestamps`, timestamps | Snapshot inmutable de líneas y total |
@@ -115,7 +123,8 @@ tenants. `createdAt` y `updatedAt` son `Timestamp` de servidor.
 | Establishment | `name: string`, `slug: string`, `timezone: string`, `currency: string`, `active: boolean`, `createdAt: Timestamp`, `updatedAt: Timestamp` |
 | Member | `establishmentId: string`, `uid: string`, `role: Role`, `permissions: string[]`, `active: boolean`, `createdAt: Timestamp`, `updatedAt: Timestamp` |
 | Table | `establishmentId: string`, `number: number`, `name: string`, `qrTokenHash: string`, `qrVersion: number`, `active: boolean`, `currentSessionId: string|null`, timestamps |
-| TableSession | `establishmentId: string`, `tableId: string`, `status: TableSessionStatus`, `guestUids: string[]`, `subtotalMinor: number`, `paidMinor: number`, `balanceMinor: number`, `openedAt: Timestamp`, `closedAt: Timestamp|null`, `updatedAt: Timestamp` |
+| TableSession | `establishmentId: string`, `tableId: string`, `status: TableSessionStatus`, `subtotalMinor: number`, `paidMinor: number`, `balanceMinor: number`, `openedAt: Timestamp`, `closedAt: Timestamp|null`, `updatedAt: Timestamp` |
+| TableSessionParticipant | `establishmentId: string`, `sessionId: string`, `uid: string`, `active: boolean`, `joinedAt: Timestamp`, `revokedAt: Timestamp|null` |
 | Category | `establishmentId: string`, `name: string`, `description: string`, `sortOrder: number`, `active: boolean`, timestamps |
 | Product | `establishmentId: string`, `categoryId: string`, `name: string`, `description: string`, `priceMinor: number`, `currency: string`, `imagePath: string|null`, `available: boolean`, `active: boolean`, `sortOrder: number`, timestamps |
 | Order | `establishmentId: string`, `sessionId: string`, `tableId: string`, `customerUid: string`, `status: OrderStatus`, `items: OrderItemSnapshot[]`, `subtotalMinor: number`, `totalMinor: number`, `currency: string`, `notes: string|null`, `statusTimestamps: map<string, Timestamp>`, timestamps |
@@ -127,6 +136,10 @@ tenants. `createdAt` y `updatedAt` son `Timestamp` de servidor.
 Las referencias se almacenan como IDs y no como `DocumentReference` para facilitar
 fixtures, contratos compartidos y migraciones. La existencia y pertenencia de
 cada ID relacionado se valida transaccionalmente en backend.
+
+La lista preliminar `guestUids` de `tableSessions` se reemplaza en la Etapa 6 por
+la subcolección `participants`. La modificación evita un array creciente y permite
+que las reglas comprueben un UID mediante una lectura de documento predecible.
 
 ## Identificadores, tiempo y estados
 

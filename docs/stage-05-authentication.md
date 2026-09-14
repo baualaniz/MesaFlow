@@ -7,12 +7,11 @@ manteniendo la separación dev/prod y sin confundir autenticación con permisos.
 
 ## Estado de esta entrega
 
-El verificador local y sus nueve pruebas están implementados. La primera lectura
-remota, realizada el 2026-09-03, confirmó Email/Password y privacidad de correos en
-ambos proyectos. Detectó Anonymous sin habilitar, política mínima de contraseñas
-pendiente y dominios loopback en producción. Aunque el usuario había confirmado
-los proveedores, se solicitó revisar Guardar en Anonymous y repetir la lectura.
-La etapa no se cierra hasta confirmar los ajustes y las plantillas.
+El verificador local y sus nueve pruebas están implementados. La lectura remota
+del 2026-09-14 confirmó en ambos proyectos Email/Password, Anonymous, privacidad
+de correos y política exigida con mínimo de 12 caracteres. También confirmó
+`localhost` en desarrollo y la ausencia de dominios loopback en producción.
+El usuario confirmó visualmente las plantillas de correo en ambos proyectos.
 No se crearon cuentas reales ni se enviaron correos.
 
 ## Resultado esperado
@@ -112,8 +111,8 @@ la consola del emulador en `127.0.0.1:4000`.
 
 **Cómo verificar:** ambos proveedores muestran estado habilitado en cada proyecto.
 
-El usuario confirmó esta acción; la lectura remota posterior detectó Anonymous
-pendiente. Se debe revisar su guardado en ambos proyectos y repetir el chequeo.
+El usuario confirmó esta acción y la lectura remota del 2026-09-14 verificó ambos
+proveedores en los dos proyectos.
 
 ## ACCIÓN MANUAL 2 — privacidad y política de contraseñas
 
@@ -258,13 +257,13 @@ declara probado ese recorrido real en esta etapa.
 ## Criterio de aceptación
 
 - [x] Email/Password confirmado por la API en dev y prod.
-- [ ] Anonymous confirmado por la API en dev y prod tras revisar Guardar.
+- [x] Anonymous confirmado por la API en dev y prod.
 - [x] Política local, verificador de solo lectura y nueve tests implementados.
 - [x] Suite local completa: 26 pruebas aprobadas.
 - [x] Privacidad de correos verificada remotamente en ambos proyectos.
-- [ ] Política mínima de contraseñas verificada remotamente en ambos proyectos.
-- [ ] Dominios autorizados verificados remotamente en ambos proyectos.
-- [ ] Plantillas revisadas manualmente en español.
+- [x] Política mínima de contraseñas verificada remotamente en ambos proyectos.
+- [x] Dominios autorizados verificados remotamente en ambos proyectos.
+- [x] Plantillas revisadas manualmente en español.
 - [x] No se crearon usuarios ni se modificó configuración remota mediante scripts.
 
 ## ACCIÓN MANUAL — guardar los cambios

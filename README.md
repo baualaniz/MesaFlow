@@ -58,8 +58,8 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
 y la ausencia de nombres de archivos que normalmente contienen secretos. Además,
-ejecuta 26 pruebas (14 de configuración, tres de herramientas y nueve de la
-política/verificador Auth). Este comando no consulta servicios remotos.
+ejecuta 34 pruebas (14 de configuración, tres de herramientas, nueve de
+Authentication y ocho de Firestore). Este comando no consulta servicios remotos.
 
 ## Configuración Authentication en la nube
 
@@ -74,6 +74,20 @@ El comando usa la sesión Firebase CLI existente y consulta solo la configuraci�
 de `dev` y `prod`. No escribe recursos ni obtiene usuarios; las plantillas se
 revisan manualmente. La política esperada vive en `firebase/auth-policy.json` y
 no se aplica automáticamente a la nube.
+
+## Configuración Firestore en la nube
+
+La Etapa 6 fija Firestore Standard nativo en `southamerica-east1`. Después de
+crear manualmente las bases `(default)` según `docs/stage-06-firestore.md`:
+
+```powershell
+npm.cmd run firestore:check -- all
+npm.cmd run firestore:smoke:dev
+```
+
+El primer comando es de solo lectura. El segundo solo acepta desarrollo, crea un
+documento técnico con ID aleatorio, verifica su lectura y lo elimina; nunca escribe
+en producción.
 
 ## Emuladores locales
 

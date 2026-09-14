@@ -23,12 +23,15 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config",
+    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config",
     "check:repo": "node ./scripts/check-repository.mjs",
     "test:config": "node --test ./scripts/firebase-projects.test.mjs ./scripts/emulator-config.test.mjs",
     "test:tooling": "node --test ./scripts/tooling-dependencies.test.mjs",
     "test:auth-config": "node --test ./scripts/auth-config.test.mjs",
+    "test:firestore-config": "node --test ./scripts/firestore-config.test.mjs",
     "auth:check": "node ./scripts/check-auth-config.mjs",
+    "firestore:check": "node ./scripts/check-firestore-config.mjs",
+    "firestore:smoke:dev": "node ./scripts/firestore-cloud-smoke.mjs dev",
     "check:env": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-environment.ps1",
     "emulators": "node ./scripts/run-emulators.mjs start",
     "test:emulators": "node ./scripts/run-emulators.mjs test",

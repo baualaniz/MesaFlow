@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "rootCollections": [
+    {
+      "key": "users",
+      "path": "users/{uid}",
+      "scope": "identity",
+      "idStrategy": "firebase-auth-uid"
+    },
+    {
+      "key": "establishmentSlugs",
+      "path": "establishmentSlugs/{slug}",
+      "scope": "public-lookup",
+      "idStrategy": "normalized-slug"
+    },
+    {
+      "key": "establishments",
+      "path": "establishments/{establishmentId}",
+      "scope": "tenant-root",
+      "idStrategy": "firestore-auto-id"
+    },
+    {
+      "key": "webhookEvents",
+      "path": "webhookEvents/{providerEventId}",
+      "scope": "server-only",
+      "idStrategy": "provider-event-id"
+    }
+  ],
+  "tenantCollections": [
+    {
+      "key": "members",
+      "path": "establishments/{establishmentId}/members/{uid}",
+      "idStrategy": "firebase-auth-uid"
+    },
+    {
+      "key": "tables",
+      "path": "establishments/{establishmentId}/tables/{tableId}",
+      "idStrategy": "firestore-auto-id"
+    },
+    {
+      "key": "tableSessions",
+      "path": "establishments/{establishmentId}/tableSessions/{sessionId}",
+      "idStrategy": "firestore-auto-id"
+    },
+    {
+      "key": "tableSessionParticipants",
+      "path": "establishments/{establishmentId}/tableSessions/{sessionId}/participants/{uid}",
+      "idStrategy": "firebase-auth-uid"
+    },
+    {
+      "key": "categories",
+      "path": "establishments/{establishmentId}/categories/{categoryId}",
+      "idStrategy": "firestore-auto-id"
+    },
+    {
+      "key": "products",
+      "path": "establishments/{establishmentId}/products/{productId}",
+      "idStrategy": "firestore-auto-id"
+    },
+    {
+      "key": "orders",
+      "path": "establishments/{establishmentId}/orders/{orderId}",
+      "idStrategy": "firestore-auto-id"
+    },
+    {
+      "key": "assistanceRequests",
+      "path": "establishments/{establishmentId}/assistanceRequests/{requestId}",
+      "idStrategy": "firestore-auto-id"
+    },
+    {
+      "key": "payments",
+      "path": "establishments/{establishmentId}/payments/{paymentId}",
+      "idStrategy": "firestore-auto-id"
+    },
+    {
+      "key": "dailyMetrics",
+      "path": "establishments/{establishmentId}/dailyMetrics/{localDate}",
+      "idStrategy": "yyyy-MM-dd"
+    },
+    {
+      "key": "settings",
+      "path": "establishments/{establishmentId}/settings/{visibility}",
+      "idStrategy": "public-or-private"
+    },
+    {
+      "key": "qrExchanges",
+      "path": "establishments/{establishmentId}/qrExchanges/{exchangeId}",
+      "idStrategy": "token-hash"
+    },
+    {
+      "key": "auditLogs",
+      "path": "establishments/{establishmentId}/auditLogs/{logId}",
+      "idStrategy": "firestore-auto-id"
+    }
+  ]
+}
