@@ -1,0 +1,337 @@
+{
+  "version": 1,
+  "name": "MesaFlow presentation dataset",
+  "environment": "dev",
+  "projectId": "mesaflow-desarrollo",
+  "databaseId": "(default)",
+  "auditPath": "establishments/mesa-flow-demo/auditLogs/presentation-seed-v1",
+  "documents": [
+    {
+      "path": "users/presentation-owner",
+      "data": {
+        "displayName": "Propietario Demo",
+        "email": "owner.demo@example.invalid",
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishmentSlugs/mesa-flow-demo",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "active": true
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo",
+      "data": {
+        "name": "Bistró MesaFlow",
+        "slug": "mesa-flow-demo",
+        "timezone": "America/Argentina/Buenos_Aires",
+        "currency": "ARS",
+        "active": true,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/members/presentation-owner",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "uid": "presentation-owner",
+        "role": "owner",
+        "permissions": ["establishment.manage", "menu.manage", "orders.manage", "metrics.read"],
+        "active": true,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/categories/principales",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "name": "Principales",
+        "description": "Platos principales de la casa",
+        "sortOrder": 1,
+        "active": true,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/categories/vegetariano",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "name": "Vegetariano",
+        "description": "Opciones sin carne",
+        "sortOrder": 2,
+        "active": true,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/categories/postres",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "name": "Postres",
+        "description": "Dulces y postres",
+        "sortOrder": 3,
+        "active": true,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/products/burger-casa",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "categoryId": "principales",
+        "name": "Burger de la casa",
+        "description": "Carne, cheddar, vegetales frescos y papas rústicas.",
+        "priceMinor": 1290000,
+        "currency": "ARS",
+        "imagePath": "menu.burger-casa",
+        "available": true,
+        "active": true,
+        "sortOrder": 1,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/products/ravioles-espinaca",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "categoryId": "principales",
+        "name": "Ravioles de espinaca",
+        "description": "Ricota, tomates cherry, albahaca y parmesano.",
+        "priceMinor": 1180000,
+        "currency": "ARS",
+        "imagePath": "menu.ravioles-espinaca",
+        "available": true,
+        "active": true,
+        "sortOrder": 2,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/products/bowl-estacion",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "categoryId": "vegetariano",
+        "name": "Bowl de estación",
+        "description": "Quinoa, vegetales asados y aderezo cítrico.",
+        "priceMinor": 980000,
+        "currency": "ARS",
+        "imagePath": "menu.bowl-estacion",
+        "available": true,
+        "active": true,
+        "sortOrder": 1,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/products/torta-chocolate",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "categoryId": "postres",
+        "name": "Torta de chocolate",
+        "description": "Chocolate intenso, frutos rojos y cacao.",
+        "priceMinor": 620000,
+        "currency": "ARS",
+        "imagePath": "menu.torta-chocolate",
+        "available": true,
+        "active": true,
+        "sortOrder": 1,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/tables/mesa-01",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "number": 1,
+        "name": "Mesa 1",
+        "qrTokenHash": "presentation-not-a-real-token",
+        "qrVersion": 1,
+        "active": true,
+        "currentSessionId": "sesion-presentacion",
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/tables/mesa-02",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "number": 2,
+        "name": "Mesa 2",
+        "qrTokenHash": "presentation-not-a-real-token",
+        "qrVersion": 1,
+        "active": true,
+        "currentSessionId": null,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/tables/mesa-03",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "number": 3,
+        "name": "Mesa 3",
+        "qrTokenHash": "presentation-not-a-real-token",
+        "qrVersion": 1,
+        "active": true,
+        "currentSessionId": null,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/tableSessions/sesion-presentacion",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "tableId": "mesa-01",
+        "status": "open",
+        "subtotalMinor": 1290000,
+        "paidMinor": 0,
+        "balanceMinor": 1290000,
+        "openedAt": { "$timestamp": "now" },
+        "closedAt": null,
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/tableSessions/sesion-presentacion/participants/presentation-guest",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "sessionId": "sesion-presentacion",
+        "uid": "presentation-guest",
+        "active": true,
+        "joinedAt": { "$timestamp": "now" },
+        "revokedAt": null
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/orders/pedido-presentacion",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "sessionId": "sesion-presentacion",
+        "tableId": "mesa-01",
+        "customerUid": "presentation-guest",
+        "status": "created",
+        "items": [
+          {
+            "productId": "burger-casa",
+            "name": "Burger de la casa",
+            "unitPriceMinor": 1290000,
+            "quantity": 1,
+            "lineTotalMinor": 1290000,
+            "notes": "Sin cebolla"
+          }
+        ],
+        "subtotalMinor": 1290000,
+        "totalMinor": 1290000,
+        "currency": "ARS",
+        "notes": "Pedido de demostración; no enviado a cocina",
+        "statusTimestamps": {
+          "created": { "$timestamp": "now" }
+        },
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/assistanceRequests/asistencia-presentacion",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "sessionId": "sesion-presentacion",
+        "tableId": "mesa-01",
+        "customerUid": "presentation-guest",
+        "type": "waiter",
+        "status": "pending",
+        "acknowledgedBy": null,
+        "resolvedBy": null,
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/payments/pago-presentacion",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "sessionId": "sesion-presentacion",
+        "provider": "mercado_pago",
+        "externalId": null,
+        "idempotencyKey": "presentation-not-submitted",
+        "status": "pending",
+        "amountMinor": 1290000,
+        "currency": "ARS",
+        "providerStatus": "demo_not_submitted",
+        "createdAt": { "$timestamp": "now" },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/dailyMetrics/2026-09-17",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "date": "2026-09-17",
+        "salesMinor": 0,
+        "approvedPayments": 0,
+        "completedOrders": 0,
+        "activeOrders": 1,
+        "productQuantities": {
+          "burger-casa": 1
+        },
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/settings/public",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "brandName": "Bistró MesaFlow",
+        "contactEmail": "contacto.demo@example.invalid",
+        "orderingEnabled": true,
+        "assistanceEnabled": true,
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/settings/private",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "mercadoPagoEnabled": false,
+        "whatsappEnabled": false,
+        "updatedAt": { "$timestamp": "now" }
+      }
+    },
+    {
+      "path": "establishments/mesa-flow-demo/auditLogs/presentation-seed-v1",
+      "data": {
+        "establishmentId": "mesa-flow-demo",
+        "actor": {
+          "type": "system",
+          "id": "presentation-seed"
+        },
+        "action": "demo.seed.created",
+        "entity": {
+          "type": "seed",
+          "id": "presentation-v1"
+        },
+        "before": null,
+        "after": {
+          "purpose": "academic-presentation",
+          "containsPersonalData": false
+        },
+        "createdAt": { "$timestamp": "now" }
+      }
+    }
+  ]
+}

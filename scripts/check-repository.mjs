@@ -32,9 +32,12 @@ const requiredPaths = [
   "apps/admin",
   "apps/landing",
   "docs/architecture.md",
+  "docs/guia-entrega-avance.md",
+  "docs/informe-avance-presentacion.md",
   "docs/master-plan.md",
   "docs/product-spec.md",
   "firebase/seeds",
+  "firebase/seeds/presentation-dev.json",
   "firebase/auth-policy.json",
   "firebase/firestore-policy.json",
   "firebase/storage-policy.json",
@@ -53,7 +56,10 @@ const requiredPaths = [
   "functions/.secret.local.example",
   "packages/contracts",
   "package.json",
-  "scripts/check-environment.ps1"
+  "scripts/check-environment.ps1",
+  "scripts/lib/presentation-seed.mjs",
+  "scripts/presentation-seed.test.mjs",
+  "scripts/seed-presentation-dev.mjs"
 ];
 
 const forbiddenFilePatterns = [

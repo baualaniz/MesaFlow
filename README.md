@@ -60,9 +60,10 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 56
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 61
 pruebas (14 de configuración, cuatro de herramientas, nueve de Authentication,
-ocho de Firestore, ocho de Storage, cuatro de secretos, seis de Hosting y tres de Functions), más
+ocho de Firestore, ocho de Storage, cuatro de secretos, seis de Hosting, cinco del
+seed de presentación y tres de Functions), más
 el lint y build TypeScript. Este comando no consulta servicios remotos.
 
 ## Configuración Authentication en la nube

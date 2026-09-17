@@ -23,7 +23,7 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config && npm run test:storage-config && npm run test:secrets-config && npm run test:hosting-config && npm run functions:check",
+    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config && npm run test:storage-config && npm run test:secrets-config && npm run test:hosting-config && npm run test:presentation-seed && npm run functions:check",
     "check:repo": "node ./scripts/check-repository.mjs",
     "test:config": "node --test ./scripts/firebase-projects.test.mjs ./scripts/emulator-config.test.mjs",
     "test:tooling": "node --test ./scripts/tooling-dependencies.test.mjs",
@@ -32,9 +32,11 @@
     "test:storage-config": "node --test ./scripts/storage-config.test.mjs",
     "test:secrets-config": "node --test ./scripts/secrets-config.test.mjs",
     "test:hosting-config": "node --test ./scripts/hosting-config.test.mjs",
+    "test:presentation-seed": "node --test ./scripts/presentation-seed.test.mjs",
     "auth:check": "node ./scripts/check-auth-config.mjs",
     "firestore:check": "node ./scripts/check-firestore-config.mjs",
     "firestore:smoke:dev": "node ./scripts/firestore-cloud-smoke.mjs dev",
+    "firebase:seed:presentation:dev": "node ./scripts/seed-presentation-dev.mjs",
     "storage:check": "node ./scripts/check-storage-config.mjs",
     "secrets:check": "node ./scripts/check-secrets-config.mjs",
     "hosting:check": "node ./scripts/check-hosting-config.mjs",
