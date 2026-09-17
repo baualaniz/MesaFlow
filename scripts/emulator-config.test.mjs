@@ -16,7 +16,7 @@ const safeEnv = {
 
 test("configuración real usa loopback y puertos locales distintos", () => {
   validateEmulatorConfig(config);
-  assert.equal(new Set(Object.values(EMULATOR_PORTS)).size, 7);
+  assert.equal(new Set(Object.values(EMULATOR_PORTS)).size, 8);
 });
 test("rechaza reglas omitidas, exposición en LAN y puertos incorrectos", () => {
   const variants = [
@@ -40,7 +40,7 @@ test("comandos start y test fijan el proyecto demo", () => {
   for (const mode of ["start", "test"]) {
     const args = buildEmulatorArgs(mode);
     assert.equal(args[args.indexOf("--project") + 1], DEMO_PROJECT_ID);
-    assert.equal(args[args.indexOf("--only") + 1], "auth,firestore,storage,functions");
+    assert.equal(args[args.indexOf("--only") + 1], "auth,firestore,storage,functions,hosting");
   }
 });
 test("no acepta override de proyecto ni modos de despliegue", () => {

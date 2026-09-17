@@ -14,12 +14,18 @@ cambia la arquitectura. Más detalles en `stage-03-firebase-environments.md`.
 ## Entorno local — Etapa 4
 
 Los emuladores usan exclusivamente `demo-mesaflow` y loopback. Auth, Firestore,
-Storage y Functions están implementados; Hosting se incorpora en la Etapa 10.
+Storage, Functions y los tres destinos Hosting están implementados.
 Las reglas iniciales deniegan todos los accesos cliente y se ampliarán en la
 Etapa 14. No se han desplegado estas reglas en ninguno de los proyectos.
 
 Firebase CLI queda fijada como dependencia local en 15.28.2 con correcciones
 transitivas documentadas en `tooling-security.md`. No cambia el stack del MVP.
+
+Nota incremental de Etapa 10: Firebase Hosting expone localmente `customer`,
+`admin` y `landing` como sitios independientes. Cliente y panel tienen fallback
+SPA; la landing conserva 404. Los sitios reales y sus targets no existen todavía:
+se crearán al desplegar desarrollo en la Etapa 47. La política canónica vive en
+`firebase/hosting-policy.json`.
 
 ## Stack elegido
 

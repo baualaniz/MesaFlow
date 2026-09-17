@@ -30,6 +30,7 @@ try {
   const args = buildEmulatorArgs(process.argv[2], process.argv.slice(3));
   const config = JSON.parse(await readFile(new URL("../firebase.json", import.meta.url), "utf8"));
   validateEmulatorConfig(config);
+  await runNpmScript("hosting:build");
   await runNpmScript("functions:build");
   const cli = require.resolve("firebase-tools/lib/bin/firebase.js");
   console.log(`MesaFlow local: ${DEMO_PROJECT_ID}. No se utilizarán dev ni prod.`);

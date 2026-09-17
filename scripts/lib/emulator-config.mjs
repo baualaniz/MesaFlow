@@ -5,6 +5,7 @@ export const EMULATOR_PORTS = Object.freeze({
   firestore: 8080,
   storage: 9199,
   functions: 5001,
+  hosting: 5100,
   ui: 4000,
   hub: 4400,
   logging: 4500
@@ -43,7 +44,7 @@ export function buildEmulatorArgs(mode, extraArgs = []) {
     mode === "start" ? "emulators:start" : "emulators:exec",
     "--project", DEMO_PROJECT_ID,
     "--config", "firebase.json",
-    "--only", "auth,firestore,storage,functions",
+    "--only", "auth,firestore,storage,functions,hosting",
     "--non-interactive"
   ];
   if (mode === "test") args.push("npm run test:emulator:clients");

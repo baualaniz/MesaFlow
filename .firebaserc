@@ -3,5 +3,14 @@
     "default": "mesaflow-desarrollo",
     "dev": "mesaflow-desarrollo",
     "prod": "mesaflow-produccion"
+  },
+  "targets": {
+    "demo-mesaflow": {
+      "hosting": {
+        "customer": ["demo-mesaflow-customer"],
+        "admin": ["demo-mesaflow-admin"],
+        "landing": ["demo-mesaflow-landing"]
+      }
+    }
   }
 }

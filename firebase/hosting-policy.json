@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "localProjectId": "demo-mesaflow",
+  "targets": [
+    {
+      "name": "customer",
+      "kind": "spa",
+      "public": "apps/customer/build/web",
+      "build": "flutter-web"
+    },
+    {
+      "name": "admin",
+      "kind": "spa-placeholder",
+      "public": "apps/admin/hosting",
+      "build": "static-placeholder"
+    },
+    {
+      "name": "landing",
+      "kind": "static-placeholder",
+      "public": "apps/landing/hosting",
+      "build": "static-placeholder"
+    }
+  ],
+  "emulator": {
+    "host": "127.0.0.1",
+    "basePort": 5100
+  },
+  "plannedCloudSites": {
+    "dev": {
+      "customer": "mesaflow-desarrollo",
+      "admin": "mesaflow-desarrollo-admin",
+      "landing": "mesaflow-desarrollo-landing"
+    },
+    "prod": {
+      "customer": "mesaflow-produccion",
+      "admin": "mesaflow-produccion-admin",
+      "landing": "mesaflow-produccion-landing"
+    }
+  },
+  "cloudStatus": "deferred"
+}

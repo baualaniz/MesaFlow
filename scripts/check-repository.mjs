@@ -10,6 +10,7 @@ import { validateAuthPolicy } from "./lib/auth-config.mjs";
 import { validateFirestorePolicy, validateFirestoreSchema } from "./lib/firestore-config.mjs";
 import { validateStoragePolicy } from "./lib/storage-config.mjs";
 import { validateSecretsPolicy } from "./lib/secrets-config.mjs";
+import { validateHostingConfig } from "./lib/hosting-config.mjs";
 
 const root = process.cwd();
 const execFileAsync = promisify(execFile);
@@ -38,6 +39,7 @@ const requiredPaths = [
   "firebase/firestore-policy.json",
   "firebase/storage-policy.json",
   "firebase/secrets-policy.json",
+  "firebase/hosting-policy.json",
   "firebase/schema/firestore-schema.json",
   "firebase/tests",
   "functions/package.json",
@@ -148,13 +150,19 @@ try {
   await assertPackageMetadata();
 
   const firebaseConfig = JSON.parse(await readFile(path.join(root, ".firebaserc"), "utf8"));
+  const firebaseJson = JSON.parse(await readFile(path.join(root, "firebase.json"), "utf8"));
   const firebaseProjects = validateFirebaseProjects(firebaseConfig);
-  validateEmulatorConfig(JSON.parse(await readFile(path.join(root, "firebase.json"), "utf8")));
+  validateEmulatorConfig(firebaseJson);
   validateAuthPolicy(JSON.parse(await readFile(path.join(root, "firebase/auth-policy.json"), "utf8")));
   validateFirestorePolicy(JSON.parse(await readFile(path.join(root, "firebase/firestore-policy.json"), "utf8")));
   validateFirestoreSchema(JSON.parse(await readFile(path.join(root, "firebase/schema/firestore-schema.json"), "utf8")));
   validateStoragePolicy(JSON.parse(await readFile(path.join(root, "firebase/storage-policy.json"), "utf8")));
   validateSecretsPolicy(JSON.parse(await readFile(path.join(root, "firebase/secrets-policy.json"), "utf8")));
+  validateHostingConfig(
+    firebaseJson,
+    firebaseConfig,
+    JSON.parse(await readFile(path.join(root, "firebase/hosting-policy.json"), "utf8"))
+  );
 
   const repositoryFiles = await listRepositoryFiles();
   const forbiddenFiles = findForbiddenFiles(repositoryFiles);
@@ -176,6 +184,7 @@ try {
   console.log("[OK] Política y esquema raíz de Firestore");
   console.log("[OK] Política y reglas base de Storage");
   console.log("[OK] Política de configuración pública y secretos");
+  console.log("[OK] Tres destinos Firebase Hosting locales");
   console.log("[OK] No se detectaron archivos ni valores sensibles versionables");
   console.log("Repositorio MesaFlow válido.");
 } catch (error) {

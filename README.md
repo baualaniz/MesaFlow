@@ -11,12 +11,10 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 3 — entorno, monorepo y alias Firebase** están terminadas.
-La **Etapa 4** incorpora emuladores locales probados; el usuario confirmó acceso
-con Firebase CLI a ambos proyectos reales. Todavía no hay aplicaciones de negocio
-ni despliegues. La Etapa 5 prepara Authentication real y su verificador de solo
-lectura; los ajustes manuales se detallan en su guía y no se consideran completos
-hasta verificarlos.
+Las **Etapas 1 a 10** están terminadas en su alcance local. Los dos proyectos
+Firebase existen, Authentication y Firestore fueron preparados, y Auth,
+Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
+No hay despliegues cloud. El primer shell Flutter del cliente adelanta la Etapa 17.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -28,6 +26,11 @@ encuentran en:
 - `docs/stage-03-firebase-environments.md`
 - `docs/stage-04-emulators.md`
 - `docs/stage-05-authentication.md`
+- `docs/stage-06-firestore.md`
+- `docs/stage-07-storage.md`
+- `docs/stage-08-functions.md`
+- `docs/stage-09-secrets.md`
+- `docs/stage-10-hosting.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -57,9 +60,9 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 50
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 56
 pruebas (14 de configuración, cuatro de herramientas, nueve de Authentication,
-ocho de Firestore, ocho de Storage, cuatro de secretos y tres de Functions), más
+ocho de Firestore, ocho de Storage, cuatro de secretos, seis de Hosting y tres de Functions), más
 el lint y build TypeScript. Este comando no consulta servicios remotos.
 
 ## Configuración Authentication en la nube
@@ -97,7 +100,7 @@ npm.cmd run emulators
 ```
 
 Abrí `http://127.0.0.1:4000` después de que indique que está listo. Incluye Auth,
-Firestore, Storage y Functions con proyecto local fijo `demo-mesaflow`. No se
+Firestore, Storage, Functions y Hosting con proyecto local fijo `demo-mesaflow`. No se
 necesita crear ese proyecto en Firebase. La primera ejecución descarga binarios.
 Detenelo con Ctrl+C antes de ejecutar el smoke test:
 
@@ -105,9 +108,14 @@ Detenelo con Ctrl+C antes de ejecutar el smoke test:
 npm.cmd run test:emulators
 ```
 
-El smoke valida el endpoint Functions `health`, Auth/Firestore y seis casos de
-reglas Storage: roles, membresía activa, aislamiento entre tenants, tipos,
-tamaños, metadata y rutas.
+El smoke valida los tres sitios Hosting, el endpoint Functions `health`,
+Auth/Firestore y seis casos de reglas Storage: roles, membresía activa,
+aislamiento entre tenants, tipos, tamaños, metadata y rutas.
+
+Los destinos web locales son cliente en `http://127.0.0.1:5100`, panel en
+`http://127.0.0.1:5105` y landing en `http://127.0.0.1:5106`. Firebase informa
+las direcciones definitivas al iniciar. La guía completa está en
+`docs/stage-10-hosting.md`.
 
 ## Cloud Functions local
 
