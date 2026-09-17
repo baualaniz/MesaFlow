@@ -13,10 +13,10 @@ cambia la arquitectura. Más detalles en `stage-03-firebase-environments.md`.
 
 ## Entorno local — Etapa 4
 
-Los emuladores usan exclusivamente `demo-mesaflow` y loopback. Auth y Firestore
-están implementados; Functions, Storage y Hosting se incorporan al existir sus
-módulos. Las reglas iniciales deniegan todos los accesos cliente y se ampliarán
-en la Etapa 14. No se han desplegado estas reglas en ninguno de los proyectos.
+Los emuladores usan exclusivamente `demo-mesaflow` y loopback. Auth, Firestore,
+Storage y Functions están implementados; Hosting se incorpora en la Etapa 10.
+Las reglas iniciales deniegan todos los accesos cliente y se ampliarán en la
+Etapa 14. No se han desplegado estas reglas en ninguno de los proyectos.
 
 Firebase CLI queda fijada como dependencia local en 15.28.2 con correcciones
 transitivas documentadas en `tooling-security.md`. No cambia el stack del MVP.
@@ -44,6 +44,13 @@ emulador compila antes de iniciar y solo opera con `demo-mesaflow`. Las opciones
 globales limitan memoria, timeout, concurrencia e instancias; cada función futura
 agregará límites específicos cuando su riesgo lo requiera. No existen archivos de
 cuenta de servicio en el repositorio.
+
+Nota incremental de Etapa 9: la configuración frontend usa exclusivamente claves
+`PUBLIC_*`; parámetros backend no secretos se declaran con `defineString` y tokens
+con `defineSecret`. Los secretos se vinculan por función siguiendo mínimo privilegio
+y nunca se leen durante la inicialización. Para el emulador, `.secret.local` puede
+reemplazar valores cloud y permanece fuera de Git. La política canónica vive en
+`firebase/secrets-policy.json`.
 
 Decisión de Etapa 7: el MVP usa imágenes versionadas y empaquetadas con las
 aplicaciones. Firestore guarda una clave lógica del catálogo, no datos binarios ni

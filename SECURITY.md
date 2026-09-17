@@ -35,8 +35,24 @@ seguridad depende de Authentication, App Check cuando se incorpore, Firestore y
 Storage Rules, y validaciones de backend. Las credenciales administrativas y los
 tokens de proveedores nunca son configuración frontend.
 
+## Clasificación y almacenamiento
+
+| Clase | Ejemplos | Ubicación |
+|---|---|---|
+| Pública frontend | Firebase Web API key, project ID, URLs públicas | Build de la aplicación; placeholders en `.env.example` |
+| Privada no secreta | ID de número de WhatsApp | Parámetro backend; ejemplo en `functions/.env.example` |
+| Secreta | Access tokens y firmas de webhooks | Secret Manager; `.secret.local` solo para emulador |
+
+Las funciones reciben secretos por lista explícita. Una función que no declara un
+secreto no debe poder leerlo. `health`, por ejemplo, no tiene ninguno vinculado.
+No usar `functions.config()`, archivos `.runtimeconfig.json` ni variables `.env`
+comunes para credenciales.
+
+Antes de cada commit ejecutar `npm.cmd run check`. El verificador revisa archivos
+versionados y no ignorados, nombres peligrosos y formatos de tokens conocidos. No
+imprime valores detectados.
+
 ## Versiones soportadas
 
 Durante el MVP solo se mantiene la rama `main`. Los reportes deben reproducirse
 contra el commit más reciente de esa rama.
-

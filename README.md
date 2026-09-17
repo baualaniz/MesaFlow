@@ -57,10 +57,10 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de nombres de archivos que normalmente contienen secretos. Además,
-ejecuta 46 pruebas (14 de configuración, cuatro de herramientas, nueve de
-Authentication, ocho de Firestore, ocho de Storage y tres de Functions), además
-del lint y build TypeScript. Este comando no consulta servicios remotos.
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 50
+pruebas (14 de configuración, cuatro de herramientas, nueve de Authentication,
+ocho de Firestore, ocho de Storage, cuatro de secretos y tres de Functions), más
+el lint y build TypeScript. Este comando no consulta servicios remotos.
 
 ## Configuración Authentication en la nube
 
@@ -176,7 +176,17 @@ falta. Las instrucciones manuales completas están en `docs/master-plan.md`.
 
 ## Seguridad de secretos
 
-`.env.example` contiene exclusivamente nombres y valores ficticios. Los tokens
-de Mercado Pago y WhatsApp se guardarán en Secret Manager y solo serán leídos
-por Cloud Functions. Nunca deben incluirse en Flutter, el panel, la landing ni
-Git.
+La configuración está separada en tres niveles:
+
+- `.env.example`: identificadores públicos que pueden llegar al frontend.
+- `functions/.env.example`: identificadores privados, pero no credenciales.
+- `functions/.secret.local.example`: nombres y placeholders de secretos para el
+  emulador; la copia real `.secret.local` está ignorada.
+
+Los tokens reales de Mercado Pago y WhatsApp se guardarán en Secret Manager y se
+vincularán solo con cada función consumidora. Nunca deben incluirse en Flutter,
+el panel, la landing ni Git. Verificar la política con:
+
+```powershell
+npm.cmd run secrets:check
+```

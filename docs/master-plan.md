@@ -17,7 +17,7 @@ usuario.
 | 6 | Firestore | Crear base, región, esquema raíz y converters | 3 | Sí: crear base | Sí: reglas/esquema/modelos | Escritura/lectura dev validada y región documentada |
 | 7 | Imágenes | Definir catálogo empaquetado sin tarjeta y preparar Storage como extensión opcional | 3 | No para el MVP | Sí: assets, contrato y `storage.rules` futura | El MVP muestra imágenes offline; las reglas opcionales aíslan tenants |
 | 8 | Functions | Proyecto TypeScript, emulador y cuentas de servicio administradas | 4–7 | Sí: habilitar facturación solo al desplegar Functions | Sí: `functions/**` | Build, lint y función health local pasan |
-| 9 | Secretos | Separar config pública y Secret Manager | 8 | Sí: cargar secretos reales | Sí: `.env.example`, docs | Ningún secreto aparece en artefactos frontend o Git |
+| 9 | Secretos | Separar config pública, parámetros backend y Secret Manager | 8 | Solo al integrar proveedores: cargar valores reales | Sí: ejemplos, política, declaraciones y tests | Ningún secreto aparece en artefactos frontend o Git |
 | 10 | Hosting | Configurar tres sitios y rewrites | 3,4 | Sí: crear sitios/aceptar dominios | Sí: `firebase.json` | Cliente, admin y landing sirven localmente |
 
 ## Fases 11–20: datos, seguridad y base Flutter
@@ -92,6 +92,7 @@ usuario.
 | 6 | Completa: bases Standard nativas en São Paulo, 8 tests y smoke cloud dev con limpieza aprobados | `docs/stage-06-firestore.md` |
 | 7 | Completa: catálogo empaquetado elegido; reglas futuras, 8 tests estáticos y 6 tests de emulador aprobados; Blaze descartado para el MVP | `docs/stage-07-storage.md` |
 | 8 | Completa localmente: Functions 2nd gen/TypeScript, lint, build, 3 unit tests y health emulado aprobados; despliegue diferido | `docs/stage-08-functions.md` |
+| 9 | Completa: configuración pública/privada/secretos separada, mínimo privilegio y 4 pruebas aprobadas; valores reales diferidos | `docs/stage-09-secrets.md` |
 | 17 | Adelanto visual en curso: shell Flutter Web, catálogo local, búsqueda, filtros y carrito demostrativo | `docs/stage-17-customer-shell.md` |
 
 ## Acciones manuales inmediatas — Etapa 1

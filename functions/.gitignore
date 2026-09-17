@@ -1,2 +1,8 @@
 lib/
 *.log
+.env
+.env.*
+!.env.example
+.secret.local
+.secret.*
+!.secret.local.example
