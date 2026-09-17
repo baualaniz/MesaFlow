@@ -15,7 +15,7 @@ usuario.
 | 4 | Firebase CLI | Login, asociación y Emulator Suite inicial (Auth, Firestore, UI) | 1,3 | Sí: login OAuth | Sí: `firebase.json`, reglas cerradas, scripts/tests | `npm.cmd run test:emulators` pasa con ID demo; otros emuladores llegan con sus módulos |
 | 5 | Authentication | Activar Email/Password y Anonymous; privacidad, contraseñas, plantillas y dominios | 3,4 | Sí: consola | Sí: política/verificador; SDKs en Etapas 17/31 | Configuración remota verificada y flujo local probado; login real al integrar apps |
 | 6 | Firestore | Crear base, región, esquema raíz y converters | 3 | Sí: crear base | Sí: reglas/esquema/modelos | Escritura/lectura dev validada y región documentada |
-| 7 | Storage | Activar bucket y rutas de imágenes por tenant | 3 | Sí: consola si lo pide | Sí: `storage.rules` | Solo miembros autorizados escriben imágenes de su tenant |
+| 7 | Imágenes | Definir catálogo empaquetado sin tarjeta y preparar Storage como extensión opcional | 3 | No para el MVP | Sí: assets, contrato y `storage.rules` futura | El MVP muestra imágenes offline; las reglas opcionales aíslan tenants |
 | 8 | Functions | Proyecto TypeScript, emulador y cuentas de servicio administradas | 4–7 | Sí: habilitar facturación solo al desplegar Functions | Sí: `functions/**` | Build, lint y función health local pasan |
 | 9 | Secretos | Separar config pública y Secret Manager | 8 | Sí: cargar secretos reales | Sí: `.env.example`, docs | Ningún secreto aparece en artefactos frontend o Git |
 | 10 | Hosting | Configurar tres sitios y rewrites | 3,4 | Sí: crear sitios/aceptar dominios | Sí: `firebase.json` | Cliente, admin y landing sirven localmente |
@@ -28,7 +28,7 @@ usuario.
 | 12 | Modelo de datos | Implementar colecciones, repositorios y consultas por tenant | 11 | No | Sí: repositorios/converters | CRUD del emulador conserva tipos y aislamiento lógico |
 | 13 | Índices | Diseñar consultas e índices compuestos | 12 | Validación controlada en dev | Sí: `firestore.indexes.json` | Consultas verificadas en desarrollo real; el emulador no exige índices compuestos |
 | 14 | Reglas Firestore | Autorización por membresía/sesión y campos inmutables | 12 | No | Sí: `firestore.rules` | Tests positivos/negativos pasan |
-| 15 | Reglas Storage | Límites MIME/tamaño y membresía | 7,14 | No | Sí: `storage.rules`, tests | Carga cruzada y archivos inválidos se deniegan |
+| 15 | Reglas Storage opcionales | Mantener límites MIME/tamaño y membresía para una futura carga dinámica | 7,14 | No | Sí: `storage.rules`, tests | Carga cruzada y archivos inválidos se deniegan sin volver Storage requisito del MVP |
 | 16 | Seed seguro | Datos demo, usuarios/roles, 10 mesas, 18 productos, pedidos/pagos | 11–14 | No en emulador; credencial dev solo si se solicita | Sí: `firebase/seeds` | Se niega producción y carga dataset idempotente |
 | 17 | App Flutter | Crear proyecto web/PWA con flavors dev/prod | 1,3 | Sí: `flutterfire configure` con login | Sí: `apps/customer` | `flutter run -d chrome` muestra shell de marca |
 | 18 | Design system | Tema MesaFlow, Poppins/Inter, spacing, inputs, cards, badges, errores | 17 | No | Sí: theme/widgets/assets | Catálogo y tests visuales básicos pasan responsive |
@@ -58,7 +58,7 @@ usuario.
 | 32 | Selección tenant/RBAC | Membresías, tenant activo y permisos en UI | 14,31 | No | Sí: auth/permissions | UI oculta acciones y reglas bloquean bypass |
 | 33 | Pedidos operativos | Tablero realtime, detalle y máquina de estados | 24,32 | No | Sí: UI/Function/tests | Solo transiciones válidas y autorizadas prosperan |
 | 34 | Mesas y QR | CRUD, sesiones, rotación y exportación imprimible | 20,32 | No | Sí: UI/Functions | 10 QR abren su mesa y el anterior falla tras rotar |
-| 35 | Categorías/productos | CRUD, orden, imagen y disponibilidad | 7,21,32 | No | Sí: UI/repositorios | Cambios se reflejan en cliente según permisos |
+| 35 | Categorías/productos | CRUD, orden, selección de imagen empaquetada y disponibilidad | 7,21,32 | No | Sí: UI/repositorios | Cambios se reflejan en cliente según permisos; carga dinámica queda opcional |
 | 36 | Usuarios/roles | Invitación, activación y matriz de roles | 5,32 | Sí: destinatario acepta alta/restablece clave | Sí: Functions/UI | Manager no puede otorgarse owner ni cruzar tenant |
 | 37 | Asistencia operativa | Cola, acknowledge/resolve y alertas visuales | 26,32 | No | Sí: UI/tests | Personal atiende y cliente ve resultado |
 | 38 | Ventas/métricas | Agregados transaccionales diarios y dashboard | 30,33 | No | Sí: triggers/UI/tests | Métricas coinciden con fixtures sin scans globales |
@@ -90,6 +90,9 @@ usuario.
 | 4 | Completa: 17 tests, smoke test, UI HTTP 200 y apagado comprobados; acceso CLI confirmado por el usuario | `docs/stage-04-emulators.md` |
 | 5 | Completa: 26 tests locales, configuración remota y plantillas aprobadas | `docs/stage-05-authentication.md` |
 | 6 | Completa: bases Standard nativas en São Paulo, 8 tests y smoke cloud dev con limpieza aprobados | `docs/stage-06-firestore.md` |
+| 7 | Completa: catálogo empaquetado elegido; reglas futuras, 8 tests estáticos y 6 tests de emulador aprobados; Blaze descartado para el MVP | `docs/stage-07-storage.md` |
+| 8 | Completa localmente: Functions 2nd gen/TypeScript, lint, build, 3 unit tests y health emulado aprobados; despliegue diferido | `docs/stage-08-functions.md` |
+| 17 | Adelanto visual en curso: shell Flutter Web, catálogo local, búsqueda, filtros y carrito demostrativo | `docs/stage-17-customer-shell.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

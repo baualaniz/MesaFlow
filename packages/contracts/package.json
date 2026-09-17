@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./firestore": "./src/firestore.mjs"
+    "./firestore": "./src/firestore.mjs",
+    "./storage": "./src/storage.mjs"
   }
 }

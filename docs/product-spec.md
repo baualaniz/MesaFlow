@@ -63,7 +63,7 @@ funcionalidades, planes Básico/Profesional/Empresarial, CTA, contacto y SEO.
 | Landing | Astro estático | Excelente rendimiento/SEO y muy poco JavaScript |
 | Backend | Cloud Functions 2nd gen en TypeScript | Protege pagos, webhooks, transiciones y operaciones privilegiadas |
 | Región | `southamerica-east1` cuando el servicio concreto lo admita; Firestore en `southamerica-east1` | Menor latencia regional para Argentina y residencia consistente |
-| Imágenes | Firebase Storage con rutas por establecimiento | Binarios fuera de Firestore y reglas por tenant |
+| Imágenes | Catálogo de recursos empaquetados en el MVP; Firebase Storage queda como extensión opcional | Permite ejecutar y publicar sin tarjeta; Firestore guarda solo una clave de recurso, nunca binarios |
 | WhatsApp | Aviso opt-in al dueño/encargado ante solicitud de asistencia pendiente | Uso concreto, pequeño y demostrable; el producto no depende del canal |
 | Pago | Checkout Pro sandbox, preferencia creada por backend y webhook autoritativo | Menor complejidad y ningún secreto en el cliente |
 | Roles | `owner`, `manager`, `staff`, `kitchen`; el cliente es una identidad anónima ligada a sesión | Separa administración, salón, cocina y consumidor |
@@ -79,4 +79,3 @@ funcionalidades, planes Básico/Profesional/Empresarial, CTA, contacto y SEO.
 - Automatizaciones masivas de marketing por WhatsApp.
 
 Estas exclusiones no impiden una arquitectura extensible hacia esas funciones.
-

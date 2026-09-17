@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rootPrefix": "establishments",
+  "bucketSuffix": ".firebasestorage.app",
+  "locationId": "SOUTHAMERICA-EAST1",
+  "maxImageBytes": 5242880,
+  "allowedContentTypes": ["image/jpeg", "image/png", "image/webp"],
+  "allowedExtensions": ["jpg", "jpeg", "png", "webp"],
+  "writeRoles": ["owner", "manager"],
+  "publicReadScopes": ["products", "branding"],
+  "requiredMetadata": ["establishmentId", "uploadedByUid"]
+}

@@ -38,6 +38,21 @@ siendo obligatorio para pruebas destructivas y repetibles. Producción no recibe
 datos de prueba. La configuración canónica está en `firebase/firestore-policy.json`
 y el manifiesto de rutas en `firebase/schema/firestore-schema.json`.
 
+Nota incremental de Etapa 8: el backend es un workspace TypeScript ESM con Cloud
+Functions 2nd gen, región `southamerica-east1` y runtime desplegable Node 22. El
+emulador compila antes de iniciar y solo opera con `demo-mesaflow`. Las opciones
+globales limitan memoria, timeout, concurrencia e instancias; cada función futura
+agregará límites específicos cuando su riesgo lo requiera. No existen archivos de
+cuenta de servicio en el repositorio.
+
+Decisión de Etapa 7: el MVP usa imágenes versionadas y empaquetadas con las
+aplicaciones. Firestore guarda una clave lógica del catálogo, no datos binarios ni
+URLs externas obligatorias. Esto elimina la dependencia del plan Blaze y permite
+una demo reproducible sin tarjeta. Las reglas y rutas de Storage quedan probadas
+como extensión futura: `establishments/{establishmentId}/products/{productId}` y
+`establishments/{establishmentId}/branding`, con escritura exclusiva para owner o
+manager activo del mismo tenant, JPEG/PNG/WebP de hasta 5 MiB y metadata obligatoria.
+
 | Componente | Tecnología | Función | Motivo |
 |---|---|---|---|
 | Cliente | Flutter 3 / Dart, Flutter Web PWA | Menú, carrito, pedidos, cuenta y pago desde QR | Requisito obligatorio y una base compatible con web/móvil |

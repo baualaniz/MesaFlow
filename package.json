@@ -23,23 +23,33 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config",
+    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config && npm run test:storage-config && npm run functions:check",
     "check:repo": "node ./scripts/check-repository.mjs",
     "test:config": "node --test ./scripts/firebase-projects.test.mjs ./scripts/emulator-config.test.mjs",
     "test:tooling": "node --test ./scripts/tooling-dependencies.test.mjs",
     "test:auth-config": "node --test ./scripts/auth-config.test.mjs",
     "test:firestore-config": "node --test ./scripts/firestore-config.test.mjs",
+    "test:storage-config": "node --test ./scripts/storage-config.test.mjs",
     "auth:check": "node ./scripts/check-auth-config.mjs",
     "firestore:check": "node ./scripts/check-firestore-config.mjs",
     "firestore:smoke:dev": "node ./scripts/firestore-cloud-smoke.mjs dev",
+    "storage:check": "node ./scripts/check-storage-config.mjs",
+    "functions:build": "npm run build --workspace @mesaflow/functions",
+    "functions:lint": "npm run lint --workspace @mesaflow/functions",
+    "functions:test": "npm test --workspace @mesaflow/functions",
+    "functions:check": "npm run check --workspace @mesaflow/functions",
+    "preview:customer": "node ./scripts/serve-customer-preview.mjs",
     "check:env": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-environment.ps1",
     "emulators": "node ./scripts/run-emulators.mjs start",
     "test:emulators": "node ./scripts/run-emulators.mjs test",
+    "test:emulator:clients": "node ./scripts/functions-emulator-smoke.mjs && node ./scripts/emulator-smoke.mjs && node --test ./firebase/tests/storage.rules.test.mjs",
     "firebase:login": "firebase login",
     "firebase:projects": "firebase projects:list",
     "firebase:use:dev": "firebase use dev"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "5.0.2",
+    "firebase": "12.19.0",
     "firebase-tools": "15.28.2"
   },
   "overrides": {
@@ -50,7 +60,8 @@
       },
       "@google-cloud/pubsub": {
         "@opentelemetry/core": "2.8.0"
-      }
+      },
+      "csv-parse": "7.0.2"
     }
   }
 }

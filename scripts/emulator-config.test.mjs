@@ -10,18 +10,22 @@ const config = JSON.parse(await readFile(new URL("../firebase.json", import.meta
 const safeEnv = {
   GCLOUD_PROJECT: DEMO_PROJECT_ID,
   FIRESTORE_EMULATOR_HOST: "127.0.0.1:8080",
-  FIREBASE_AUTH_EMULATOR_HOST: "127.0.0.1:9099"
+  FIREBASE_AUTH_EMULATOR_HOST: "127.0.0.1:9099",
+  FIREBASE_STORAGE_EMULATOR_HOST: "127.0.0.1:9199"
 };
 
 test("configuración real usa loopback y puertos locales distintos", () => {
   validateEmulatorConfig(config);
-  assert.equal(new Set(Object.values(EMULATOR_PORTS)).size, 5);
+  assert.equal(new Set(Object.values(EMULATOR_PORTS)).size, 7);
 });
 test("rechaza reglas omitidas, exposición en LAN y puertos incorrectos", () => {
-  const variants = [structuredClone(config), structuredClone(config), structuredClone(config)];
+  const variants = [
+    structuredClone(config), structuredClone(config), structuredClone(config), structuredClone(config)
+  ];
   delete variants[0].firestore.rules;
   variants[1].emulators.firestore.host = "0.0.0.0";
   variants[2].emulators.auth.port = 8080;
+  variants[3].functions[0].runtime = "nodejs24";
   for (const invalid of variants) assert.throws(() => validateEmulatorConfig(invalid));
 });
 test("rechaza UI desactivada o múltiples proyectos", () => {
@@ -36,7 +40,7 @@ test("comandos start y test fijan el proyecto demo", () => {
   for (const mode of ["start", "test"]) {
     const args = buildEmulatorArgs(mode);
     assert.equal(args[args.indexOf("--project") + 1], DEMO_PROJECT_ID);
-    assert.equal(args[args.indexOf("--only") + 1], "auth,firestore");
+    assert.equal(args[args.indexOf("--only") + 1], "auth,firestore,storage,functions");
   }
 });
 test("no acepta override de proyecto ni modos de despliegue", () => {
@@ -50,6 +54,7 @@ test("smoke test acepta únicamente su entorno local", () => {
     { GCLOUD_PROJECT: "mesaflow-desarrollo" },
     { GOOGLE_CLOUD_PROJECT: "mesaflow-produccion" },
     { FIRESTORE_EMULATOR_HOST: "firestore.googleapis.com" },
-    { FIREBASE_AUTH_EMULATOR_HOST: undefined }
+    { FIREBASE_AUTH_EMULATOR_HOST: undefined },
+    { FIREBASE_STORAGE_EMULATOR_HOST: undefined }
   ]) assert.throws(() => assertLocalEmulatorEnvironment({ ...safeEnv, ...change }));
 });

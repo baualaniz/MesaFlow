@@ -1,0 +1,54 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function membership(establishmentId) {
+      return firestore.get(/databases/(default)/documents/establishments/$(establishmentId)/members/$(request.auth.uid));
+    }
+
+    function hasMembership(establishmentId) {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/establishments/$(establishmentId)/members/$(request.auth.uid));
+    }
+
+    function canManageAssets(establishmentId) {
+      return hasMembership(establishmentId)
+        && membership(establishmentId).data.active == true
+        && membership(establishmentId).data.establishmentId == establishmentId
+        && membership(establishmentId).data.uid == request.auth.uid
+        && membership(establishmentId).data.role in ['owner', 'manager'];
+    }
+
+    function validFileName(fileName) {
+      return fileName.size() <= 128
+        && fileName.matches('^[A-Za-z0-9][A-Za-z0-9._-]*$');
+    }
+
+    function validImage(establishmentId, fileName) {
+      return request.resource != null
+        && validFileName(fileName)
+        && request.resource.size > 0
+        && request.resource.size <= 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)')
+        && request.resource.metadata.establishmentId == establishmentId
+        && request.resource.metadata.uploadedByUid == request.auth.uid;
+    }
+
+    match /establishments/{establishmentId}/products/{productId}/{fileName} {
+      allow read: if true;
+      allow create, update: if canManageAssets(establishmentId)
+        && validImage(establishmentId, fileName);
+      allow delete: if canManageAssets(establishmentId);
+    }
+
+    match /establishments/{establishmentId}/branding/{fileName} {
+      allow read: if true;
+      allow create, update: if canManageAssets(establishmentId)
+        && validImage(establishmentId, fileName);
+      allow delete: if canManageAssets(establishmentId);
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

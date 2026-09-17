@@ -58,8 +58,9 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
 y la ausencia de nombres de archivos que normalmente contienen secretos. Además,
-ejecuta 34 pruebas (14 de configuración, tres de herramientas, nueve de
-Authentication y ocho de Firestore). Este comando no consulta servicios remotos.
+ejecuta 46 pruebas (14 de configuración, cuatro de herramientas, nueve de
+Authentication, ocho de Firestore, ocho de Storage y tres de Functions), además
+del lint y build TypeScript. Este comando no consulta servicios remotos.
 
 ## Configuración Authentication en la nube
 
@@ -95,14 +96,54 @@ en producción.
 npm.cmd run emulators
 ```
 
-Abrí `http://127.0.0.1:4000` después de que indique que está listo. Incluye Auth y
-Firestore, con reglas cerradas y proyecto local fijo `demo-mesaflow`. No se
+Abrí `http://127.0.0.1:4000` después de que indique que está listo. Incluye Auth,
+Firestore, Storage y Functions con proyecto local fijo `demo-mesaflow`. No se
 necesita crear ese proyecto en Firebase. La primera ejecución descarga binarios.
 Detenelo con Ctrl+C antes de ejecutar el smoke test:
 
 ```powershell
 npm.cmd run test:emulators
 ```
+
+El smoke valida el endpoint Functions `health`, Auth/Firestore y seis casos de
+reglas Storage: roles, membresía activa, aislamiento entre tenants, tipos,
+tamaños, metadata y rutas.
+
+## Cloud Functions local
+
+La base TypeScript usa Functions 2nd gen y runtime desplegable Node 22. El build,
+lint y las pruebas unitarias se ejecutan sin facturación:
+
+```powershell
+npm.cmd run functions:check
+```
+
+`npm.cmd run test:emulators` comprueba además la función HTTP real en
+`http://127.0.0.1:5001/demo-mesaflow/southamerica-east1/health`. No se despliega
+nada; Blaze solo se reconsiderará en la etapa de publicación del backend.
+
+## Imágenes sin tarjeta
+
+El MVP usa fotografías empaquetadas dentro de las aplicaciones y no requiere un
+bucket real, Blaze ni una tarjeta. Las rutas y reglas de Cloud Storage permanecen
+probadas como extensión opcional. Si se activa en el futuro, el bucket se comprueba
+sin escribir con:
+
+```powershell
+npm.cmd run storage:check -- dev
+```
+
+El primer shell visual está en `apps/customer`. Se ejecuta con:
+
+```powershell
+cd apps/customer
+flutter.bat pub get
+flutter.bat build web
+cd ../..
+npm.cmd run preview:customer
+```
+
+Después abrí `http://127.0.0.1:7357`. La vista previa se detiene con Ctrl+C.
 
 El test inicia/apaga los servicios y elimina solo los usuarios/documentos que
 creó. Nunca usa desarrollo ni producción. No exponer la UI fuera de esta máquina.
