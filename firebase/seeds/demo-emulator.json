@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "name": "MesaFlow complete local demo",
+  "target": {
+    "environment": "emulator",
+    "projectId": "demo-mesaflow",
+    "databaseId": "(default)"
+  },
+  "fixedTimestamp": "2026-09-17T12:00:00.000Z",
+  "establishment": {
+    "id": "mesa-flow-demo",
+    "name": "Bistró MesaFlow",
+    "slug": "mesa-flow-demo",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "currency": "ARS",
+    "active": true
+  },
+  "users": [
+    { "id": "demo-owner", "displayName": "Olivia Propietaria", "email": "owner@mesaflow.example.invalid" },
+    { "id": "demo-manager", "displayName": "Marcos Encargado", "email": "manager@mesaflow.example.invalid" },
+    { "id": "demo-staff", "displayName": "Sofía Salón", "email": "staff@mesaflow.example.invalid" },
+    { "id": "demo-kitchen", "displayName": "Ciro Cocina", "email": "kitchen@mesaflow.example.invalid" }
+  ],
+  "members": [
+    { "id": "demo-owner", "uid": "demo-owner", "role": "owner", "permissions": ["establishment.manage", "menu.manage", "orders.manage", "metrics.read"], "active": true },
+    { "id": "demo-manager", "uid": "demo-manager", "role": "manager", "permissions": ["menu.manage", "orders.manage", "metrics.read"], "active": true },
+    { "id": "demo-staff", "uid": "demo-staff", "role": "staff", "permissions": ["orders.manage", "assistance.manage"], "active": true },
+    { "id": "demo-kitchen", "uid": "demo-kitchen", "role": "kitchen", "permissions": ["orders.prepare"], "active": true }
+  ],
+  "categories": [
+    { "id": "entradas", "name": "Entradas", "description": "Para abrir el apetito", "sortOrder": 1, "active": true },
+    { "id": "principales", "name": "Principales", "description": "Clásicos de la casa", "sortOrder": 2, "active": true },
+    { "id": "vegetariano", "name": "Vegetariano", "description": "Opciones frescas sin carne", "sortOrder": 3, "active": true },
+    { "id": "postres", "name": "Postres y bebidas", "description": "Finales dulces y bebidas", "sortOrder": 4, "active": true }
+  ],
+  "products": [
+    { "id": "empanadas-criollas", "categoryId": "entradas", "name": "Empanadas criollas", "description": "Dos empanadas de carne cortada a cuchillo.", "priceMinor": 580000, "imagePath": "menu.burger-casa", "available": true, "active": true, "sortOrder": 1 },
+    { "id": "provoleta-hierbas", "categoryId": "entradas", "name": "Provoleta con hierbas", "description": "Provolone dorado, tomates y orégano.", "priceMinor": 740000, "imagePath": "menu.ravioles-espinaca", "available": true, "active": true, "sortOrder": 2 },
+    { "id": "papas-bravas", "categoryId": "entradas", "name": "Papas bravas", "description": "Papas crocantes con salsa ahumada.", "priceMinor": 520000, "imagePath": "menu.bowl-estacion", "available": true, "active": true, "sortOrder": 3 },
+    { "id": "ensalada-citrica", "categoryId": "entradas", "name": "Ensalada cítrica", "description": "Hojas verdes, naranja, nueces y vinagreta.", "priceMinor": 610000, "imagePath": "menu.bowl-estacion", "available": true, "active": true, "sortOrder": 4 },
+    { "id": "burger-casa", "categoryId": "principales", "name": "Burger de la casa", "description": "Carne, cheddar, vegetales frescos y papas rústicas.", "priceMinor": 1290000, "imagePath": "menu.burger-casa", "available": true, "active": true, "sortOrder": 1 },
+    { "id": "ravioles-espinaca", "categoryId": "principales", "name": "Ravioles de espinaca", "description": "Ricota, tomates cherry, albahaca y parmesano.", "priceMinor": 1180000, "imagePath": "menu.ravioles-espinaca", "available": true, "active": true, "sortOrder": 2 },
+    { "id": "milanesa-napolitana", "categoryId": "principales", "name": "Milanesa napolitana", "description": "Ternera, tomate, mozzarella y papas.", "priceMinor": 1360000, "imagePath": "menu.burger-casa", "available": true, "active": true, "sortOrder": 3 },
+    { "id": "pollo-grillado", "categoryId": "principales", "name": "Pollo grillado", "description": "Pechuga marinada con vegetales asados.", "priceMinor": 1120000, "imagePath": "menu.bowl-estacion", "available": true, "active": true, "sortOrder": 4 },
+    { "id": "salmon-limon", "categoryId": "principales", "name": "Salmón al limón", "description": "Salmón, puré rústico y manteca cítrica.", "priceMinor": 1780000, "imagePath": "menu.ravioles-espinaca", "available": false, "active": true, "sortOrder": 5 },
+    { "id": "bondiola-barbeque", "categoryId": "principales", "name": "Bondiola barbacoa", "description": "Cocción lenta, batatas y salsa casera.", "priceMinor": 1490000, "imagePath": "menu.burger-casa", "available": true, "active": true, "sortOrder": 6 },
+    { "id": "bowl-estacion", "categoryId": "vegetariano", "name": "Bowl de estación", "description": "Quinoa, vegetales asados y aderezo cítrico.", "priceMinor": 980000, "imagePath": "menu.bowl-estacion", "available": true, "active": true, "sortOrder": 1 },
+    { "id": "risotto-hongos", "categoryId": "vegetariano", "name": "Risotto de hongos", "description": "Arroz cremoso, hongos y parmesano.", "priceMinor": 1160000, "imagePath": "menu.ravioles-espinaca", "available": true, "active": true, "sortOrder": 2 },
+    { "id": "lasagna-vegetales", "categoryId": "vegetariano", "name": "Lasaña de vegetales", "description": "Capas de vegetales, tomate y mozzarella.", "priceMinor": 1090000, "imagePath": "menu.ravioles-espinaca", "available": true, "active": true, "sortOrder": 3 },
+    { "id": "tacos-coliflor", "categoryId": "vegetariano", "name": "Tacos de coliflor", "description": "Tres tacos, palta y salsa fresca.", "priceMinor": 940000, "imagePath": "menu.bowl-estacion", "available": true, "active": true, "sortOrder": 4 },
+    { "id": "torta-chocolate", "categoryId": "postres", "name": "Torta de chocolate", "description": "Chocolate intenso, frutos rojos y cacao.", "priceMinor": 620000, "imagePath": "menu.torta-chocolate", "available": true, "active": true, "sortOrder": 1 },
+    { "id": "flan-casero", "categoryId": "postres", "name": "Flan casero", "description": "Flan con dulce de leche y crema.", "priceMinor": 480000, "imagePath": "menu.torta-chocolate", "available": true, "active": true, "sortOrder": 2 },
+    { "id": "limonada-menta", "categoryId": "postres", "name": "Limonada con menta", "description": "Jarra individual recién preparada.", "priceMinor": 350000, "imagePath": "menu.bowl-estacion", "available": true, "active": true, "sortOrder": 3 },
+    { "id": "cafe-especial", "categoryId": "postres", "name": "Café especial", "description": "Doble espresso de origen seleccionado.", "priceMinor": 290000, "imagePath": "menu.torta-chocolate", "available": true, "active": true, "sortOrder": 4 }
+  ],
+  "tables": [
+    { "id": "mesa-01", "number": 1, "name": "Mesa 1", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000001", "qrVersion": 1, "active": true, "currentSessionId": "sesion-mesa-01" },
+    { "id": "mesa-02", "number": 2, "name": "Mesa 2", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000002", "qrVersion": 1, "active": true, "currentSessionId": "sesion-mesa-02" },
+    { "id": "mesa-03", "number": 3, "name": "Mesa 3", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000003", "qrVersion": 1, "active": true, "currentSessionId": null },
+    { "id": "mesa-04", "number": 4, "name": "Mesa 4", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000004", "qrVersion": 1, "active": true, "currentSessionId": null },
+    { "id": "mesa-05", "number": 5, "name": "Mesa 5", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000005", "qrVersion": 1, "active": true, "currentSessionId": null },
+    { "id": "mesa-06", "number": 6, "name": "Mesa 6", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000006", "qrVersion": 1, "active": true, "currentSessionId": null },
+    { "id": "mesa-07", "number": 7, "name": "Mesa 7", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000007", "qrVersion": 1, "active": true, "currentSessionId": null },
+    { "id": "mesa-08", "number": 8, "name": "Mesa 8", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000008", "qrVersion": 1, "active": true, "currentSessionId": null },
+    { "id": "mesa-09", "number": 9, "name": "Mesa 9", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000009", "qrVersion": 1, "active": true, "currentSessionId": null },
+    { "id": "mesa-10", "number": 10, "name": "Mesa 10", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000010", "qrVersion": 1, "active": true, "currentSessionId": null }
+  ],
+  "sessions": [
+    { "id": "sesion-mesa-01", "tableId": "mesa-01", "status": "open", "subtotalMinor": 2560000, "paidMinor": 0, "balanceMinor": 2560000, "openedAt": "2026-09-17T11:30:00.000Z", "closedAt": null },
+    { "id": "sesion-mesa-02", "tableId": "mesa-02", "status": "payment_pending", "subtotalMinor": 1530000, "paidMinor": 0, "balanceMinor": 1530000, "openedAt": "2026-09-17T11:00:00.000Z", "closedAt": null },
+    { "id": "sesion-mesa-03", "tableId": "mesa-03", "status": "closed", "subtotalMinor": 620000, "paidMinor": 620000, "balanceMinor": 0, "openedAt": "2026-09-17T10:00:00.000Z", "closedAt": "2026-09-17T11:15:00.000Z" }
+  ],
+  "participants": [
+    { "id": "demo-guest-01", "sessionId": "sesion-mesa-01", "uid": "demo-guest-01", "active": true, "joinedAt": "2026-09-17T11:30:00.000Z", "revokedAt": null },
+    { "id": "demo-guest-02", "sessionId": "sesion-mesa-02", "uid": "demo-guest-02", "active": true, "joinedAt": "2026-09-17T11:00:00.000Z", "revokedAt": null },
+    { "id": "demo-guest-03", "sessionId": "sesion-mesa-03", "uid": "demo-guest-03", "active": false, "joinedAt": "2026-09-17T10:00:00.000Z", "revokedAt": "2026-09-17T11:15:00.000Z" }
+  ],
+  "orders": [
+    {
+      "id": "pedido-mesa-01-a", "sessionId": "sesion-mesa-01", "tableId": "mesa-01", "customerUid": "demo-guest-01", "status": "preparing",
+      "items": [
+        { "productId": "burger-casa", "name": "Burger de la casa", "unitPriceMinor": 1290000, "quantity": 1, "lineTotalMinor": 1290000, "notes": "Sin cebolla" },
+        { "productId": "bowl-estacion", "name": "Bowl de estación", "unitPriceMinor": 980000, "quantity": 1, "lineTotalMinor": 980000, "notes": null }
+      ],
+      "subtotalMinor": 2270000, "totalMinor": 2270000, "notes": "Primera comanda de la mesa", "statusTimestamps": { "created": "2026-09-17T11:35:00.000Z", "confirmed": "2026-09-17T11:36:00.000Z", "preparing": "2026-09-17T11:40:00.000Z" }, "createdAt": "2026-09-17T11:35:00.000Z", "updatedAt": "2026-09-17T11:40:00.000Z"
+    },
+    {
+      "id": "pedido-mesa-01-b", "sessionId": "sesion-mesa-01", "tableId": "mesa-01", "customerUid": "demo-guest-01", "status": "created",
+      "items": [{ "productId": "cafe-especial", "name": "Café especial", "unitPriceMinor": 290000, "quantity": 1, "lineTotalMinor": 290000, "notes": null }],
+      "subtotalMinor": 290000, "totalMinor": 290000, "notes": null, "statusTimestamps": { "created": "2026-09-17T11:55:00.000Z" }, "createdAt": "2026-09-17T11:55:00.000Z", "updatedAt": "2026-09-17T11:55:00.000Z"
+    },
+    {
+      "id": "pedido-mesa-02", "sessionId": "sesion-mesa-02", "tableId": "mesa-02", "customerUid": "demo-guest-02", "status": "delivered",
+      "items": [
+        { "productId": "ravioles-espinaca", "name": "Ravioles de espinaca", "unitPriceMinor": 1180000, "quantity": 1, "lineTotalMinor": 1180000, "notes": null },
+        { "productId": "limonada-menta", "name": "Limonada con menta", "unitPriceMinor": 350000, "quantity": 1, "lineTotalMinor": 350000, "notes": "Sin hielo" }
+      ],
+      "subtotalMinor": 1530000, "totalMinor": 1530000, "notes": null, "statusTimestamps": { "created": "2026-09-17T11:05:00.000Z", "confirmed": "2026-09-17T11:06:00.000Z", "preparing": "2026-09-17T11:10:00.000Z", "ready": "2026-09-17T11:25:00.000Z", "delivered": "2026-09-17T11:28:00.000Z" }, "createdAt": "2026-09-17T11:05:00.000Z", "updatedAt": "2026-09-17T11:28:00.000Z"
+    },
+    {
+      "id": "pedido-mesa-03", "sessionId": "sesion-mesa-03", "tableId": "mesa-03", "customerUid": "demo-guest-03", "status": "completed",
+      "items": [{ "productId": "torta-chocolate", "name": "Torta de chocolate", "unitPriceMinor": 620000, "quantity": 1, "lineTotalMinor": 620000, "notes": null }],
+      "subtotalMinor": 620000, "totalMinor": 620000, "notes": null, "statusTimestamps": { "created": "2026-09-17T10:10:00.000Z", "confirmed": "2026-09-17T10:11:00.000Z", "preparing": "2026-09-17T10:15:00.000Z", "ready": "2026-09-17T10:25:00.000Z", "delivered": "2026-09-17T10:30:00.000Z", "completed": "2026-09-17T11:10:00.000Z" }, "createdAt": "2026-09-17T10:10:00.000Z", "updatedAt": "2026-09-17T11:10:00.000Z"
+    }
+  ],
+  "assistanceRequests": [
+    { "id": "asistencia-mesa-01", "sessionId": "sesion-mesa-01", "tableId": "mesa-01", "customerUid": "demo-guest-01", "type": "waiter", "status": "pending", "acknowledgedBy": null, "resolvedBy": null, "createdAt": "2026-09-17T11:58:00.000Z", "updatedAt": "2026-09-17T11:58:00.000Z" },
+    { "id": "asistencia-mesa-02", "sessionId": "sesion-mesa-02", "tableId": "mesa-02", "customerUid": "demo-guest-02", "type": "bill", "status": "acknowledged", "acknowledgedBy": "demo-staff", "resolvedBy": null, "createdAt": "2026-09-17T11:45:00.000Z", "updatedAt": "2026-09-17T11:47:00.000Z" }
+  ],
+  "payments": [
+    { "id": "pago-mesa-02", "sessionId": "sesion-mesa-02", "provider": "mercado_pago", "externalId": null, "idempotencyKey": "demo-payment-mesa-02", "status": "pending", "amountMinor": 1530000, "providerStatus": "demo_pending", "createdAt": "2026-09-17T11:50:00.000Z", "updatedAt": "2026-09-17T11:50:00.000Z" },
+    { "id": "pago-mesa-03", "sessionId": "sesion-mesa-03", "provider": "mercado_pago", "externalId": "demo-approved-03", "idempotencyKey": "demo-payment-mesa-03", "status": "approved", "amountMinor": 620000, "providerStatus": "approved", "createdAt": "2026-09-17T11:12:00.000Z", "updatedAt": "2026-09-17T11:13:00.000Z" },
+    { "id": "pago-rechazado-demo", "sessionId": "sesion-mesa-02", "provider": "mercado_pago", "externalId": "demo-rejected-02", "idempotencyKey": "demo-payment-rejected-02", "status": "rejected", "amountMinor": 1530000, "providerStatus": "rejected", "createdAt": "2026-09-17T11:48:00.000Z", "updatedAt": "2026-09-17T11:49:00.000Z" }
+  ],
+  "dailyMetrics": [
+    { "id": "2026-09-17", "date": "2026-09-17", "salesMinor": 620000, "approvedPayments": 1, "completedOrders": 1, "activeOrders": 3, "productQuantities": { "burger-casa": 1, "bowl-estacion": 1, "cafe-especial": 1, "ravioles-espinaca": 1, "limonada-menta": 1, "torta-chocolate": 1 } }
+  ],
+  "settings": [
+    { "id": "public", "brandName": "Bistró MesaFlow", "contactEmail": "contacto@mesaflow.example.invalid", "orderingEnabled": true, "assistanceEnabled": true },
+    { "id": "private", "mercadoPagoEnabled": false, "whatsappEnabled": false }
+  ],
+  "auditLogs": [
+    { "id": "demo-seed-v1", "actor": { "type": "system", "id": "demo-seed" }, "action": "demo.seed.applied", "entity": { "type": "seed", "id": "demo-v1" }, "before": null, "after": { "purpose": "local-development", "containsPersonalData": false } }
+  ]
+}

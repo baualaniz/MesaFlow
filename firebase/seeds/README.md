@@ -1,7 +1,20 @@
 # Seeds
 
-El seed completo, seguro e idempotente se implementará en la Etapa 16 y usará el
-emulador por defecto.
+El seed completo de la Etapa 16 vive en `demo-emulator.json`. Contiene 61
+documentos deterministas con cuatro perfiles/roles, 10 mesas, 18 productos,
+sesiones, pedidos, asistencia, pagos, métricas y configuración.
+
+Solo admite el proyecto ficticio `demo-mesaflow` y Firestore Emulator en
+`127.0.0.1:8080`; rechaza credenciales, proyectos cloud y otros hosts. Con los
+emuladores iniciados se carga mediante:
+
+```powershell
+npm.cmd run firebase:seed:demo
+```
+
+El ejecutor verifica todos los documentos y repite internamente la operación para
+demostrar que la segunda aplicación no cambia nada. No elimina colecciones ni
+documentos ajenos al dataset.
 
 `presentation-dev.json` es una excepción acotada para la entrega académica de
 avance. Contiene únicamente datos ficticios, declara de forma fija

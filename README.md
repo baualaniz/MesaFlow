@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 15** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 16** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -37,6 +37,7 @@ encuentran en:
 - `docs/stage-13-firestore-indexes.md`
 - `docs/stage-14-firestore-rules.md`
 - `docs/stage-15-storage-rules.md`
+- `docs/stage-16-demo-seed.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -66,10 +67,10 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 80
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 87
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, seis de Hosting, cinco del
-seed de presentación, ocho de contratos y siete de Functions), más
+seed de presentación, siete del seed demo, ocho de contratos y siete de Functions), más
 el lint y build TypeScript. Este comando no consulta servicios remotos.
 
 Los contratos compartidos tienen además siete pruebas Dart contra los mismos
@@ -136,6 +137,26 @@ Auth/Firestore, el CRUD tipado con aislamiento por tenant, 14 casos de reglas
 Firestore y nueve casos de reglas Storage: roles, membresía activa,
 aislamiento entre tenants, tipos, tamaños, extensión, metadata exacta, rutas y
 actualizaciones.
+
+La misma prueba carga además el dataset completo de la Etapa 16 y confirma una
+segunda aplicación sin cambios: 4 roles, 10 mesas, 18 productos, 4 pedidos y 3
+pagos. El dataset solo puede conectarse al emulador local `demo-mesaflow`.
+
+Para verlo mientras los emuladores permanecen abiertos, usá dos terminales. En
+la primera:
+
+```powershell
+npm.cmd run emulators
+```
+
+En la segunda:
+
+```powershell
+npm.cmd run firebase:seed:demo
+```
+
+Después abrí `http://127.0.0.1:4000/firestore`. Repetir el segundo comando es
+seguro: verifica el mismo estado y no duplica documentos.
 
 Los destinos web locales son cliente en `http://127.0.0.1:5100`, panel en
 `http://127.0.0.1:5105` y landing en `http://127.0.0.1:5106`. Firebase informa

@@ -38,6 +38,7 @@ const requiredPaths = [
   "docs/product-spec.md",
   "firebase/seeds",
   "firebase/seeds/presentation-dev.json",
+  "firebase/seeds/demo-emulator.json",
   "firebase/auth-policy.json",
   "firebase/firestore-policy.json",
   "firebase/storage-policy.json",
@@ -67,6 +68,7 @@ const requiredPaths = [
   "docs/stage-13-firestore-indexes.md",
   "docs/stage-14-firestore-rules.md",
   "docs/stage-15-storage-rules.md",
+  "docs/stage-16-demo-seed.md",
   "functions/src/data/firestore-converters.ts",
   "functions/src/data/tenant-repository.ts",
   "functions/test/tenant-repository.test.mjs",
@@ -82,6 +84,9 @@ const requiredPaths = [
   "scripts/lib/presentation-seed.mjs",
   "scripts/presentation-seed.test.mjs",
   "scripts/seed-presentation-dev.mjs",
+  "scripts/lib/demo-seed.mjs",
+  "scripts/demo-seed.test.mjs",
+  "scripts/seed-demo-emulator.mjs",
   "scripts/firestore-repository-emulator.mjs",
   "scripts/firestore-query-emulator.mjs"
 ];

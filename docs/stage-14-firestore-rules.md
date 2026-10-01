@@ -74,7 +74,7 @@ npm.cmd run test:emulators
 npm.cmd run check
 ```
 
-La suite Firestore ejecuta 14 escenarios y la suite Storage mantiene seis:
+La suite Firestore ejecuta 14 escenarios y la suite Storage mantiene nueve:
 
 - catálogo público y consultas filtradas;
 - lectura operativa de miembros activos;

@@ -300,3 +300,17 @@ Las cargas aceptadas son JPEG (`.jpg`/`.jpeg`), PNG (`.png`) o WebP (`.webp`), d
 `establishmentId` y `uploadedByUid`, ambos coherentes con la ruta y la identidad.
 Estas reglas están verificadas en emuladores y no fueron desplegadas: el MVP sigue
 usando imágenes empaquetadas y no necesita bucket, plan Blaze ni tarjeta.
+
+## Dataset demo seguro — Etapa 16
+
+El dataset canónico reside en `firebase/seeds/demo-emulator.json` y declara como
+único destino `demo-mesaflow`. Su ejecutor fija Firestore Emulator en
+`127.0.0.1:8080`, rechaza credenciales cloud, otros proyectos y argumentos, y
+nunca contiene contraseñas ni tokens QR utilizables.
+
+Los 61 documentos representan owner, manager, staff y kitchen; 10 mesas; 18
+productos; tres sesiones; cuatro pedidos; asistencia, pagos, métricas,
+configuración y auditoría. Los timestamps y IDs son deterministas. La carga hace
+`set` solamente sobre sus rutas conocidas, verifica el resultado completo y una
+segunda aplicación debe producir cero cambios. El seed de presentación anterior
+permanece separado como excepción histórica para desarrollo real.
