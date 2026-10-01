@@ -16,6 +16,11 @@ npm.cmd run functions:check
 npm.cmd run test:emulators
 ```
 
+La capa `src/data` contiene converters estrictos y repositorios anclados por
+establecimiento para Product y Order. Sus pruebas unitarias forman parte de
+`functions:check`; el CRUD contra Firestore real se comprueba exclusivamente en
+el proyecto local `demo-mesaflow` con `test:emulators`.
+
 La función emulada queda en:
 
 ```text

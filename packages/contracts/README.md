@@ -19,3 +19,7 @@ npm.cmd run contracts:check
 
 El primer tramo compila y prueba TypeScript; el segundo ejecuta los mismos
 fixtures con Flutter/Dart. El build generado en `lib/` no se versiona.
+
+Desde la Etapa 12, `src/firestore.d.mts` tipa las rutas históricas de
+`src/firestore.mjs`. Los converters que dependen del SDK administrativo viven en
+`functions/src/data`, evitando acoplar este paquete compartido a Firebase Admin.

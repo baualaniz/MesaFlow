@@ -246,3 +246,17 @@ Los adaptadores Firestore futuros convertirán `Timestamp` a la representación
 del lenguaje dentro de cada aplicación. Solo los límites JSON/API utilizan el
 texto RFC3339 canónico. Los importes nunca cruzan el sistema como flotantes: se
 transportan como enteros `*Minor` junto con `currency`.
+
+## Repositorios multiestablecimiento — Etapa 12
+
+La capa administrativa de datos reside en `functions/src/data`. Un repositorio se
+construye con un `establishmentId` y genera internamente todas sus referencias
+bajo `establishments/{establishmentId}`; no recibe paths arbitrarios. También
+verifica que el campo redundante `establishmentId` coincida antes y después de
+persistir.
+
+Los converters de Product y Order son el límite entre los `Timestamp` nativos de
+Firestore y los contratos serializables de la Etapa 11. Toda lectura se valida de
+nuevo, de modo que un documento histórico corrupto no llega como entidad válida
+a la lógica de negocio. Los SDKs cliente siguen bloqueados por reglas hasta la
+Etapa 14.

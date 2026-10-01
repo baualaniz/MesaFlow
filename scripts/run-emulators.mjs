@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { buildEmulatorArgs, DEMO_PROJECT_ID, validateEmulatorConfig } from "./lib/emulator-config.mjs";
+import { resolveJava21Environment } from "./lib/java-runtime.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const require = createRequire(import.meta.url);
@@ -28,18 +29,20 @@ function runNpmScript(script) {
 
 try {
   const args = buildEmulatorArgs(process.argv[2], process.argv.slice(3));
+  const javaRuntime = resolveJava21Environment(process.env);
   const config = JSON.parse(await readFile(new URL("../firebase.json", import.meta.url), "utf8"));
   validateEmulatorConfig(config);
   await runNpmScript("hosting:build");
   await runNpmScript("functions:build");
   const cli = require.resolve("firebase-tools/lib/bin/firebase.js");
   console.log(`MesaFlow local: ${DEMO_PROJECT_ID}. No se utilizarán dev ni prod.`);
+  console.log(`[OK] Emulator Suite usará Java ${javaRuntime.major}: ${javaRuntime.executable}`);
 
   const child = spawn(process.execPath, [cli, ...args], {
     cwd: root,
     stdio: "inherit",
     env: {
-      ...process.env,
+      ...javaRuntime.environment,
       GCLOUD_PROJECT: DEMO_PROJECT_ID,
       GOOGLE_CLOUD_PROJECT: DEMO_PROJECT_ID,
       FUNCTIONS_DISCOVERY_TIMEOUT: "30"

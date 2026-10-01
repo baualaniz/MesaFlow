@@ -8,12 +8,13 @@
     "node": ">=22 <25"
   },
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build": "npm --prefix ../packages/contracts run build && tsc --project tsconfig.json",
     "lint": "eslint \"src/**/*.ts\" --max-warnings=0",
     "test": "npm run build && node --test ./test/**/*.test.mjs",
     "check": "npm run lint && npm test"
   },
   "dependencies": {
+    "@mesaflow/contracts": "0.1.0",
     "firebase-admin": "14.4.0",
     "firebase-functions": "7.4.0"
   },

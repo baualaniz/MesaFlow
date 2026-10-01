@@ -95,6 +95,7 @@ usuario.
 | 9 | Completa: configuración pública/privada/secretos separada, mínimo privilegio y 4 pruebas aprobadas; valores reales diferidos | `docs/stage-09-secrets.md` |
 | 10 | Completa localmente: tres destinos, builds, rewrites, headers, 6 pruebas y smoke integrado; sitios cloud diferidos a Etapa 47 | `docs/stage-10-hosting.md` |
 | 11 | Completa: contratos TypeScript/Dart, enums, dinero minor, timestamps UTC, fixtures compartidos y validación estricta | `docs/stage-11-contracts.md` |
+| 12 | Completa localmente: converters Product/Order, repositorios anclados por tenant, CRUD y aislamiento comprobados en emulador | `docs/stage-12-data-model.md` |
 | 17 | Adelanto visual en curso: shell Flutter Web, catálogo local, búsqueda, filtros y carrito demostrativo | `docs/stage-17-customer-shell.md` |
 
 ## Acciones manuales inmediatas — Etapa 1

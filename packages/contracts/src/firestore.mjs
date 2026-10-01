@@ -77,6 +77,10 @@ function isTimestampLike(value) {
   );
 }
 
+export function isFirestoreTimestamp(value) {
+  return isTimestampLike(value);
+}
+
 export function parseEstablishment(value) {
   if (!isPlainObject(value)) throw new TypeError("Establishment debe ser un objeto.");
   const keys = Object.keys(value).sort();

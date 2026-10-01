@@ -62,11 +62,18 @@ const requiredPaths = [
   "apps/customer/lib/src/contracts/domain_contracts.dart",
   "apps/customer/test/domain_contracts_test.dart",
   "docs/stage-11-contracts.md",
+  "docs/stage-12-data-model.md",
+  "functions/src/data/firestore-converters.ts",
+  "functions/src/data/tenant-repository.ts",
+  "functions/test/tenant-repository.test.mjs",
   "package.json",
   "scripts/check-environment.ps1",
+  "scripts/lib/java-runtime.mjs",
+  "scripts/java-runtime.test.mjs",
   "scripts/lib/presentation-seed.mjs",
   "scripts/presentation-seed.test.mjs",
-  "scripts/seed-presentation-dev.mjs"
+  "scripts/seed-presentation-dev.mjs",
+  "scripts/firestore-repository-emulator.mjs"
 ];
 
 const forbiddenFilePatterns = [
