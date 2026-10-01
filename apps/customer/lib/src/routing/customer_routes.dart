@@ -6,12 +6,18 @@ abstract final class CustomerRoutes {
   static const tablePattern = '/e/:slug/table/:tableId';
   static const demoEstablishmentSlug = 'mesa-flow-demo';
   static const demoTableId = 'mesa-01';
+  static const demoQrToken = '6d657361666c6f772d64656d6f2d3031';
 
   static String table({required String slug, required String tableId}) =>
       '/${Uri(pathSegments: ['e', slug, 'table', tableId]).path}';
 
   static String get demoTable =>
       table(slug: demoEstablishmentSlug, tableId: demoTableId);
+
+  static String get demoQrLocation => Uri(
+    path: demoTable,
+    queryParameters: const {'token': demoQrToken},
+  ).toString();
 }
 
 final class CustomerTableRoute {

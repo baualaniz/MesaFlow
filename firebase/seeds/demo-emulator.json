@@ -54,7 +54,7 @@
     { "id": "cafe-especial", "categoryId": "postres", "name": "Café especial", "description": "Doble espresso de origen seleccionado.", "priceMinor": 290000, "imagePath": "menu.torta-chocolate", "available": true, "active": true, "sortOrder": 4 }
   ],
   "tables": [
-    { "id": "mesa-01", "number": 1, "name": "Mesa 1", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000001", "qrVersion": 1, "active": true, "currentSessionId": "sesion-mesa-01" },
+    { "id": "mesa-01", "number": 1, "name": "Mesa 1", "qrTokenHash": "a48ae8ff01ee167c24383b60ee72bc0107dadeecb915f9d17b1967ccbb88aefc", "qrVersion": 1, "active": true, "currentSessionId": "sesion-mesa-01" },
     { "id": "mesa-02", "number": 2, "name": "Mesa 2", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000002", "qrVersion": 1, "active": true, "currentSessionId": "sesion-mesa-02" },
     { "id": "mesa-03", "number": 3, "name": "Mesa 3", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000003", "qrVersion": 1, "active": true, "currentSessionId": null },
     { "id": "mesa-04", "number": 4, "name": "Mesa 4", "qrTokenHash": "0000000000000000000000000000000000000000000000000000000000000004", "qrVersion": 1, "active": true, "currentSessionId": null },

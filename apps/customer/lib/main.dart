@@ -4,6 +4,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'src/app.dart';
 import 'src/config/app_environment.dart';
 import 'src/firebase/firebase_bootstrap.dart';
+import 'src/session/firebase_qr_session_gateway.dart';
 
 export 'src/app.dart';
 
@@ -12,5 +13,10 @@ Future<void> main() async {
   usePathUrlStrategy();
   final environment = AppEnvironment.fromCompileTime();
   await initializeMesaFlowFirebase(environment);
-  runApp(MesaFlowApp(environment: environment));
+  runApp(
+    MesaFlowApp(
+      environment: environment,
+      qrSessionGateway: FirebaseQrSessionGateway(),
+    ),
+  );
 }

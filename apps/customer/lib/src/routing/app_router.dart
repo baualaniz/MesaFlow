@@ -4,12 +4,14 @@ import 'package:go_router/go_router.dart';
 import '../config/app_environment.dart';
 import '../screens/entry_page.dart';
 import '../screens/invalid_link_page.dart';
-import '../screens/menu_page.dart';
+import '../screens/session_gate_page.dart';
+import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
 import 'customer_routes.dart';
 
 GoRouter createCustomerRouter({
   required AppEnvironment environment,
+  required QrSessionGateway qrSessionGateway,
   String? initialLocation,
 }) {
   return GoRouter(
@@ -18,7 +20,7 @@ GoRouter createCustomerRouter({
     redirect: (context, state) {
       if (state.uri.path == CustomerRoutes.entry &&
           environment == AppEnvironment.emulator) {
-        return CustomerRoutes.demoTable;
+        return CustomerRoutes.demoQrLocation;
       }
       return null;
     },
@@ -34,9 +36,16 @@ GoRouter createCustomerRouter({
       GoRoute(
         path: CustomerRoutes.tablePattern,
         redirect: (context, state) => CustomerSessionRouteGuard.redirect(state),
-        builder: (context, state) => MenuPage(
-          tableRoute: CustomerSessionRouteGuard.requireContext(state),
-        ),
+        builder: (context, state) {
+          final tableRoute = CustomerSessionRouteGuard.requireContext(state);
+          final tokens = state.uri.queryParametersAll['token'] ?? const [];
+          return SessionGatePage(
+            tableRoute: tableRoute,
+            gateway: qrSessionGateway,
+            token: tokens.length == 1 ? tokens.single : null,
+            onTokenConsumed: () => context.replace(tableRoute.location),
+          );
+        },
       ),
     ],
     errorBuilder: (context, state) => const InvalidLinkPage(),
@@ -47,10 +56,12 @@ class MesaFlowRouterApp extends StatefulWidget {
   const MesaFlowRouterApp({
     super.key,
     required this.environment,
+    required this.qrSessionGateway,
     this.initialLocation,
   });
 
   final AppEnvironment environment;
+  final QrSessionGateway qrSessionGateway;
   final String? initialLocation;
 
   @override
@@ -60,6 +71,7 @@ class MesaFlowRouterApp extends StatefulWidget {
 class _MesaFlowRouterAppState extends State<MesaFlowRouterApp> {
   late final GoRouter _router = createCustomerRouter(
     environment: widget.environment,
+    qrSessionGateway: widget.qrSessionGateway,
     initialLocation: widget.initialLocation,
   );
 

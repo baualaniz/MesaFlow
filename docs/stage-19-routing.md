@@ -39,8 +39,9 @@ pantalla de mesa. Ambos segmentos deben:
 
 Esta validación evita montar pantallas con un contexto ausente o mal formado,
 pero no confunde una URL válida con una autorización. El slug y el ID de mesa no
-son secretos. La Etapa 20 agregará token QR, Anonymous Auth, canje backend,
-antirreplay y sesión local segura antes de permitir operaciones privadas.
+son secretos. La Etapa 20 agregó token QR, Anonymous Auth, canje backend,
+antirreplay y sesión local segura; se documenta por separado en
+`docs/stage-20-qr-exchange.md`.
 
 ## Probar en Chrome
 
@@ -97,7 +98,8 @@ Resultados de cierre:
 
 ## Próximo paso
 
-La Etapa 20 implementará el canje seguro del token QR y la identidad anónima.
+El canje seguro del token QR y la identidad anónima quedó implementado en
+`docs/stage-20-qr-exchange.md`.
 
 ## Fuentes oficiales
 

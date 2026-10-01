@@ -4,14 +4,20 @@ import '../contracts/domain_contracts.dart';
 import '../data/demo_menu.dart';
 import '../models/menu_product.dart';
 import '../routing/customer_routes.dart';
+import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
 import '../widgets/product_card.dart';
 import '../widgets/feedback_panel.dart';
 
 class MenuPage extends StatefulWidget {
-  const MenuPage({super.key, required this.tableRoute});
+  const MenuPage({
+    super.key,
+    required this.tableRoute,
+    required this.sessionAccess,
+  });
 
   final CustomerTableRoute tableRoute;
+  final QrSessionAccess sessionAccess;
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -188,7 +194,8 @@ class _MenuPageState extends State<MenuPage> {
             SliverToBoxAdapter(
               child: _Header(
                 itemCount: _itemCount,
-                tableLabel: widget.tableRoute.tableLabel,
+                establishmentName: widget.sessionAccess.establishmentName,
+                tableLabel: widget.sessionAccess.tableName,
               ),
             ),
             SliverToBoxAdapter(
@@ -331,9 +338,14 @@ class _MenuPageState extends State<MenuPage> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.itemCount, required this.tableLabel});
+  const _Header({
+    required this.itemCount,
+    required this.establishmentName,
+    required this.tableLabel,
+  });
 
   final int itemCount;
+  final String establishmentName;
   final String tableLabel;
 
   @override
@@ -368,7 +380,7 @@ class _Header extends StatelessWidget {
                 ),
                 const SizedBox(height: 28),
                 Text(
-                  'Bienvenidos a\nCasa Jacarandá',
+                  'Bienvenidos a\n$establishmentName',
                   style: Theme.of(context).textTheme.displaySmall,
                 ),
                 const SizedBox(height: 14),

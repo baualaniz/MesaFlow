@@ -5,6 +5,8 @@ import 'package:mesaflow_customer/src/theme/mesaflow_theme.dart';
 import 'package:mesaflow_customer/src/widgets/feedback_panel.dart';
 import 'package:mesaflow_customer/src/widgets/status_badge.dart';
 
+import 'helpers/test_qr_session_gateway.dart';
+
 void main() {
   test('el tema usa tipografías, radios y estados semánticos de MesaFlow', () {
     final theme = MesaFlowTheme.light;
@@ -60,7 +62,9 @@ void main() {
   testWidgets('el menú no desborda en móvil ni escritorio', (tester) async {
     for (final size in [const Size(390, 844), const Size(1280, 900)]) {
       await tester.binding.setSurfaceSize(size);
-      await tester.pumpWidget(const MesaFlowApp());
+      await tester.pumpWidget(
+        const MesaFlowApp(qrSessionGateway: TestQrSessionGateway.active),
+      );
       await tester.pumpAndSettle();
       expect(find.text('Burger de la casa'), findsOneWidget);
       expect(find.text('Buscar en el menú'), findsOneWidget);

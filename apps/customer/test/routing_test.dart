@@ -5,6 +5,8 @@ import 'package:mesaflow_customer/main.dart';
 import 'package:mesaflow_customer/src/config/app_environment.dart';
 import 'package:mesaflow_customer/src/screens/menu_page.dart';
 
+import 'helpers/test_qr_session_gateway.dart';
+
 void main() {
   testWidgets('una entrada directa conserva establecimiento y mesa', (
     tester,
@@ -14,6 +16,7 @@ void main() {
       const MesaFlowApp(
         environment: AppEnvironment.development,
         initialLocation: location,
+        qrSessionGateway: TestQrSessionGateway.active,
       ),
     );
     await tester.pumpAndSettle();
@@ -34,6 +37,7 @@ void main() {
       const MesaFlowApp(
         environment: AppEnvironment.development,
         initialLocation: '/',
+        qrSessionGateway: TestQrSessionGateway.active,
       ),
     );
     await tester.pumpAndSettle();
@@ -46,11 +50,20 @@ void main() {
   testWidgets('el ambiente local abre la mesa demo desde la raíz', (
     tester,
   ) async {
-    await tester.pumpWidget(const MesaFlowApp(initialLocation: '/'));
+    await tester.pumpWidget(
+      const MesaFlowApp(
+        initialLocation: '/',
+        qrSessionGateway: TestQrSessionGateway.active,
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.byType(MenuPage), findsOneWidget);
     expect(find.text('Mesa 1'), findsOneWidget);
+    final context = tester.element(find.byType(MenuPage));
+    final uri = GoRouter.of(context).routeInformationProvider.value.uri;
+    expect(uri.path, '/e/mesa-flow-demo/table/mesa-01');
+    expect(uri.query, isEmpty, reason: 'El token QR debe desaparecer de la URL');
   });
 
   testWidgets('un contexto inválido no monta el menú', (tester) async {
@@ -58,6 +71,7 @@ void main() {
       const MesaFlowApp(
         environment: AppEnvironment.development,
         initialLocation: '/e/Casa-Jacaranda/table/mesa-01',
+        qrSessionGateway: TestQrSessionGateway.active,
       ),
     );
     await tester.pumpAndSettle();
@@ -73,6 +87,7 @@ void main() {
       const MesaFlowApp(
         environment: AppEnvironment.development,
         initialLocation: '/ruta-que-no-existe',
+        qrSessionGateway: TestQrSessionGateway.active,
       ),
     );
     await tester.pumpAndSettle();

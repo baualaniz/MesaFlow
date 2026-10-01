@@ -360,3 +360,25 @@ La raíz del emulador redirige a `mesa-flow-demo/mesa-01` para desarrollo. En
 desarrollo cloud y producción, la raíz no inventa contexto y solicita escanear el
 QR. Las rutas desconocidas y los segmentos inválidos terminan en una pantalla de
 recuperación que no refleja valores de la URL.
+
+## Canje QR y sesión cliente — Etapa 20
+
+El query parameter `token` es una credencial transitoria. El cliente crea o
+recupera un usuario anónimo con persistencia de pestaña y llama
+`exchangeQrSession`; el SDK callable adjunta el ID token de Auth. Tras un canje
+correcto, el router reemplaza la URL por la misma ruta sin query parameter.
+
+La callable resuelve slug, establecimiento, mesa y sesión dentro de una
+transacción. Compara en tiempo constante SHA-256 del token con `qrTokenHash`,
+exige mesa activa, versión positiva y sesión `open`, y crea atómicamente el
+participant y un `qrExchange`. El ID antirreplay deriva de UID más hash del token:
+el mismo QR admite distintas identidades de comensales, pero el mismo UID no puede
+repetirlo.
+
+`restoreQrSession` no recibe credenciales QR. Resuelve la sesión actual desde la
+ruta y solo devuelve contexto si existe un participant activo con el UID
+autenticado. Esto permite recargar durante `open` o `payment_pending` sin guardar
+tokens en almacenamiento de aplicación. El fixture local es conocido y solo
+coincide con `demo-mesaflow`; producción deberá generar 128 bits aleatorios por
+versión. App Check queda como requisito previo al despliegue cloud de las
+callables.

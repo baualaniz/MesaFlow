@@ -2,11 +2,13 @@
 
 Aplicación Flutter Web/PWA que se abre desde el QR de la mesa. El shell visual
 permite recorrer el menú demo, buscar, filtrar, abrir un producto y armar un
-pedido local. Todavía no escribe en Firebase.
+pedido local. El canje QR ya crea la participación de sesión en Firebase; el
+catálogo continúa empaquetado hasta la Etapa 21.
 
 La ruta QR canónica es `/e/:slug/table/:tableId`. La navegación usa URLs limpias
 y muestra una pantalla segura si falta el contexto de mesa o sus segmentos no son
-válidos. La autorización real del token se incorpora en la Etapa 20.
+válidos. La autorización real usa Firebase Auth anónima y dos callables: una
+canjea el token y otra recupera la participación al recargar.
 
 `MESAFLOW_ENV` selecciona el destino en tiempo de compilación. Si se omite, usa
 `emulator` y nunca cae implícitamente en un proyecto cloud:
@@ -24,18 +26,21 @@ OFL, por lo que la identidad visual no descarga tipografías en tiempo de ejecuc
 
 ## Ejecutar
 
-Desde esta carpeta, en PowerShell:
+Para usar el flujo completo, desde la raíz abrí dos PowerShell. En la primera:
 
 ```powershell
-flutter.bat pub get
-flutter.bat build web --dart-define=MESAFLOW_ENV=emulator
-cd ../..
-npm.cmd run preview:customer
+npm.cmd run emulators
 ```
 
-Abrí `http://127.0.0.1:7357/e/mesa-flow-demo/table/mesa-01` y detené el servidor
-con Ctrl+C. Recargar esa dirección conserva Mesa 1. En ambiente local, la raíz
-también redirige automáticamente a esta mesa demo.
+En la segunda:
+
+```powershell
+npm.cmd run firebase:seed:demo
+```
+
+Abrí `http://127.0.0.1:5100`. El ambiente local canjea el token demo, lo elimina
+de la URL y permite recargar Mesa 1 con la identidad anónima de esa pestaña.
+Detené los emuladores con Ctrl+C en la primera terminal.
 
 Para comprobar el código y generar el build web:
 
@@ -51,9 +56,8 @@ Para ejecutar directamente en Chrome:
 flutter.bat run -d chrome --dart-define=MESAFLOW_ENV=emulator
 ```
 
-Si Chrome abre la raíz, la aplicación redirige a la mesa demo. Para probar otra
-mesa, cambiá solo el último segmento, por ejemplo
-`/e/mesa-flow-demo/table/mesa-02`.
+No cambies manualmente el ID de mesa: cada mesa requiere su propio token vigente.
+El fixture conocido de Mesa 1 funciona únicamente contra `demo-mesaflow`.
 
 La configuración cloud está separada para `dev` y `prod` según
 `docs/stage-17-customer-shell.md`. Firebase Core se inicializa con el proyecto

@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–19 completadas en alcance local. La siguiente etapa es el
-canje seguro del QR con identidad anónima.
+Estado actual: Etapas 1–20 completadas en alcance local. La siguiente etapa es el
+menú dinámico filtrado por establecimiento.
 
 ## Fases 1–10: base y Firebase
 
@@ -105,6 +105,8 @@ canje seguro del QR con identidad anónima.
 | 16 | Completa localmente: dataset determinista de 61 documentos, 4 roles, 10 mesas, 18 productos, pedidos/pagos e idempotencia en emulador | `docs/stage-16-demo-seed.md` |
 | 17 | Completa: shell/PWA, `firebase_core`, apps Web dev/prod separadas, ambiente local seguro, 15 tests y tres builds aprobados | `docs/stage-17-customer-shell.md` |
 | 18 | Completa: Poppins/Inter locales, tokens visuales, temas de controles, badges/feedback y 18 tests responsive aprobados | `docs/stage-18-design-system.md` |
+| 19 | Completa: deep links, paths Web, contexto de mesa, recuperación inválida y 26 tests Flutter aprobados | `docs/stage-19-routing.md` |
+| 20 | Completa localmente: Auth anónima, canje/restore callable, hash, antirreplay, rotación y 31 tests Flutter más 12 de Functions aprobados | `docs/stage-20-qr-exchange.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mesaflow_customer/main.dart';
 
+import 'helpers/test_qr_session_gateway.dart';
+
 void main() {
   testWidgets('muestra el menú demo y agrega un producto', (tester) async {
-    await tester.pumpWidget(const MesaFlowApp());
+    await tester.pumpWidget(
+      const MesaFlowApp(qrSessionGateway: TestQrSessionGateway.active),
+    );
     await tester.pumpAndSettle();
 
     expect(find.textContaining('Casa Jacarandá'), findsOneWidget);
@@ -22,7 +26,9 @@ void main() {
   });
 
   testWidgets('filtra productos con la búsqueda', (tester) async {
-    await tester.pumpWidget(const MesaFlowApp());
+    await tester.pumpWidget(
+      const MesaFlowApp(qrSessionGateway: TestQrSessionGateway.active),
+    );
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(EditableText), 'chocolate');

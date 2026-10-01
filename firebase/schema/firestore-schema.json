@@ -85,7 +85,7 @@
     {
       "key": "qrExchanges",
       "path": "establishments/{establishmentId}/qrExchanges/{exchangeId}",
-      "idStrategy": "token-hash"
+      "idStrategy": "uid-token-hash"
     },
     {
       "key": "auditLogs",

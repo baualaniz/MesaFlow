@@ -4,6 +4,11 @@ El seed completo de la Etapa 16 vive en `demo-emulator.json`. Contiene 61
 documentos deterministas con cuatro perfiles/roles, 10 mesas, 18 productos,
 sesiones, pedidos, asistencia, pagos, métricas y configuración.
 
+Mesa 1 incluye el hash del token fixture utilizado por la Etapa 20. El token es
+conocido, está compilado únicamente para la redirección del ambiente `emulator` y
+no es válido en desarrollo ni producción. Los proyectos reales nunca deben
+reutilizarlo.
+
 Solo admite el proyecto ficticio `demo-mesaflow` y Firestore Emulator en
 `127.0.0.1:8080`; rechaza credenciales, proyectos cloud y otros hosts. Con los
 emuladores iniciados se carga mediante:
