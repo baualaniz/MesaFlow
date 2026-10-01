@@ -4,6 +4,10 @@ Aplicación Flutter Web/PWA que se abre desde el QR de la mesa. El shell visual
 permite recorrer el menú demo, buscar, filtrar, abrir un producto y armar un
 pedido local. Todavía no escribe en Firebase.
 
+La ruta QR canónica es `/e/:slug/table/:tableId`. La navegación usa URLs limpias
+y muestra una pantalla segura si falta el contexto de mesa o sus segmentos no son
+válidos. La autorización real del token se incorpora en la Etapa 20.
+
 `MESAFLOW_ENV` selecciona el destino en tiempo de compilación. Si se omite, usa
 `emulator` y nunca cae implícitamente en un proyecto cloud:
 
@@ -29,7 +33,9 @@ cd ../..
 npm.cmd run preview:customer
 ```
 
-Abrí `http://127.0.0.1:7357` y detené el servidor con Ctrl+C.
+Abrí `http://127.0.0.1:7357/e/mesa-flow-demo/table/mesa-01` y detené el servidor
+con Ctrl+C. Recargar esa dirección conserva Mesa 1. En ambiente local, la raíz
+también redirige automáticamente a esta mesa demo.
 
 Para comprobar el código y generar el build web:
 
@@ -44,6 +50,10 @@ Para ejecutar directamente en Chrome:
 ```powershell
 flutter.bat run -d chrome --dart-define=MESAFLOW_ENV=emulator
 ```
+
+Si Chrome abre la raíz, la aplicación redirige a la mesa demo. Para probar otra
+mesa, cambiá solo el último segmento, por ejemplo
+`/e/mesa-flow-demo/table/mesa-02`.
 
 La configuración cloud está separada para `dev` y `prod` según
 `docs/stage-17-customer-shell.md`. Firebase Core se inicializa con el proyecto

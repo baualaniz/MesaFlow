@@ -19,7 +19,7 @@ try {
   assert.equal(customerRoot.status, 200);
   assert.match(await customerRoot.text(), /<title>MesaFlow<\/title>/u);
   const customerDeepLink = await get(
-    `http://${EMULATOR_HOST}:${ports[0]}/e/casa-demo/table/mesa-01`
+    `http://${EMULATOR_HOST}:${ports[0]}/e/mesa-flow-demo/table/mesa-01`
   );
   assert.equal(customerDeepLink.status, 200);
   assert.match(await customerDeepLink.text(), /flutter_bootstrap\.js/u);

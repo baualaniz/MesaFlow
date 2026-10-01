@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 18** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 19** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -19,6 +19,8 @@ y sitios continúan locales. La app Flutter inicializa Firebase Core con apps We
 separadas para desarrollo y producción, y usa `demo-mesaflow` por defecto local.
 El sistema visual incluye Poppins/Inter empaquetadas, tokens y componentes
 semánticos probados en móvil y escritorio.
+La aplicación reconoce enlaces QR `/e/:slug/table/:tableId`, conserva la ruta al
+recargar y rechaza contextos de mesa mal formados sin tratarlos como autorización.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -43,6 +45,7 @@ encuentran en:
 - `docs/stage-16-demo-seed.md`
 - `docs/stage-17-customer-shell.md`
 - `docs/stage-18-design-system.md`
+- `docs/stage-19-routing.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -167,6 +170,11 @@ Los destinos web locales son cliente en `http://127.0.0.1:5100`, panel en
 `http://127.0.0.1:5105` y landing en `http://127.0.0.1:5106`. Firebase informa
 las direcciones definitivas al iniciar. La guía completa está en
 `docs/stage-10-hosting.md`.
+
+El enlace directo de la mesa demo es
+`http://127.0.0.1:5100/e/mesa-flow-demo/table/mesa-01`. Se puede recargar sin
+perder el establecimiento ni la mesa. La raíz local redirige a esa demo; las
+raíces cloud esperan un QR válido.
 
 ## Cloud Functions local
 

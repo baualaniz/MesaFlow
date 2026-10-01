@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'src/app.dart';
 import 'src/config/app_environment.dart';
@@ -8,6 +9,7 @@ export 'src/app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  usePathUrlStrategy();
   final environment = AppEnvironment.fromCompileTime();
   await initializeMesaFlowFirebase(environment);
   runApp(MesaFlowApp(environment: environment));

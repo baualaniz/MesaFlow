@@ -5,6 +5,9 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
+Estado actual: Etapas 1–19 completadas en alcance local. La siguiente etapa es el
+canje seguro del QR con identidad anónima.
+
 ## Fases 1–10: base y Firebase
 
 | # | Etapa | Objetivo y trabajo | Dependencias | Manual | Código / archivos | Resultado y criterio verificable |

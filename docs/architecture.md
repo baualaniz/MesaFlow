@@ -341,3 +341,22 @@ tarjetas, snackbars, bottom sheets, tooltips y progreso, forman la base común.
 `MesaFlowStatusBadge` y `MesaFlowFeedbackPanel` representan estados sin depender
 solo del color. Las pruebas de widgets cubren 320, 390 y 1280 px, y el bundle se
 verificó visualmente en navegador sin errores de consola.
+
+## Navegación cliente — Etapa 19
+
+El cliente usa `go_router` sobre la API Router de Flutter y estrategia Web de
+paths, sin fragmentos `#`. La ruta pública canónica
+`/e/:slug/table/:tableId` conserva establecimiento y mesa en recargas y enlaces
+compartidos. Firebase Hosting reescribe cualquier ruta del cliente a
+`index.html`, mientras el router decide la pantalla dentro de la aplicación.
+
+`CustomerTableRoute` es el único objeto que transporta ese contexto hacia el
+menú. `CustomerSessionRouteGuard` valida presencia, forma y longitud antes de
+montar la pantalla. Una ruta sintácticamente válida no concede acceso a sesión:
+el token, la identidad anónima, la vigencia y el antirreplay pertenecen al canje
+backend de la Etapa 20.
+
+La raíz del emulador redirige a `mesa-flow-demo/mesa-01` para desarrollo. En
+desarrollo cloud y producción, la raíz no inventa contexto y solicita escanear el
+QR. Las rutas desconocidas y los segmentos inválidos terminan en una pantalla de
+recuperación que no refleja valores de la URL.

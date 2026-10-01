@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 
 import 'config/app_environment.dart';
-import 'screens/menu_page.dart';
-import 'theme/mesaflow_theme.dart';
+import 'routing/app_router.dart';
 
 class MesaFlowApp extends StatelessWidget {
   const MesaFlowApp({
     super.key,
     this.environment = AppEnvironment.emulator,
+    this.initialLocation,
   });
 
   final AppEnvironment environment;
+  final String? initialLocation;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: environment.browserTitle,
-      debugShowCheckedModeBanner: false,
-      theme: MesaFlowTheme.light,
-      home: const MenuPage(),
+    return MesaFlowRouterApp(
+      environment: environment,
+      initialLocation: initialLocation,
     );
   }
 }

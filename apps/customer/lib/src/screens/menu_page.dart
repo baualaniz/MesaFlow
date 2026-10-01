@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import '../contracts/domain_contracts.dart';
 import '../data/demo_menu.dart';
 import '../models/menu_product.dart';
+import '../routing/customer_routes.dart';
 import '../theme/mesaflow_theme.dart';
 import '../widgets/product_card.dart';
 import '../widgets/feedback_panel.dart';
 
 class MenuPage extends StatefulWidget {
-  const MenuPage({super.key});
+  const MenuPage({super.key, required this.tableRoute});
+
+  final CustomerTableRoute tableRoute;
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -182,7 +185,12 @@ class _MenuPageState extends State<MenuPage> {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: _Header(itemCount: _itemCount)),
+            SliverToBoxAdapter(
+              child: _Header(
+                itemCount: _itemCount,
+                tableLabel: widget.tableRoute.tableLabel,
+              ),
+            ),
             SliverToBoxAdapter(
               child: Center(
                 child: ConstrainedBox(
@@ -323,9 +331,10 @@ class _MenuPageState extends State<MenuPage> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.itemCount});
+  const _Header({required this.itemCount, required this.tableLabel});
 
   final int itemCount;
+  final String tableLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -366,13 +375,19 @@ class _Header extends StatelessWidget {
                 Wrap(
                   spacing: 10,
                   runSpacing: 10,
-                  children: const [
+                  children: [
                     _InfoPill(
                       icon: Icons.table_restaurant_outlined,
-                      label: 'Mesa 12',
+                      label: tableLabel,
                     ),
-                    _InfoPill(icon: Icons.schedule_rounded, label: '20–30 min'),
-                    _InfoPill(icon: Icons.circle, label: 'Cocina abierta'),
+                    const _InfoPill(
+                      icon: Icons.schedule_rounded,
+                      label: '20–30 min',
+                    ),
+                    const _InfoPill(
+                      icon: Icons.circle,
+                      label: 'Cocina abierta',
+                    ),
                   ],
                 ),
               ],
