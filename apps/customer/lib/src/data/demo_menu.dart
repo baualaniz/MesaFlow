@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../contracts/domain_contracts.dart';
 import '../models/menu_product.dart';
 
 const demoCategories = ['Todos', 'Principales', 'Vegetariano', 'Postres'];
@@ -10,7 +11,7 @@ const demoProducts = <MenuProduct>[
     name: 'Burger de la casa',
     description: 'Carne, cheddar, vegetales frescos y papas rústicas.',
     category: 'Principales',
-    priceInCents: 1290000,
+    price: Money(amountMinor: 1290000, currency: 'ARS'),
     imageAlignment: Alignment.topLeft,
     badge: 'Favorito',
   ),
@@ -19,7 +20,7 @@ const demoProducts = <MenuProduct>[
     name: 'Ravioles de espinaca',
     description: 'Ricota, tomates cherry, albahaca y parmesano.',
     category: 'Principales',
-    priceInCents: 1180000,
+    price: Money(amountMinor: 1180000, currency: 'ARS'),
     imageAlignment: Alignment.topRight,
   ),
   MenuProduct(
@@ -27,7 +28,7 @@ const demoProducts = <MenuProduct>[
     name: 'Bowl de estación',
     description: 'Quinoa, vegetales asados y aderezo cítrico.',
     category: 'Vegetariano',
-    priceInCents: 980000,
+    price: Money(amountMinor: 980000, currency: 'ARS'),
     imageAlignment: Alignment.bottomLeft,
     badge: 'Veggie',
   ),
@@ -36,7 +37,7 @@ const demoProducts = <MenuProduct>[
     name: 'Torta de chocolate',
     description: 'Chocolate intenso, frutos rojos y cacao.',
     category: 'Postres',
-    priceInCents: 620000,
+    price: Money(amountMinor: 620000, currency: 'ARS'),
     imageAlignment: Alignment.bottomRight,
   ),
 ];

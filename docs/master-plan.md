@@ -94,6 +94,7 @@ usuario.
 | 8 | Completa localmente: Functions 2nd gen/TypeScript, lint, build, 3 unit tests y health emulado aprobados; despliegue diferido | `docs/stage-08-functions.md` |
 | 9 | Completa: configuración pública/privada/secretos separada, mínimo privilegio y 4 pruebas aprobadas; valores reales diferidos | `docs/stage-09-secrets.md` |
 | 10 | Completa localmente: tres destinos, builds, rewrites, headers, 6 pruebas y smoke integrado; sitios cloud diferidos a Etapa 47 | `docs/stage-10-hosting.md` |
+| 11 | Completa: contratos TypeScript/Dart, enums, dinero minor, timestamps UTC, fixtures compartidos y validación estricta | `docs/stage-11-contracts.md` |
 | 17 | Adelanto visual en curso: shell Flutter Web, catálogo local, búsqueda, filtros y carrito demostrativo | `docs/stage-17-customer-shell.md` |
 
 ## Acciones manuales inmediatas — Etapa 1

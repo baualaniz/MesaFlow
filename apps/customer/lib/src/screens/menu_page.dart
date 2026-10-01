@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../contracts/domain_contracts.dart';
 import '../data/demo_menu.dart';
 import '../models/menu_product.dart';
 import '../theme/mesaflow_theme.dart';
@@ -37,7 +38,7 @@ class _MenuPageState extends State<MenuPage> {
 
   int get _total => _cart.entries.fold(0, (sum, entry) {
     final product = demoProducts.firstWhere((item) => item.id == entry.key);
-    return sum + product.priceInCents * entry.value;
+    return sum + product.price.amountMinor * entry.value;
   });
 
   @override
@@ -100,7 +101,7 @@ class _MenuPageState extends State<MenuPage> {
                   _add(product);
                 },
                 icon: const Icon(Icons.add_rounded),
-                label: Text('Agregar · ${formatPrice(product.priceInCents)}'),
+                label: Text('Agregar · ${formatPrice(product.price)}'),
               ),
             ],
           ),
@@ -151,7 +152,7 @@ class _MenuPageState extends State<MenuPage> {
                 children: [
                   const Text('Total'),
                   Text(
-                    formatPrice(_total),
+                    formatPrice(Money(amountMinor: _total, currency: 'ARS')),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ],
@@ -309,7 +310,9 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                     const SizedBox(width: 12),
                     const Expanded(child: Text('Ver pedido')),
-                    Text(formatPrice(_total)),
+                    Text(
+                      formatPrice(Money(amountMinor: _total, currency: 'ARS')),
+                    ),
                   ],
                 ),
               ),

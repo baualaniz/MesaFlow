@@ -234,3 +234,15 @@ verificarse también en el proyecto de desarrollo real antes de cerrar esa etapa
 
 Las transiciones no se autorizan con escrituras directas del cliente: pasan por
 Functions y se verifican también mediante reglas que deniegan campos protegidos.
+
+## Contratos ejecutables — Etapa 11
+
+La forma compartida del dominio se divide en una especificación JSON y dos
+implementaciones estrictas. TypeScript cubre Functions, panel y herramientas;
+Dart cubre Flutter. Ambos ejecutan `packages/contracts/fixtures` para impedir que
+enums, límites, dinero o timestamps diverjan silenciosamente.
+
+Los adaptadores Firestore futuros convertirán `Timestamp` a la representación
+del lenguaje dentro de cada aplicación. Solo los límites JSON/API utilizan el
+texto RFC3339 canónico. Los importes nunca cruzan el sistema como flotantes: se
+transportan como enteros `*Minor` junto con `currency`.

@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "moneyCases": [
+    { "amountMinor": 0, "currency": "ARS", "decimal": "0.00" },
+    { "amountMinor": 1290000, "currency": "ARS", "decimal": "12900.00" },
+    { "amountMinor": 12345, "currency": "USD", "decimal": "123.45" }
+  ],
+  "timestampCases": [
+    "2026-09-17T12:00:00.000Z",
+    "2026-09-17T15:30:45.123Z"
+  ],
+  "product": {
+    "establishmentId": "mesa-flow-demo",
+    "categoryId": "principales",
+    "name": "Burger de la casa",
+    "description": "Carne, cheddar, vegetales frescos y papas rústicas.",
+    "priceMinor": 1290000,
+    "currency": "ARS",
+    "imagePath": "menu.burger-casa",
+    "available": true,
+    "active": true,
+    "sortOrder": 1,
+    "createdAt": "2026-09-17T12:00:00.000Z",
+    "updatedAt": "2026-09-17T12:00:00.000Z"
+  },
+  "order": {
+    "establishmentId": "mesa-flow-demo",
+    "sessionId": "sesion-presentacion",
+    "tableId": "mesa-01",
+    "customerUid": "presentation-guest",
+    "status": "created",
+    "items": [
+      {
+        "productId": "burger-casa",
+        "name": "Burger de la casa",
+        "unitPriceMinor": 1290000,
+        "quantity": 1,
+        "lineTotalMinor": 1290000,
+        "notes": "Sin cebolla"
+      }
+    ],
+    "subtotalMinor": 1290000,
+    "totalMinor": 1290000,
+    "currency": "ARS",
+    "notes": "Pedido de fixture",
+    "statusTimestamps": {
+      "created": "2026-09-17T12:00:00.000Z"
+    },
+    "createdAt": "2026-09-17T12:00:00.000Z",
+    "updatedAt": "2026-09-17T12:00:00.000Z"
+  },
+  "invalid": {
+    "money": [
+      { "amountMinor": -1, "currency": "ARS" },
+      { "amountMinor": 10.5, "currency": "ARS" },
+      { "amountMinor": 100, "currency": "ars" }
+    ],
+    "timestamps": [
+      "2026-09-17",
+      "2026-09-17T12:00:00Z",
+      "2026-09-17T12:00:00.000-03:00"
+    ]
+  }
+}

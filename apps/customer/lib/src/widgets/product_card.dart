@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../contracts/domain_contracts.dart';
 import '../models/menu_product.dart';
 import '../theme/mesaflow_theme.dart';
 
@@ -88,7 +89,7 @@ class ProductCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          formatPrice(product.priceInCents),
+                          formatPrice(product.price),
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 color: MesaFlowColors.success,
@@ -119,8 +120,8 @@ class ProductCard extends StatelessWidget {
   }
 }
 
-String formatPrice(int cents) {
-  final pesos = cents ~/ 100;
+String formatPrice(Money money) {
+  final pesos = money.amountMinor ~/ 100;
   final digits = pesos.toString();
   final parts = <String>[];
   for (var end = digits.length; end > 0; end -= 3) {

@@ -1,9 +1,21 @@
 # Contratos compartidos
 
 Enums, esquemas de validación, tipos y utilidades de dinero compartidos por el
-panel, la landing cuando corresponda, Functions y herramientas de prueba.
+panel, Functions y herramientas de prueba. La implementación TypeScript estricta
+vive en `src/domain.ts`; Flutter mantiene su equivalente en
+`apps/customer/lib/src/contracts/domain_contracts.dart`.
 
-La Etapa 6 incorpora las rutas canónicas, validación de IDs y el primer converter
-estricto (`Establishment`) en `src/firestore.mjs`. La Etapa 11 completará enums,
-dinero, timestamps y los modelos TypeScript/Dart equivalentes, verificados contra
-fixtures JSON comunes.
+`fixtures/contract-spec.json` es la fuente canónica de enums y límites, mientras
+que `fixtures/domain-fixtures.json` contiene casos válidos e inválidos que ambas
+plataformas ejecutan. Los contratos rechazan campos desconocidos, importes
+fraccionarios o negativos, timestamps sin UTC/milisegundos, enums ajenos y totales
+de pedido inconsistentes.
+
+Validación completa desde la raíz:
+
+```powershell
+npm.cmd run contracts:check
+```
+
+El primer tramo compila y prueba TypeScript; el segundo ejecuta los mismos
+fixtures con Flutter/Dart. El build generado en `lib/` no se versiona.

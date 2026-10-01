@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 10** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 11** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 No hay despliegues cloud. El primer shell Flutter del cliente adelanta la Etapa 17.
@@ -31,6 +31,7 @@ encuentran en:
 - `docs/stage-08-functions.md`
 - `docs/stage-09-secrets.md`
 - `docs/stage-10-hosting.md`
+- `docs/stage-11-contracts.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -60,11 +61,18 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 61
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 69
 pruebas (14 de configuración, cuatro de herramientas, nueve de Authentication,
 ocho de Firestore, ocho de Storage, cuatro de secretos, seis de Hosting, cinco del
-seed de presentación y tres de Functions), más
+seed de presentación, ocho de contratos y tres de Functions), más
 el lint y build TypeScript. Este comando no consulta servicios remotos.
+
+Los contratos compartidos tienen además siete pruebas Dart contra los mismos
+fixtures. Se ejecutan por separado porque requieren el SDK Flutter:
+
+```powershell
+npm.cmd run contracts:check
+```
 
 ## Configuración Authentication en la nube
 

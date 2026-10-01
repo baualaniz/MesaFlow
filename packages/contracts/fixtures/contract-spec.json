@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "enums": {
+    "role": ["owner", "manager", "staff", "kitchen"],
+    "orderStatus": ["created", "confirmed", "preparing", "ready", "delivered", "completed", "cancelled"],
+    "tableSessionStatus": ["open", "payment_pending", "paid", "closed", "cancelled"],
+    "paymentStatus": ["pending", "approved", "rejected", "cancelled", "refunded", "charged_back"],
+    "assistanceType": ["waiter", "bill", "other"],
+    "assistanceStatus": ["pending", "acknowledged", "resolved", "cancelled"]
+  },
+  "limits": {
+    "maxMinorAmount": 9000000000000,
+    "maxOrderItems": 50,
+    "maxItemQuantity": 99,
+    "currencyFractionDigits": 2
+  },
+  "timestampFormat": "UTC RFC3339 with millisecond precision"
+}
