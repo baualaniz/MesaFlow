@@ -1,7 +1,8 @@
 import type {
   CollectionReference,
   Firestore,
-  FirestoreDataConverter
+  FirestoreDataConverter,
+  Query
 } from "firebase-admin/firestore";
 
 import {
@@ -10,7 +11,12 @@ import {
   tenantCollectionPath,
   type TenantCollection
 } from "@mesaflow/contracts/firestore";
-import type { OrderContract, ProductContract } from "@mesaflow/contracts";
+import {
+  ORDER_STATUSES,
+  type OrderContract,
+  type OrderStatus,
+  type ProductContract
+} from "@mesaflow/contracts";
 
 import { orderConverter, productConverter } from "./firestore-converters.js";
 
@@ -76,7 +82,11 @@ export class TenantRepository<T extends TenantOwned> {
   }
 
   async list(): Promise<readonly TenantDocument<T>[]> {
-    const snapshot = await this.collection.get();
+    return this.collect(this.collection);
+  }
+
+  protected async collect(query: Query<T>): Promise<readonly TenantDocument<T>[]> {
+    const snapshot = await query.get();
     return Object.freeze(snapshot.docs.map((document) => {
       const data = assertTenantOwnership(this.establishmentId, document.data());
       return Object.freeze({ id: document.id, data });
@@ -97,6 +107,18 @@ export class ProductRepository extends TenantRepository<ProductContract> {
       productConverter
     );
   }
+
+  async listPublishedByCategory(
+    categoryId: string
+  ): Promise<readonly TenantDocument<ProductContract>[]> {
+    return this.collect(
+      this.collection
+        .where("categoryId", "==", assertDocumentId(categoryId, "categoryId"))
+        .where("active", "==", true)
+        .where("available", "==", true)
+        .orderBy("sortOrder", "asc")
+    );
+  }
 }
 
 export class OrderRepository extends TenantRepository<OrderContract> {
@@ -106,6 +128,46 @@ export class OrderRepository extends TenantRepository<OrderContract> {
       establishmentId,
       TENANT_COLLECTIONS.orders,
       orderConverter
+    );
+  }
+
+  async listOperational(
+    statuses: readonly OrderStatus[]
+  ): Promise<readonly TenantDocument<OrderContract>[]> {
+    const uniqueStatuses = [...new Set(statuses)];
+    if (uniqueStatuses.length === 0 || uniqueStatuses.length !== statuses.length ||
+        uniqueStatuses.some((status) => !ORDER_STATUSES.includes(status))) {
+      throw new TypeError("statuses debe contener estados únicos y válidos.");
+    }
+    return this.collect(
+      this.collection
+        .where("status", "in", uniqueStatuses)
+        .orderBy("createdAt", "asc")
+    );
+  }
+
+  async listBySession(
+    sessionId: string
+  ): Promise<readonly TenantDocument<OrderContract>[]> {
+    return this.collect(
+      this.collection
+        .where("sessionId", "==", assertDocumentId(sessionId, "sessionId"))
+        .orderBy("createdAt", "asc")
+    );
+  }
+
+  async listRecentByTable(
+    tableId: string,
+    resultLimit = 50
+  ): Promise<readonly TenantDocument<OrderContract>[]> {
+    if (!Number.isSafeInteger(resultLimit) || resultLimit < 1 || resultLimit > 100) {
+      throw new TypeError("resultLimit debe ser un entero entre 1 y 100.");
+    }
+    return this.collect(
+      this.collection
+        .where("tableId", "==", assertDocumentId(tableId, "tableId"))
+        .orderBy("createdAt", "desc")
+        .limit(resultLimit)
     );
   }
 }

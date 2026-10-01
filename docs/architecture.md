@@ -216,10 +216,11 @@ una membresía o sesión validada.
 | Pagos de sesión | `payments` | `sessionId ==`, `createdAt desc` | `sessionId, createdAt` |
 | Miembros por rol | `members` | `active ==`, `role ==`, `createdAt desc` | `active, role, createdAt` |
 
-`firestore.indexes.json` tiene inicialmente listas vacías para configurar el
-emulador; se completará en la Etapa 13 al existir consultas reales. Corrección de
-verificación: el emulador no exige índices compuestos. Las consultas deberán
-verificarse también en el proyecto de desarrollo real antes de cerrar esa etapa.
+`firestore.indexes.json` contiene desde la Etapa 13 los ocho índices compuestos
+de esta tabla. Todos usan scope `COLLECTION` sobre una subcolección concreta del
+tenant. El emulador comprueba filtros, orden y límites, pero no exige índices;
+por eso el cierre de la etapa requiere comprobar estados `READY` y ejecutar los
+planes en el proyecto de desarrollo real.
 
 ## Matriz resumida de permisos
 
@@ -260,3 +261,11 @@ Firestore y los contratos serializables de la Etapa 11. Toda lectura se valida d
 nuevo, de modo que un documento histórico corrupto no llega como entidad válida
 a la lógica de negocio. Los SDKs cliente siguen bloqueados por reglas hasta la
 Etapa 14.
+
+## Consultas e índices — Etapa 13
+
+Los planes canónicos viven en `firebase/query-plans.json` y deben corresponder
+exactamente a `firestore.indexes.json`. El verificador rechaza índices ausentes,
+adicionales, duplicados o que incorporen `establishmentId`, evitando normalizar
+consultas globales entre tenants. Los repositorios de Product y Order construyen
+las consultas desde su `CollectionReference` ya acotada al establecimiento.

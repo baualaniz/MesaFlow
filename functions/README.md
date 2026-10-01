@@ -21,6 +21,10 @@ establecimiento para Product y Order. Sus pruebas unitarias forman parte de
 `functions:check`; el CRUD contra Firestore real se comprueba exclusivamente en
 el proyecto local `demo-mesaflow` con `test:emulators`.
 
+La Etapa 13 agrega consultas tipadas de menú publicado y vistas operativas de
+pedidos. Sus índices canónicos viven en `firestore.indexes.json`; los repositorios
+siempre consultan una subcolección previamente acotada al establecimiento.
+
 La función emulada queda en:
 
 ```text

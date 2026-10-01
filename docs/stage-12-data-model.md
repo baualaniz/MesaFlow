@@ -60,7 +60,7 @@ El repositorio base expone:
 - `list()`: lista únicamente la colección del tenant construido.
 - `remove(id)`: elimina el documento indicado dentro de ese tenant.
 
-Las consultas filtradas y sus índices compuestos se agregan en la Etapa 13. Las
+Las consultas filtradas y sus índices compuestos se agregaron en la Etapa 13. Las
 transacciones de negocio no se implementan en este CRUD: pedidos, pagos y cambios
 de estado tendrán Functions específicas en etapas posteriores.
 

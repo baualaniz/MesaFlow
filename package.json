@@ -23,12 +23,13 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config && npm run test:storage-config && npm run test:secrets-config && npm run test:hosting-config && npm run test:presentation-seed && npm run test:contracts && npm run functions:check",
+    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config && npm run test:firestore-indexes && npm run test:storage-config && npm run test:secrets-config && npm run test:hosting-config && npm run test:presentation-seed && npm run test:contracts && npm run functions:check",
     "check:repo": "node ./scripts/check-repository.mjs",
     "test:config": "node --test ./scripts/firebase-projects.test.mjs ./scripts/emulator-config.test.mjs",
     "test:tooling": "node --test ./scripts/tooling-dependencies.test.mjs ./scripts/java-runtime.test.mjs",
     "test:auth-config": "node --test ./scripts/auth-config.test.mjs",
     "test:firestore-config": "node --test ./scripts/firestore-config.test.mjs",
+    "test:firestore-indexes": "node --test ./scripts/firestore-indexes.test.mjs",
     "test:storage-config": "node --test ./scripts/storage-config.test.mjs",
     "test:secrets-config": "node --test ./scripts/secrets-config.test.mjs",
     "test:hosting-config": "node --test ./scripts/hosting-config.test.mjs",
@@ -38,6 +39,8 @@
     "contracts:check": "npm run test:contracts && npm run test:contracts:flutter",
     "auth:check": "node ./scripts/check-auth-config.mjs",
     "firestore:check": "node ./scripts/check-firestore-config.mjs",
+    "firestore:indexes:check:dev": "node ./scripts/check-firestore-indexes.mjs dev",
+    "firestore:queries:check:dev": "node ./scripts/check-firestore-queries.mjs dev",
     "firestore:smoke:dev": "node ./scripts/firestore-cloud-smoke.mjs dev",
     "firebase:seed:presentation:dev": "node ./scripts/seed-presentation-dev.mjs",
     "storage:check": "node ./scripts/check-storage-config.mjs",
@@ -52,7 +55,7 @@
     "check:env": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-environment.ps1",
     "emulators": "node ./scripts/run-emulators.mjs start",
     "test:emulators": "node ./scripts/run-emulators.mjs test",
-    "test:emulator:clients": "node ./scripts/functions-emulator-smoke.mjs && node ./scripts/hosting-emulator-smoke.mjs && node ./scripts/emulator-smoke.mjs && node ./scripts/firestore-repository-emulator.mjs && node --test ./firebase/tests/storage.rules.test.mjs",
+    "test:emulator:clients": "node ./scripts/functions-emulator-smoke.mjs && node ./scripts/hosting-emulator-smoke.mjs && node ./scripts/emulator-smoke.mjs && node ./scripts/firestore-repository-emulator.mjs && node ./scripts/firestore-query-emulator.mjs && node --test ./firebase/tests/storage.rules.test.mjs",
     "firebase:login": "firebase login",
     "firebase:projects": "firebase projects:list",
     "firebase:use:dev": "firebase use dev"

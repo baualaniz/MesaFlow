@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "databaseId": "(default)",
+  "queryScope": "COLLECTION",
+  "plans": [
+    {
+      "id": "published-products-by-category",
+      "collectionGroup": "products",
+      "purpose": "Menú publicable ordenado dentro de una categoría",
+      "filters": ["categoryId ==", "active ==", "available =="],
+      "orderBy": ["sortOrder asc"],
+      "indexFields": ["categoryId ASCENDING", "active ASCENDING", "available ASCENDING", "sortOrder ASCENDING"]
+    },
+    {
+      "id": "published-categories",
+      "collectionGroup": "categories",
+      "purpose": "Categorías publicadas del menú",
+      "filters": ["active =="],
+      "orderBy": ["sortOrder asc"],
+      "indexFields": ["active ASCENDING", "sortOrder ASCENDING"]
+    },
+    {
+      "id": "operational-order-queue",
+      "collectionGroup": "orders",
+      "purpose": "Cola operativa por conjunto de estados",
+      "filters": ["status in"],
+      "orderBy": ["createdAt asc"],
+      "indexFields": ["status ASCENDING", "createdAt ASCENDING"]
+    },
+    {
+      "id": "orders-by-session",
+      "collectionGroup": "orders",
+      "purpose": "Historial cronológico de una sesión",
+      "filters": ["sessionId =="],
+      "orderBy": ["createdAt asc"],
+      "indexFields": ["sessionId ASCENDING", "createdAt ASCENDING"]
+    },
+    {
+      "id": "recent-orders-by-table",
+      "collectionGroup": "orders",
+      "purpose": "Pedidos recientes de una mesa",
+      "filters": ["tableId =="],
+      "orderBy": ["createdAt desc"],
+      "indexFields": ["tableId ASCENDING", "createdAt DESCENDING"]
+    },
+    {
+      "id": "pending-assistance",
+      "collectionGroup": "assistanceRequests",
+      "purpose": "Solicitudes pendientes por antigüedad",
+      "filters": ["status =="],
+      "orderBy": ["createdAt asc"],
+      "indexFields": ["status ASCENDING", "createdAt ASCENDING"]
+    },
+    {
+      "id": "payments-by-session",
+      "collectionGroup": "payments",
+      "purpose": "Pagos recientes de una sesión",
+      "filters": ["sessionId =="],
+      "orderBy": ["createdAt desc"],
+      "indexFields": ["sessionId ASCENDING", "createdAt DESCENDING"]
+    },
+    {
+      "id": "active-members-by-role",
+      "collectionGroup": "members",
+      "purpose": "Miembros activos de un rol",
+      "filters": ["active ==", "role =="],
+      "orderBy": ["createdAt desc"],
+      "indexFields": ["active ASCENDING", "role ASCENDING", "createdAt DESCENDING"]
+    }
+  ]
+}

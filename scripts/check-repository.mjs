@@ -44,6 +44,7 @@ const requiredPaths = [
   "firebase/secrets-policy.json",
   "firebase/hosting-policy.json",
   "firebase/schema/firestore-schema.json",
+  "firebase/query-plans.json",
   "firebase/tests",
   "functions/package.json",
   "functions/tsconfig.json",
@@ -63,17 +64,23 @@ const requiredPaths = [
   "apps/customer/test/domain_contracts_test.dart",
   "docs/stage-11-contracts.md",
   "docs/stage-12-data-model.md",
+  "docs/stage-13-firestore-indexes.md",
   "functions/src/data/firestore-converters.ts",
   "functions/src/data/tenant-repository.ts",
   "functions/test/tenant-repository.test.mjs",
   "package.json",
   "scripts/check-environment.ps1",
   "scripts/lib/java-runtime.mjs",
+  "scripts/lib/firestore-indexes.mjs",
+  "scripts/firestore-indexes.test.mjs",
+  "scripts/check-firestore-indexes.mjs",
+  "scripts/check-firestore-queries.mjs",
   "scripts/java-runtime.test.mjs",
   "scripts/lib/presentation-seed.mjs",
   "scripts/presentation-seed.test.mjs",
   "scripts/seed-presentation-dev.mjs",
-  "scripts/firestore-repository-emulator.mjs"
+  "scripts/firestore-repository-emulator.mjs",
+  "scripts/firestore-query-emulator.mjs"
 ];
 
 const forbiddenFilePatterns = [

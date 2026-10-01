@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 12** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 13** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 No hay despliegues cloud. El primer shell Flutter del cliente adelanta la Etapa 17.
@@ -33,6 +33,7 @@ encuentran en:
 - `docs/stage-10-hosting.md`
 - `docs/stage-11-contracts.md`
 - `docs/stage-12-data-model.md`
+- `docs/stage-13-firestore-indexes.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -62,9 +63,9 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 74
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 80
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
-ocho de Firestore, ocho de Storage, cuatro de secretos, seis de Hosting, cinco del
+ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, seis de Hosting, cinco del
 seed de presentación, ocho de contratos y siete de Functions), más
 el lint y build TypeScript. Este comando no consulta servicios remotos.
 
@@ -102,6 +103,15 @@ npm.cmd run firestore:smoke:dev
 El primer comando es de solo lectura. El segundo solo acepta desarrollo, crea un
 documento técnico con ID aleatorio, verifica su lectura y lo elimina; nunca escribe
 en producción.
+
+La Etapa 13 versiona ocho consultas e índices. Tras desplegar manualmente solo los
+índices en desarrollo, su estado y las consultas sobre el dataset demo se validan
+sin escrituras:
+
+```powershell
+npm.cmd run firestore:indexes:check:dev
+npm.cmd run firestore:queries:check:dev
+```
 
 ## Emuladores locales
 
