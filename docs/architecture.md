@@ -314,3 +314,30 @@ configuración y auditoría. Los timestamps y IDs son deterministas. La carga ha
 `set` solamente sobre sus rutas conocidas, verifica el resultado completo y una
 segunda aplicación debe producir cero cambios. El seed de presentación anterior
 permanece separado como excepción histórica para desarrollo real.
+
+## Bootstrap Flutter — Etapa 17
+
+El cliente Web selecciona `emulator`, `dev` o `prod` mediante
+`MESAFLOW_ENV` en tiempo de compilación. La ausencia del valor elige
+`demo-mesaflow`; un valor desconocido falla y nunca cae en producción. Desarrollo
+y producción tienen apps Web Firebase distintas y archivos FlutterFire separados.
+
+Antes de inicializar Firebase Core se comprueba que el `projectId` de las opciones
+coincida con el ambiente elegido. El manifiesto generado por FlutterFire se valida
+también desde la suite raíz. Los identificadores Web se versionan por ser
+configuración pública; la autorización sigue dependiendo de Auth, Rules y backend.
+Hosting local solo acepta un build marcado como `emulator`, evitando servir un
+bundle cloud dejado por una compilación manual anterior.
+
+## Sistema visual — Etapa 18
+
+El cliente usa Poppins para títulos e Inter para texto y controles. Ambas fuentes
+se distribuyen dentro del bundle junto con sus licencias OFL; no dependen de una
+petición a Google Fonts. La paleta MesaFlow agrega superficies y colores
+semánticos para éxito, advertencia, información y error.
+
+Los tokens de espaciado y radio, más los temas de campos, botones, chips,
+tarjetas, snackbars, bottom sheets, tooltips y progreso, forman la base común.
+`MesaFlowStatusBadge` y `MesaFlowFeedbackPanel` representan estados sin depender
+solo del color. Las pruebas de widgets cubren 320, 390 y 1280 px, y el bundle se
+verificó visualmente en navegador sin errores de consola.

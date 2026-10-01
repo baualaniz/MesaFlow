@@ -5,6 +5,7 @@ import '../data/demo_menu.dart';
 import '../models/menu_product.dart';
 import '../theme/mesaflow_theme.dart';
 import '../widgets/product_card.dart';
+import '../widgets/feedback_panel.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -444,18 +445,16 @@ class _EmptySearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 64),
-      child: Column(
-        children: [
-          const Icon(Icons.search_off_rounded, size: 44),
-          const SizedBox(height: 12),
-          Text(
-            'No encontramos productos',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 4),
-          const Text('Probá con otra búsqueda o categoría.'),
-        ],
+      padding: const EdgeInsets.symmetric(
+        vertical: 64,
+        horizontal: MesaFlowSpacing.md,
+      ),
+      child: const Center(
+        child: MesaFlowFeedbackPanel(
+          title: 'No encontramos productos',
+          message: 'Probá con otra búsqueda o categoría.',
+          tone: MesaFlowFeedbackTone.neutral,
+        ),
       ),
     );
   }

@@ -100,7 +100,8 @@ usuario.
 | 14 | Completa localmente: membresías, roles, participantes, catálogo público, campos inmutables y 14 pruebas de reglas aprobadas | `docs/stage-14-firestore-rules.md` |
 | 15 | Completa localmente: MIME/extensión, tamaño, metadata exacta, rutas, membresía y actualizaciones cubiertos por 9 pruebas de reglas | `docs/stage-15-storage-rules.md` |
 | 16 | Completa localmente: dataset determinista de 61 documentos, 4 roles, 10 mesas, 18 productos, pedidos/pagos e idempotencia en emulador | `docs/stage-16-demo-seed.md` |
-| 17 | Adelanto visual en curso: shell Flutter Web, catálogo local, búsqueda, filtros y carrito demostrativo | `docs/stage-17-customer-shell.md` |
+| 17 | Completa: shell/PWA, `firebase_core`, apps Web dev/prod separadas, ambiente local seguro, 15 tests y tres builds aprobados | `docs/stage-17-customer-shell.md` |
+| 18 | Completa: Poppins/Inter locales, tokens visuales, temas de controles, badges/feedback y 18 tests responsive aprobados | `docs/stage-18-design-system.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

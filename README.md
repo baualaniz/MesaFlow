@@ -11,11 +11,14 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 16** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 18** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
-y sitios continúan locales. El primer shell Flutter del cliente adelanta la Etapa 17.
+y sitios continúan locales. La app Flutter inicializa Firebase Core con apps Web
+separadas para desarrollo y producción, y usa `demo-mesaflow` por defecto local.
+El sistema visual incluye Poppins/Inter empaquetadas, tokens y componentes
+semánticos probados en móvil y escritorio.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -38,6 +41,8 @@ encuentran en:
 - `docs/stage-14-firestore-rules.md`
 - `docs/stage-15-storage-rules.md`
 - `docs/stage-16-demo-seed.md`
+- `docs/stage-17-customer-shell.md`
+- `docs/stage-18-design-system.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -67,10 +72,10 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 87
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 90
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, seis de Hosting, cinco del
-seed de presentación, siete del seed demo, ocho de contratos y siete de Functions), más
+seed de presentación, siete del seed demo, tres de FlutterFire, ocho de contratos y siete de Functions), más
 el lint y build TypeScript. Este comando no consulta servicios remotos.
 
 Los contratos compartidos tienen además siete pruebas Dart contra los mismos
@@ -192,7 +197,7 @@ El primer shell visual está en `apps/customer`. Se ejecuta con:
 ```powershell
 cd apps/customer
 flutter.bat pub get
-flutter.bat build web
+flutter.bat build web --dart-define=MESAFLOW_ENV=emulator
 cd ../..
 npm.cmd run preview:customer
 ```

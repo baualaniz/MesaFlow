@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"dart":{"lib/src/firebase/firebase_options_dev.dart":{"projectId":"mesaflow-desarrollo","configurations":{"web":"1:685584709099:web:2d9cac26a22fbdcae815ae"}},"lib/src/firebase/firebase_options_prod.dart":{"projectId":"mesaflow-produccion","configurations":{"web":"1:619377674437:web:3643ee20e7c37954a288ac"}}}}}}

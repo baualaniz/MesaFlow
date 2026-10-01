@@ -11,6 +11,7 @@ import { validateFirestorePolicy, validateFirestoreSchema } from "./lib/firestor
 import { validateStoragePolicy } from "./lib/storage-config.mjs";
 import { validateSecretsPolicy } from "./lib/secrets-config.mjs";
 import { validateHostingConfig } from "./lib/hosting-config.mjs";
+import { validateCustomerFirebaseConfig } from "./lib/customer-firebase-config.mjs";
 
 const root = process.cwd();
 const execFileAsync = promisify(execFile);
@@ -63,12 +64,30 @@ const requiredPaths = [
   "packages/contracts/test/domain.test.mjs",
   "apps/customer/lib/src/contracts/domain_contracts.dart",
   "apps/customer/test/domain_contracts_test.dart",
+  "apps/customer/lib/src/config/app_environment.dart",
+  "apps/customer/test/app_environment_test.dart",
+  "apps/customer/firebase.json",
+  "apps/customer/lib/src/firebase/firebase_bootstrap.dart",
+  "apps/customer/lib/src/firebase/firebase_options_dev.dart",
+  "apps/customer/lib/src/firebase/firebase_options_prod.dart",
+  "apps/customer/test/firebase_bootstrap_test.dart",
+  "apps/customer/assets/fonts/Inter-Variable.ttf",
+  "apps/customer/assets/fonts/Poppins-Regular.ttf",
+  "apps/customer/assets/fonts/Poppins-SemiBold.ttf",
+  "apps/customer/assets/fonts/Poppins-Bold.ttf",
+  "apps/customer/assets/fonts/OFL-Inter.txt",
+  "apps/customer/assets/fonts/OFL-Poppins.txt",
+  "apps/customer/lib/src/widgets/status_badge.dart",
+  "apps/customer/lib/src/widgets/feedback_panel.dart",
+  "apps/customer/test/design_system_test.dart",
   "docs/stage-11-contracts.md",
   "docs/stage-12-data-model.md",
   "docs/stage-13-firestore-indexes.md",
   "docs/stage-14-firestore-rules.md",
   "docs/stage-15-storage-rules.md",
   "docs/stage-16-demo-seed.md",
+  "docs/stage-17-customer-shell.md",
+  "docs/stage-18-design-system.md",
   "functions/src/data/firestore-converters.ts",
   "functions/src/data/tenant-repository.ts",
   "functions/test/tenant-repository.test.mjs",
@@ -87,6 +106,8 @@ const requiredPaths = [
   "scripts/lib/demo-seed.mjs",
   "scripts/demo-seed.test.mjs",
   "scripts/seed-demo-emulator.mjs",
+  "scripts/lib/customer-firebase-config.mjs",
+  "scripts/customer-firebase-config.test.mjs",
   "scripts/firestore-repository-emulator.mjs",
   "scripts/firestore-query-emulator.mjs"
 ];
@@ -198,6 +219,10 @@ try {
     firebaseConfig,
     JSON.parse(await readFile(path.join(root, "firebase/hosting-policy.json"), "utf8"))
   );
+  validateCustomerFirebaseConfig(
+    JSON.parse(await readFile(path.join(root, "apps/customer/firebase.json"), "utf8")),
+    firebaseProjects
+  );
 
   const repositoryFiles = await listRepositoryFiles();
   const forbiddenFiles = findForbiddenFiles(repositoryFiles);
@@ -220,6 +245,7 @@ try {
   console.log("[OK] Política y reglas base de Storage");
   console.log("[OK] Política de configuración pública y secretos");
   console.log("[OK] Tres destinos Firebase Hosting locales");
+  console.log("[OK] Apps Web FlutterFire separadas para desarrollo y producción");
   console.log("[OK] No se detectaron archivos ni valores sensibles versionables");
   console.log("Repositorio MesaFlow válido.");
 } catch (error) {

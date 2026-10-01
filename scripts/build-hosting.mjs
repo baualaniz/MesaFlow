@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { access, readdir, stat } from "node:fs/promises";
+import { access, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { constants } from "node:fs";
 import path from "node:path";
@@ -21,6 +21,11 @@ async function newestMtime(target) {
 async function customerBuildIsCurrent() {
   try {
     const outputTime = (await stat(path.join(customer, "build/web/index.html"))).mtimeMs;
+    const environment = await readFile(
+      path.join(customer, "build/web/.mesaflow-environment"),
+      "utf8"
+    );
+    if (environment.trim() !== "emulator") return false;
     const sources = ["lib", "web", "assets", "pubspec.yaml", "pubspec.lock", ".metadata"];
     const sourceTime = Math.max(...await Promise.all(
       sources.map((entry) => newestMtime(path.join(customer, entry)))
@@ -34,7 +39,7 @@ async function customerBuildIsCurrent() {
 function runFlutterBuild() {
   const windows = process.platform === "win32";
   let executable = "flutter";
-  let args = ["build", "web", "--release"];
+  let args = ["build", "web", "--release", "--dart-define=MESAFLOW_ENV=emulator"];
   let env = process.env;
   if (windows) {
     const flutterBin = (process.env.Path ?? process.env.PATH ?? "")
@@ -48,7 +53,7 @@ function runFlutterBuild() {
     args = [
       `--packages=${path.join(flutterRoot, "packages/flutter_tools/.dart_tool/package_config.json")}`,
       path.join(flutterRoot, "bin/cache/flutter_tools.snapshot"),
-      "build", "web", "--release"
+      "build", "web", "--release", "--dart-define=MESAFLOW_ENV=emulator"
     ];
     env = { ...process.env, FLUTTER_ROOT: flutterRoot };
   }
@@ -67,6 +72,11 @@ try {
     console.log("[OK] Build Flutter vigente; no fue necesario recompilar.");
   } else {
     await runFlutterBuild();
+    await writeFile(
+      path.join(customer, "build/web/.mesaflow-environment"),
+      "emulator\n",
+      "utf8"
+    );
   }
   for (const relativePath of [
     "apps/customer/build/web/index.html",

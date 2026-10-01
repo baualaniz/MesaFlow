@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../contracts/domain_contracts.dart';
 import '../models/menu_product.dart';
 import '../theme/mesaflow_theme.dart';
+import 'status_badge.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
@@ -38,22 +39,11 @@ class ProductCard extends StatelessWidget {
                     Positioned(
                       left: 14,
                       top: 14,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: MesaFlowColors.ivory.withValues(alpha: 0.92),
-                          borderRadius: BorderRadius.circular(99),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 7,
-                          ),
-                          child: Text(
-                            badge,
-                            style: Theme.of(context).textTheme.labelMedium
-                                ?.copyWith(fontWeight: FontWeight.w700),
-                          ),
-                        ),
+                      child: MesaFlowStatusBadge(
+                        label: badge,
+                        tone: badge == 'Veggie'
+                            ? MesaFlowBadgeTone.success
+                            : MesaFlowBadgeTone.neutral,
                       ),
                     ),
                 ],
