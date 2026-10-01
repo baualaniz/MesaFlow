@@ -2,10 +2,9 @@
 
 ## Estado
 
-Implementación local completa y probada en Emulator Suite. La activación de los
-ocho índices y la comprobación final de consultas en `mesaflow-desarrollo` quedan
-pendientes de una acción manual explícita. Producción no forma parte de esta
-etapa.
+Etapa completa. Los ocho índices están activos en `mesaflow-desarrollo` y los
+ocho planes fueron ejecutados en modo solo lectura contra el dataset de
+presentación. Producción no formó parte de esta etapa.
 
 ## Planes canónicos
 
@@ -96,8 +95,11 @@ dataset de presentación siga cargado y no crea, modifica ni elimina documentos.
 - [x] Consultas de Product/Order implementadas y tipadas.
 - [x] Filtros, orden y límites probados con emulador.
 - [x] Validadores locales y verificadores cloud de solo lectura.
-- [ ] Índices desplegados y `READY` en `mesaflow-desarrollo`.
-- [ ] Ocho consultas reales aprobadas en `mesaflow-desarrollo`.
+- [x] Índices desplegados y `READY` en `mesaflow-desarrollo`.
+- [x] Ocho consultas reales aprobadas en `mesaflow-desarrollo`.
+
+Evidencia confirmada por el usuario: menú 2 resultados, categorías 3 y un
+resultado para cada plan operativo restante; los ocho índices informaron `OK`.
 
 No requiere Blaze ni tarjeta. La creación de índices puede consumir almacenamiento
 y escrituras internas del servicio cuando existan datos, por eso se limita a

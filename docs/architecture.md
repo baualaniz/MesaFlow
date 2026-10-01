@@ -15,8 +15,9 @@ cambia la arquitectura. Más detalles en `stage-03-firebase-environments.md`.
 
 Los emuladores usan exclusivamente `demo-mesaflow` y loopback. Auth, Firestore,
 Storage, Functions y los tres destinos Hosting están implementados.
-Las reglas iniciales deniegan todos los accesos cliente y se ampliarán en la
-Etapa 14. No se han desplegado estas reglas en ninguno de los proyectos.
+Las reglas de la Etapa 14 autorizan catálogo público, membresías activas y
+participantes de sesión con mínimo privilegio. Todavía no se desplegaron en los
+proyectos cloud; su validación actual se realiza con Emulator Suite.
 
 Firebase CLI queda fijada como dependencia local en 15.28.2 con correcciones
 transitivas documentadas en `tooling-security.md`. No cambia el stack del MVP.
@@ -269,3 +270,15 @@ exactamente a `firestore.indexes.json`. El verificador rechaza índices ausentes
 adicionales, duplicados o que incorporen `establishmentId`, evitando normalizar
 consultas globales entre tenants. Los repositorios de Product y Order construyen
 las consultas desde su `CollectionReference` ya acotada al establecimiento.
+
+## Autorización Firestore — Etapa 14
+
+Las reglas distinguen miembros del panel y participantes anónimos de mesa. Los
+miembros se validan por UID, estado activo, rol y coherencia de tenant. Los
+participantes se validan por UID, sesión activa y coherencia de establecimiento.
+
+El catálogo admite lectura pública solo para categorías activas y productos
+activos/disponibles. Owner/manager administran catálogo y staff solo alterna
+disponibilidad. Pedidos, sesiones, asistencia, pagos, membresías, QR y webhooks
+reservan sus escrituras a Functions/Admin SDK. Las reglas separan `get` de `list`
+para exigir en consultas filtros que Firestore pueda demostrar.

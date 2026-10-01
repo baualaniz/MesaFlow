@@ -1,7 +1,219 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Closed baseline for emulator setup. Tenant permissions arrive in Stage 14.
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function membershipPath(establishmentId) {
+      return /databases/$(database)/documents/establishments/$(establishmentId)/members/$(request.auth.uid);
+    }
+
+    function isActiveMember(establishmentId) {
+      return signedIn()
+        && exists(membershipPath(establishmentId))
+        && get(membershipPath(establishmentId)).data.active == true
+        && get(membershipPath(establishmentId)).data.establishmentId == establishmentId
+        && get(membershipPath(establishmentId)).data.uid == request.auth.uid;
+    }
+
+    function hasRole(establishmentId, roles) {
+      return isActiveMember(establishmentId)
+        && get(membershipPath(establishmentId)).data.role in roles;
+    }
+
+    function participantPath(establishmentId, sessionId) {
+      return /databases/$(database)/documents/establishments/$(establishmentId)/tableSessions/$(sessionId)/participants/$(request.auth.uid);
+    }
+
+    function isActiveParticipant(establishmentId, sessionId) {
+      return signedIn()
+        && exists(participantPath(establishmentId, sessionId))
+        && get(participantPath(establishmentId, sessionId)).data.active == true
+        && get(participantPath(establishmentId, sessionId)).data.establishmentId == establishmentId
+        && get(participantPath(establishmentId, sessionId)).data.sessionId == sessionId
+        && get(participantPath(establishmentId, sessionId)).data.uid == request.auth.uid;
+    }
+
+    function validCategory(establishmentId, data) {
+      return data.keys().hasOnly([
+          'establishmentId', 'name', 'description', 'sortOrder', 'active',
+          'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasAll([
+          'establishmentId', 'name', 'description', 'sortOrder', 'active',
+          'createdAt', 'updatedAt'
+        ])
+        && data.establishmentId == establishmentId
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 120
+        && data.description is string && data.description.size() <= 500
+        && data.sortOrder is int && data.sortOrder >= 0
+        && data.active is bool
+        && data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    function validProduct(establishmentId, data) {
+      return data.keys().hasOnly([
+          'establishmentId', 'categoryId', 'name', 'description', 'priceMinor',
+          'currency', 'imagePath', 'available', 'active', 'sortOrder',
+          'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasAll([
+          'establishmentId', 'categoryId', 'name', 'description', 'priceMinor',
+          'currency', 'imagePath', 'available', 'active', 'sortOrder',
+          'createdAt', 'updatedAt'
+        ])
+        && data.establishmentId == establishmentId
+        && data.categoryId is string && data.categoryId.size() > 0
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 120
+        && data.description is string && data.description.size() <= 500
+        && data.priceMinor is int && data.priceMinor >= 0
+        && data.priceMinor <= 9000000000000
+        && data.currency is string && data.currency.matches('^[A-Z]{3}$')
+        && (data.imagePath == null || data.imagePath is string)
+        && data.available is bool && data.active is bool
+        && data.sortOrder is int && data.sortOrder >= 0
+        && data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    match /users/{uid} {
+      allow get: if signedIn() && request.auth.uid == uid;
+      allow list, write: if false;
+    }
+
+    match /establishmentSlugs/{slug} {
+      allow get: if resource.data.active == true;
+      allow list, write: if false;
+    }
+
+    match /establishments/{establishmentId} {
+      allow get: if resource.data.active == true || isActiveMember(establishmentId);
+      allow list, write: if false;
+
+      match /members/{uid} {
+        allow get: if resource.data.establishmentId == establishmentId
+          && signedIn()
+          && (request.auth.uid == uid || hasRole(establishmentId, ['owner', 'manager']));
+        allow list: if hasRole(establishmentId, ['owner', 'manager']);
+        allow write: if false;
+      }
+
+      match /categories/{categoryId} {
+        allow get: if resource.data.establishmentId == establishmentId
+          && (resource.data.active == true || isActiveMember(establishmentId));
+        allow list: if resource.data.active == true || isActiveMember(establishmentId);
+        allow create: if hasRole(establishmentId, ['owner', 'manager'])
+          && validCategory(establishmentId, request.resource.data);
+        allow update: if hasRole(establishmentId, ['owner', 'manager'])
+          && validCategory(establishmentId, request.resource.data)
+          && resource.data.establishmentId == establishmentId
+          && request.resource.data.establishmentId == resource.data.establishmentId
+          && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if hasRole(establishmentId, ['owner', 'manager'])
+          && resource.data.establishmentId == establishmentId;
+      }
+
+      match /products/{productId} {
+        allow get: if resource.data.establishmentId == establishmentId
+          && ((resource.data.active == true && resource.data.available == true)
+            || isActiveMember(establishmentId));
+        allow list: if (resource.data.active == true && resource.data.available == true)
+          || isActiveMember(establishmentId);
+        allow create: if hasRole(establishmentId, ['owner', 'manager'])
+          && validProduct(establishmentId, request.resource.data);
+        allow update: if validProduct(establishmentId, request.resource.data)
+          && resource.data.establishmentId == establishmentId
+          && request.resource.data.establishmentId == resource.data.establishmentId
+          && request.resource.data.createdAt == resource.data.createdAt
+          && (hasRole(establishmentId, ['owner', 'manager'])
+            || (hasRole(establishmentId, ['staff'])
+              && request.resource.data.diff(resource.data).affectedKeys()
+                .hasOnly(['available', 'updatedAt'])));
+        allow delete: if hasRole(establishmentId, ['owner', 'manager'])
+          && resource.data.establishmentId == establishmentId;
+      }
+
+      match /tables/{tableId} {
+        allow get: if resource.data.establishmentId == establishmentId
+          && isActiveMember(establishmentId);
+        allow list: if isActiveMember(establishmentId);
+        allow write: if false;
+      }
+
+      match /tableSessions/{sessionId} {
+        allow get: if resource.data.establishmentId == establishmentId
+          && (isActiveMember(establishmentId)
+            || isActiveParticipant(establishmentId, sessionId));
+        allow list: if isActiveMember(establishmentId);
+        allow write: if false;
+
+        match /participants/{uid} {
+          allow read: if resource.data.establishmentId == establishmentId
+            && resource.data.sessionId == sessionId
+            && (isActiveMember(establishmentId)
+              || (signedIn() && request.auth.uid == uid
+                && isActiveParticipant(establishmentId, sessionId)));
+          allow write: if false;
+        }
+      }
+
+      match /orders/{orderId} {
+        allow get: if resource.data.establishmentId == establishmentId
+          && (isActiveMember(establishmentId)
+            || isActiveParticipant(establishmentId, resource.data.sessionId));
+        allow list: if isActiveMember(establishmentId)
+          || isActiveParticipant(establishmentId, resource.data.sessionId);
+        allow write: if false;
+      }
+
+      match /assistanceRequests/{requestId} {
+        allow get: if resource.data.establishmentId == establishmentId
+          && (isActiveMember(establishmentId)
+            || isActiveParticipant(establishmentId, resource.data.sessionId));
+        allow list: if isActiveMember(establishmentId)
+          || isActiveParticipant(establishmentId, resource.data.sessionId);
+        allow write: if false;
+      }
+
+      match /payments/{paymentId} {
+        allow get: if resource.data.establishmentId == establishmentId
+          && (hasRole(establishmentId, ['owner', 'manager'])
+            || isActiveParticipant(establishmentId, resource.data.sessionId));
+        allow list: if hasRole(establishmentId, ['owner', 'manager'])
+          || isActiveParticipant(establishmentId, resource.data.sessionId);
+        allow write: if false;
+      }
+
+      match /dailyMetrics/{date} {
+        allow get: if resource.data.establishmentId == establishmentId
+          && hasRole(establishmentId, ['owner', 'manager']);
+        allow list: if hasRole(establishmentId, ['owner', 'manager']);
+        allow write: if false;
+      }
+
+      match /settings/{visibility} {
+        allow read: if resource.data.establishmentId == establishmentId
+          && (visibility == 'public'
+            || hasRole(establishmentId, ['owner', 'manager']));
+        allow write: if false;
+      }
+
+      match /auditLogs/{logId} {
+        allow get: if resource.data.establishmentId == establishmentId
+          && hasRole(establishmentId, ['owner', 'manager']);
+        allow list: if hasRole(establishmentId, ['owner', 'manager']);
+        allow write: if false;
+      }
+
+      match /qrExchanges/{exchangeId} {
+        allow read, write: if false;
+      }
+    }
+
+    match /webhookEvents/{eventId} {
+      allow read, write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

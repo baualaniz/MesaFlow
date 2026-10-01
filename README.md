@@ -11,10 +11,11 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 13** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 14** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
-No hay despliegues cloud. El primer shell Flutter del cliente adelanta la Etapa 17.
+Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
+y sitios continúan locales. El primer shell Flutter del cliente adelanta la Etapa 17.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -34,6 +35,7 @@ encuentran en:
 - `docs/stage-11-contracts.md`
 - `docs/stage-12-data-model.md`
 - `docs/stage-13-firestore-indexes.md`
+- `docs/stage-14-firestore-rules.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -129,8 +131,8 @@ npm.cmd run test:emulators
 ```
 
 El smoke valida los tres sitios Hosting, el endpoint Functions `health`,
-Auth/Firestore, el CRUD tipado con aislamiento por tenant y seis casos de reglas
-Storage: roles, membresía activa,
+Auth/Firestore, el CRUD tipado con aislamiento por tenant, 14 casos de reglas
+Firestore y seis casos de reglas Storage: roles, membresía activa,
 aislamiento entre tenants, tipos, tamaños, metadata y rutas.
 
 Los destinos web locales son cliente en `http://127.0.0.1:5100`, panel en

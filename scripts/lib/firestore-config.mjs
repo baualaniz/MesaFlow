@@ -3,7 +3,7 @@ const expectedPolicy = Object.freeze({
   edition: "STANDARD",
   type: "FIRESTORE_NATIVE",
   locationId: "southamerica-east1",
-  initialRulesMode: "deny-all"
+  initialRulesMode: "membership-and-session"
 });
 
 export function validateFirestorePolicy(policy) {

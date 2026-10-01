@@ -4,6 +4,6 @@
   "edition": "STANDARD",
   "type": "FIRESTORE_NATIVE",
   "locationId": "southamerica-east1",
-  "initialRulesMode": "deny-all",
+  "initialRulesMode": "membership-and-session",
   "environments": ["dev", "prod"]
 }
