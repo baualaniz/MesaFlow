@@ -66,6 +66,10 @@ una demo reproducible sin tarjeta. Las reglas y rutas de Storage quedan probadas
 como extensión futura: `establishments/{establishmentId}/products/{productId}` y
 `establishments/{establishmentId}/branding`, con escritura exclusiva para owner o
 manager activo del mismo tenant, JPEG/PNG/WebP de hasta 5 MiB y metadata obligatoria.
+La Etapa 15 endurece esa extensión opcional: el tipo MIME debe coincidir con la
+extensión en minúsculas, solo se admiten los dos campos de metadata previstos y
+el identificador de producto debe ser un segmento seguro. Las mismas condiciones
+se aplican al crear y reemplazar archivos.
 
 | Componente | Tecnología | Función | Motivo |
 |---|---|---|---|
@@ -282,3 +286,17 @@ activos/disponibles. Owner/manager administran catálogo y staff solo alterna
 disponibilidad. Pedidos, sesiones, asistencia, pagos, membresías, QR y webhooks
 reservan sus escrituras a Functions/Admin SDK. Las reglas separan `get` de `list`
 para exigir en consultas filtros que Firestore pueda demostrar.
+
+## Autorización Storage opcional — Etapa 15
+
+Las lecturas de imágenes de producto y marca son públicas porque forman parte del
+menú, pero toda creación, actualización o eliminación exige un owner o manager
+activo del mismo establecimiento. No se admiten rutas privadas improvisadas ni
+escrituras cruzadas entre tenants.
+
+Las cargas aceptadas son JPEG (`.jpg`/`.jpeg`), PNG (`.png`) o WebP (`.webp`), de
+1 byte a 5 MiB. El nombre y el `productId` deben ser segmentos seguros de hasta
+128 caracteres. La metadata personalizada debe contener exclusivamente
+`establishmentId` y `uploadedByUid`, ambos coherentes con la ruta y la identidad.
+Estas reglas están verificadas en emuladores y no fueron desplegadas: el MVP sigue
+usando imágenes empaquetadas y no necesita bucket, plan Blaze ni tarjeta.

@@ -23,21 +23,39 @@ service firebase.storage {
         && fileName.matches('^[A-Za-z0-9][A-Za-z0-9._-]*$');
     }
 
+    function validSegment(value) {
+      return value.size() <= 128
+        && value.matches('^[A-Za-z0-9][A-Za-z0-9_-]*$');
+    }
+
+    function fileMatchesContentType(fileName) {
+      return (request.resource.contentType == 'image/jpeg'
+          && fileName.matches('^[A-Za-z0-9][A-Za-z0-9._-]*[.](jpg|jpeg)$'))
+        || (request.resource.contentType == 'image/png'
+          && fileName.matches('^[A-Za-z0-9][A-Za-z0-9._-]*[.]png$'))
+        || (request.resource.contentType == 'image/webp'
+          && fileName.matches('^[A-Za-z0-9][A-Za-z0-9._-]*[.]webp$'));
+    }
+
     function validImage(establishmentId, fileName) {
       return request.resource != null
         && validFileName(fileName)
         && request.resource.size > 0
         && request.resource.size <= 5 * 1024 * 1024
         && request.resource.contentType.matches('image/(jpeg|png|webp)')
+        && fileMatchesContentType(fileName)
+        && request.resource.metadata.keys().hasOnly(['establishmentId', 'uploadedByUid'])
         && request.resource.metadata.establishmentId == establishmentId
         && request.resource.metadata.uploadedByUid == request.auth.uid;
     }
 
     match /establishments/{establishmentId}/products/{productId}/{fileName} {
       allow read: if true;
-      allow create, update: if canManageAssets(establishmentId)
+      allow create, update: if validSegment(productId)
+        && canManageAssets(establishmentId)
         && validImage(establishmentId, fileName);
-      allow delete: if canManageAssets(establishmentId);
+      allow delete: if validSegment(productId)
+        && canManageAssets(establishmentId);
     }
 
     match /establishments/{establishmentId}/branding/{fileName} {

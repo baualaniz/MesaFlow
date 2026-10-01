@@ -4,7 +4,11 @@ export function validateStoragePolicy(policy) {
     rootPrefix: "establishments",
     bucketSuffix: ".firebasestorage.app",
     locationId: "SOUTHAMERICA-EAST1",
-    maxImageBytes: 5 * 1024 * 1024
+    maxImageBytes: 5 * 1024 * 1024,
+    maxFileNameCharacters: 128,
+    requireContentTypeExtensionMatch: true,
+    allowAdditionalMetadata: false,
+    validateProductId: true
   };
   if (!policy || typeof policy !== "object" || Array.isArray(policy)) {
     throw new Error("La política Storage no es válida.");

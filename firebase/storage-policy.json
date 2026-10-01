@@ -4,9 +4,13 @@
   "bucketSuffix": ".firebasestorage.app",
   "locationId": "SOUTHAMERICA-EAST1",
   "maxImageBytes": 5242880,
+  "maxFileNameCharacters": 128,
   "allowedContentTypes": ["image/jpeg", "image/png", "image/webp"],
   "allowedExtensions": ["jpg", "jpeg", "png", "webp"],
+  "requireContentTypeExtensionMatch": true,
   "writeRoles": ["owner", "manager"],
   "publicReadScopes": ["products", "branding"],
-  "requiredMetadata": ["establishmentId", "uploadedByUid"]
+  "requiredMetadata": ["establishmentId", "uploadedByUid"],
+  "allowAdditionalMetadata": false,
+  "validateProductId": true
 }

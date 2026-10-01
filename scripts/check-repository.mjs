@@ -66,6 +66,7 @@ const requiredPaths = [
   "docs/stage-12-data-model.md",
   "docs/stage-13-firestore-indexes.md",
   "docs/stage-14-firestore-rules.md",
+  "docs/stage-15-storage-rules.md",
   "functions/src/data/firestore-converters.ts",
   "functions/src/data/tenant-repository.ts",
   "functions/test/tenant-repository.test.mjs",

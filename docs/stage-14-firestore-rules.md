@@ -97,6 +97,6 @@ Los mensajes `PERMISSION_DENIED` durante las pruebas negativas son esperados.
 - [x] `establishmentId` y `createdAt` protegidos.
 - [x] Consultas sin filtros seguros rechazadas.
 - [x] Cruces de tenant y miembros inactivos rechazados.
-- [x] 14 pruebas Firestore y seis pruebas Storage aprobadas.
+- [x] 14 pruebas Firestore y nueve pruebas Storage aprobadas tras la Etapa 15.
 
 No requiere ninguna acción en Firebase Console ni facturación.

@@ -49,9 +49,13 @@ test("rechaza tipos, tamaños e IDs inseguros", () => {
 test("no permite debilitar la política versionada", () => {
   for (const change of [
     { maxImageBytes: 10 * 1024 * 1024 },
+    { maxFileNameCharacters: 256 },
     { allowedContentTypes: [...policy.allowedContentTypes, "image/svg+xml"] },
+    { requireContentTypeExtensionMatch: false },
     { writeRoles: [...policy.writeRoles, "staff"] },
-    { publicReadScopes: ["products", "branding", "private"] }
+    { publicReadScopes: ["products", "branding", "private"] },
+    { allowAdditionalMetadata: true },
+    { validateProductId: false }
   ]) assert.throws(() => validateStoragePolicy({ ...policy, ...change }), /política Storage/);
 });
 

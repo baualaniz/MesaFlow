@@ -14,12 +14,15 @@ const onePixelPng = Uint8Array.from([
 ]);
 let environment;
 
-function metadata(establishmentId, uid, contentType = "image/png") {
-  return { contentType, customMetadata: { establishmentId, uploadedByUid: uid } };
+function metadata(establishmentId, uid, contentType = "image/png", additionalMetadata = {}) {
+  return {
+    contentType,
+    customMetadata: { establishmentId, uploadedByUid: uid, ...additionalMetadata }
+  };
 }
 
-function productRef(context, establishmentId = "restaurantA", fileName = "asset.png") {
-  return ref(context.storage(bucket), `establishments/${establishmentId}/products/productA/${fileName}`);
+function productRef(context, establishmentId = "restaurantA", fileName = "asset.png", productId = "productA") {
+  return ref(context.storage(bucket), `establishments/${establishmentId}/products/${productId}/${fileName}`);
 }
 
 async function seedMember(uid, role, establishmentId = "restaurantA", active = true) {
@@ -99,4 +102,38 @@ test("rechaza nombres y rutas fuera del contrato", async () => {
   await assertFails(uploadBytes(productRef(owner, "restaurantA", ".hidden"), onePixelPng, metadata("restaurantA", "ownerA")));
   const privateFile = ref(owner.storage(bucket), "establishments/restaurantA/private/secret.png");
   await assertFails(uploadBytes(privateFile, onePixelPng, metadata("restaurantA", "ownerA")));
+});
+
+test("rechaza extensiones que no coinciden con el tipo MIME", async () => {
+  await seedMember("ownerA", "owner");
+  const owner = environment.authenticatedContext("ownerA");
+  await assertFails(uploadBytes(productRef(owner, "restaurantA", "asset.svg"), onePixelPng, metadata("restaurantA", "ownerA")));
+  await assertFails(uploadBytes(productRef(owner, "restaurantA", "asset.jpg"), onePixelPng, metadata("restaurantA", "ownerA")));
+  await assertFails(uploadBytes(productRef(owner, "restaurantA", "asset.png"), onePixelPng, metadata("restaurantA", "ownerA", "image/jpeg")));
+  await assertFails(uploadBytes(productRef(owner, "restaurantA", "asset.PNG"), onePixelPng, metadata("restaurantA", "ownerA")));
+});
+
+test("rechaza metadata adicional e identificadores de producto inseguros", async () => {
+  await seedMember("ownerA", "owner");
+  const owner = environment.authenticatedContext("ownerA");
+  await assertFails(uploadBytes(
+    productRef(owner, "restaurantA", "asset.png"),
+    onePixelPng,
+    metadata("restaurantA", "ownerA", "image/png", { privateNote: "no permitido" })
+  ));
+  await assertFails(uploadBytes(productRef(owner, "restaurantA", "asset.png", ".hidden"), onePixelPng, metadata("restaurantA", "ownerA")));
+  await assertFails(uploadBytes(productRef(owner, "restaurantA", "asset.png", "product A"), onePixelPng, metadata("restaurantA", "ownerA")));
+});
+
+test("una actualización válida conserva las mismas restricciones", async () => {
+  await seedMember("ownerA", "owner");
+  await seedMember("managerA", "manager");
+  await seedMember("staffA", "staff");
+  const owner = environment.authenticatedContext("ownerA");
+  const manager = environment.authenticatedContext("managerA");
+  const staff = environment.authenticatedContext("staffA");
+  await assertSucceeds(uploadBytes(productRef(owner), onePixelPng, metadata("restaurantA", "ownerA")));
+  await assertSucceeds(uploadBytes(productRef(manager), onePixelPng, metadata("restaurantA", "managerA")));
+  await assertFails(uploadBytes(productRef(manager), onePixelPng, metadata("restaurantA", "managerA", "image/png", { extra: "no" })));
+  await assertFails(deleteObject(productRef(staff)));
 });

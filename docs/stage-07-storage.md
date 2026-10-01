@@ -12,7 +12,7 @@ La etapa está completa sin activar facturación. El usuario eligió que el MVP 
 imágenes empaquetadas dentro de la aplicación. El primer recurso vive en
 `apps/customer/assets/images/mesa-demo.png` y funciona offline o desde Hosting.
 
-Además, pasan ocho pruebas estáticas de política y rutas, más seis pruebas reales
+Además, pasan ocho pruebas estáticas de política y rutas, más nueve pruebas reales
 contra los emuladores de Firestore y Storage. Este código no activa un bucket y se
 conserva como extensión futura, sin bloquear ninguna función acordada del MVP.
 
@@ -46,8 +46,11 @@ Cada carga debe cumplir simultáneamente:
 - JPEG, PNG o WebP; SVG/GIF y otros tipos se rechazan.
 - Tamaño entre 1 byte y 5 MiB.
 - Nombre seguro de hasta 128 caracteres.
+- Extensión en minúsculas coherente con el tipo MIME declarado.
+- Identificador de producto seguro de hasta 128 caracteres.
 - Metadata `establishmentId` igual al tenant de la ruta.
 - Metadata `uploadedByUid` igual al UID autenticado.
+- Ningún campo adicional de metadata personalizada.
 
 ## Archivos
 
@@ -127,7 +130,7 @@ la mitigación están en `docs/tooling-security.md`.
 - [x] Tipo, tamaño, nombre y metadata validados por reglas.
 - [x] Otras rutas y accesos cruzados denegados.
 - [x] Storage Emulator incorporado al proyecto demo.
-- [x] Ocho pruebas estáticas y seis pruebas de reglas aprobadas.
+- [x] Ocho pruebas estáticas y nueve pruebas de reglas aprobadas.
 - [x] Estrategia sin tarjeta elegida y documentada.
 - [x] Primer recurso empaquetado dentro de Flutter.
 - [x] Bucket real y despliegue de reglas excluidos del MVP actual.

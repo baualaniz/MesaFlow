@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 14** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 15** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -36,6 +36,7 @@ encuentran en:
 - `docs/stage-12-data-model.md`
 - `docs/stage-13-firestore-indexes.md`
 - `docs/stage-14-firestore-rules.md`
+- `docs/stage-15-storage-rules.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -132,8 +133,9 @@ npm.cmd run test:emulators
 
 El smoke valida los tres sitios Hosting, el endpoint Functions `health`,
 Auth/Firestore, el CRUD tipado con aislamiento por tenant, 14 casos de reglas
-Firestore y seis casos de reglas Storage: roles, membresía activa,
-aislamiento entre tenants, tipos, tamaños, metadata y rutas.
+Firestore y nueve casos de reglas Storage: roles, membresía activa,
+aislamiento entre tenants, tipos, tamaños, extensión, metadata exacta, rutas y
+actualizaciones.
 
 Los destinos web locales son cliente en `http://127.0.0.1:5100`, panel en
 `http://127.0.0.1:5105` y landing en `http://127.0.0.1:5106`. Firebase informa
