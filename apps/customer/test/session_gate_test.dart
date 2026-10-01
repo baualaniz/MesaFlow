@@ -7,6 +7,7 @@ import 'package:mesaflow_customer/src/session/qr_session.dart';
 import 'package:mesaflow_customer/src/theme/mesaflow_theme.dart';
 
 import 'helpers/test_qr_session_gateway.dart';
+import 'helpers/test_menu_repository.dart';
 
 const route = CustomerTableRoute(
   establishmentSlug: 'mesa-flow-demo',
@@ -25,6 +26,7 @@ void main() {
           tableRoute: route,
           token: CustomerRoutes.demoQrToken,
           gateway: TestQrSessionGateway.active,
+          menuRepository: TestMenuRepository.published,
           onTokenConsumed: () => consumed = true,
         ),
       ),
@@ -46,6 +48,7 @@ void main() {
           gateway: const TestQrSessionGateway(
             failure: QrSessionFailure.accessRequired,
           ),
+          menuRepository: TestMenuRepository.published,
           onTokenConsumed: () {},
         ),
       ),
@@ -66,6 +69,7 @@ void main() {
           gateway: const TestQrSessionGateway(
             failure: QrSessionFailure.invalidQr,
           ),
+          menuRepository: TestMenuRepository.published,
           onTokenConsumed: () {},
         ),
       ),

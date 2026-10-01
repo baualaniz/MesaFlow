@@ -6,6 +6,7 @@ import 'package:mesaflow_customer/src/config/app_environment.dart';
 import 'package:mesaflow_customer/src/screens/menu_page.dart';
 
 import 'helpers/test_qr_session_gateway.dart';
+import 'helpers/test_menu_repository.dart';
 
 void main() {
   testWidgets('una entrada directa conserva establecimiento y mesa', (
@@ -17,6 +18,7 @@ void main() {
         environment: AppEnvironment.development,
         initialLocation: location,
         qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
       ),
     );
     await tester.pumpAndSettle();
@@ -38,6 +40,7 @@ void main() {
         environment: AppEnvironment.development,
         initialLocation: '/',
         qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
       ),
     );
     await tester.pumpAndSettle();
@@ -54,6 +57,7 @@ void main() {
       const MesaFlowApp(
         initialLocation: '/',
         qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
       ),
     );
     await tester.pumpAndSettle();
@@ -63,7 +67,11 @@ void main() {
     final context = tester.element(find.byType(MenuPage));
     final uri = GoRouter.of(context).routeInformationProvider.value.uri;
     expect(uri.path, '/e/mesa-flow-demo/table/mesa-01');
-    expect(uri.query, isEmpty, reason: 'El token QR debe desaparecer de la URL');
+    expect(
+      uri.query,
+      isEmpty,
+      reason: 'El token QR debe desaparecer de la URL',
+    );
   });
 
   testWidgets('un contexto inválido no monta el menú', (tester) async {
@@ -72,6 +80,7 @@ void main() {
         environment: AppEnvironment.development,
         initialLocation: '/e/Casa-Jacaranda/table/mesa-01',
         qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
       ),
     );
     await tester.pumpAndSettle();
@@ -88,6 +97,7 @@ void main() {
         environment: AppEnvironment.development,
         initialLocation: '/ruta-que-no-existe',
         qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
       ),
     );
     await tester.pumpAndSettle();

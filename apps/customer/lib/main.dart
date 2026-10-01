@@ -4,6 +4,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'src/app.dart';
 import 'src/config/app_environment.dart';
 import 'src/firebase/firebase_bootstrap.dart';
+import 'src/menu/firestore_menu_repository.dart';
 import 'src/session/firebase_qr_session_gateway.dart';
 
 export 'src/app.dart';
@@ -17,6 +18,7 @@ Future<void> main() async {
     MesaFlowApp(
       environment: environment,
       qrSessionGateway: FirebaseQrSessionGateway(),
+      menuRepository: FirestoreMenuRepository(),
     ),
   );
 }

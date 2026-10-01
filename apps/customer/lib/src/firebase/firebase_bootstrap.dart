@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -31,6 +32,9 @@ Future<FirebaseApp> initializeMesaFlowFirebase(
       demoProjectId: environment.projectId,
     );
     await FirebaseAuth.instanceFor(app: app).useAuthEmulator('127.0.0.1', 9099);
+    FirebaseFirestore.instanceFor(
+      app: app,
+    ).useFirestoreEmulator('127.0.0.1', 8080);
     FirebaseFunctions.instanceFor(
       app: app,
       region: 'southamerica-east1',

@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 20** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 21** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -23,6 +23,9 @@ La aplicación reconoce enlaces QR `/e/:slug/table/:tableId`, conserva la ruta a
 recargar y rechaza contextos de mesa mal formados sin tratarlos como autorización.
 El token QR se canjea mediante Auth anónima y Functions, se elimina de la URL y
 las recargas recuperan únicamente una participación vigente en Firestore.
+Después del canje, el cliente lee desde Firestore solo categorías activas y
+productos activos/disponibles del establecimiento validado, con búsqueda,
+filtros y estados de carga, vacío y reintento.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -49,6 +52,7 @@ encuentran en:
 - `docs/stage-18-design-system.md`
 - `docs/stage-19-routing.md`
 - `docs/stage-20-qr-exchange.md`
+- `docs/stage-21-dynamic-menu.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 

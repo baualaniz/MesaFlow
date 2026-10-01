@@ -6,6 +6,7 @@ import 'package:mesaflow_customer/src/widgets/feedback_panel.dart';
 import 'package:mesaflow_customer/src/widgets/status_badge.dart';
 
 import 'helpers/test_qr_session_gateway.dart';
+import 'helpers/test_menu_repository.dart';
 
 void main() {
   test('el tema usa tipografías, radios y estados semánticos de MesaFlow', () {
@@ -13,7 +14,10 @@ void main() {
     expect(theme.textTheme.displaySmall?.fontFamily, 'Poppins');
     expect(theme.textTheme.bodyLarge?.fontFamily, 'Inter');
     expect(theme.colorScheme.error, MesaFlowColors.error);
-    expect(theme.filledButtonTheme.style?.minimumSize?.resolve({}), const Size(48, 52));
+    expect(
+      theme.filledButtonTheme.style?.minimumSize?.resolve({}),
+      const Size(48, 52),
+    );
     expect(theme.inputDecorationTheme.errorBorder, isNotNull);
     expect(MesaFlowSpacing.lg, 24);
     expect(MesaFlowRadius.lg, 24);
@@ -63,12 +67,19 @@ void main() {
     for (final size in [const Size(390, 844), const Size(1280, 900)]) {
       await tester.binding.setSurfaceSize(size);
       await tester.pumpWidget(
-        const MesaFlowApp(qrSessionGateway: TestQrSessionGateway.active),
+        const MesaFlowApp(
+          qrSessionGateway: TestQrSessionGateway.active,
+          menuRepository: TestMenuRepository.published,
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.text('Burger de la casa'), findsOneWidget);
       expect(find.text('Buscar en el menú'), findsOneWidget);
-      expect(tester.takeException(), isNull, reason: 'Falló en ${size.width}px');
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'Falló en ${size.width}px',
+      );
     }
     await tester.binding.setSurfaceSize(null);
   });

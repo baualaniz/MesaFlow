@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../routing/customer_routes.dart';
+import '../menu/menu_repository.dart';
 import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
 import '../widgets/feedback_panel.dart';
@@ -11,12 +12,14 @@ class SessionGatePage extends StatefulWidget {
     super.key,
     required this.tableRoute,
     required this.gateway,
+    required this.menuRepository,
     required this.onTokenConsumed,
     this.token,
   });
 
   final CustomerTableRoute tableRoute;
   final QrSessionGateway gateway;
+  final MenuRepository menuRepository;
   final String? token;
   final VoidCallback onTokenConsumed;
 
@@ -105,6 +108,7 @@ class _SessionGatePageState extends State<SessionGatePage> {
       return MenuPage(
         tableRoute: widget.tableRoute,
         sessionAccess: _access!,
+        menuRepository: widget.menuRepository,
       );
     }
     final failure = _failure ?? QrSessionFailure.unavailable;

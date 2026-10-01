@@ -3,11 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mesaflow_customer/main.dart';
 
 import 'helpers/test_qr_session_gateway.dart';
+import 'helpers/test_menu_repository.dart';
 
 void main() {
   testWidgets('muestra el menú demo y agrega un producto', (tester) async {
     await tester.pumpWidget(
-      const MesaFlowApp(qrSessionGateway: TestQrSessionGateway.active),
+      const MesaFlowApp(
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -27,7 +31,10 @@ void main() {
 
   testWidgets('filtra productos con la búsqueda', (tester) async {
     await tester.pumpWidget(
-      const MesaFlowApp(qrSessionGateway: TestQrSessionGateway.active),
+      const MesaFlowApp(
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -35,6 +42,22 @@ void main() {
     await tester.pump();
 
     expect(find.text('Torta de chocolate'), findsOneWidget);
+    expect(find.text('Burger de la casa'), findsNothing);
+  });
+
+  testWidgets('filtra productos con la categoría publicada', (tester) async {
+    await tester.pumpWidget(
+      const MesaFlowApp(
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Vegetariano'));
+    await tester.pump();
+
+    expect(find.text('Bowl de estación'), findsOneWidget);
     expect(find.text('Burger de la casa'), findsNothing);
   });
 }

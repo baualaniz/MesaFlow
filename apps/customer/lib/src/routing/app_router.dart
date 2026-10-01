@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../config/app_environment.dart';
+import '../menu/menu_repository.dart';
 import '../screens/entry_page.dart';
 import '../screens/invalid_link_page.dart';
 import '../screens/session_gate_page.dart';
@@ -12,6 +13,7 @@ import 'customer_routes.dart';
 GoRouter createCustomerRouter({
   required AppEnvironment environment,
   required QrSessionGateway qrSessionGateway,
+  required MenuRepository menuRepository,
   String? initialLocation,
 }) {
   return GoRouter(
@@ -42,6 +44,7 @@ GoRouter createCustomerRouter({
           return SessionGatePage(
             tableRoute: tableRoute,
             gateway: qrSessionGateway,
+            menuRepository: menuRepository,
             token: tokens.length == 1 ? tokens.single : null,
             onTokenConsumed: () => context.replace(tableRoute.location),
           );
@@ -57,11 +60,13 @@ class MesaFlowRouterApp extends StatefulWidget {
     super.key,
     required this.environment,
     required this.qrSessionGateway,
+    required this.menuRepository,
     this.initialLocation,
   });
 
   final AppEnvironment environment;
   final QrSessionGateway qrSessionGateway;
+  final MenuRepository menuRepository;
   final String? initialLocation;
 
   @override
@@ -72,6 +77,7 @@ class _MesaFlowRouterAppState extends State<MesaFlowRouterApp> {
   late final GoRouter _router = createCustomerRouter(
     environment: widget.environment,
     qrSessionGateway: widget.qrSessionGateway,
+    menuRepository: widget.menuRepository,
     initialLocation: widget.initialLocation,
   );
 

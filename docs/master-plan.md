@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–20 completadas en alcance local. La siguiente etapa es el
-menú dinámico filtrado por establecimiento.
+Estado actual: Etapas 1–21 completadas en alcance local. La siguiente etapa es el
+detalle de producto con cantidad, notas y validaciones.
 
 ## Fases 1–10: base y Firebase
 
@@ -107,6 +107,7 @@ menú dinámico filtrado por establecimiento.
 | 18 | Completa: Poppins/Inter locales, tokens visuales, temas de controles, badges/feedback y 18 tests responsive aprobados | `docs/stage-18-design-system.md` |
 | 19 | Completa: deep links, paths Web, contexto de mesa, recuperación inválida y 26 tests Flutter aprobados | `docs/stage-19-routing.md` |
 | 20 | Completa localmente: Auth anónima, canje/restore callable, hash, antirreplay, rotación y 31 tests Flutter más 12 de Functions aprobados | `docs/stage-20-qr-exchange.md` |
+| 21 | Completa localmente: menú Firestore aislado por tenant, búsqueda, filtros, estados recuperables, build Web y 38 tests Flutter aprobados | `docs/stage-21-dynamic-menu.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

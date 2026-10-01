@@ -382,3 +382,25 @@ tokens en almacenamiento de aplicación. El fixture local es conocido y solo
 coincide con `demo-mesaflow`; producción deberá generar 128 bits aleatorios por
 versión. App Check queda como requisito previo al despliegue cloud de las
 callables.
+
+## Menú dinámico cliente — Etapa 21
+
+`FirestoreMenuRepository` es el límite de lectura del catálogo en Flutter. Se
+construye con la instancia Firebase del ambiente y recibe exclusivamente el
+`establishmentId` que devolvió el canje o la restauración de sesión; nunca toma
+el tenant directamente de la URL para consultar datos.
+
+Primero consulta categorías activas ordenadas por `sortOrder`. Luego consulta
+productos por cada categoría con `active == true`, `available == true` y el mismo
+orden canónico. Esta forma coincide con las reglas públicas y los índices ya
+desplegados en desarrollo, y evita scans o consultas globales entre tenants.
+
+Los adaptadores convierten `Timestamp` nativo a contratos Dart y vuelven a
+validar campos exactos, IDs, dinero, moneda, tenant y flags de publicación. La UI
+recibe un `MenuCatalog` inmutable y diferencia carga, éxito, catálogo vacío y
+error recuperable. La dependencia se inyecta desde `main.dart`; las pruebas de
+widgets usan un repositorio en memoria sin sustituir el camino productivo.
+
+`imagePath` solo selecciona una presentación del asset empaquetado. El cliente no
+depende de Firebase Storage, por lo que el MVP conserva el funcionamiento sin
+bucket de pago.

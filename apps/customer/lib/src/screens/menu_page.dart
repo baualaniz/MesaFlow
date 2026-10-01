@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../contracts/domain_contracts.dart';
-import '../data/demo_menu.dart';
+import '../menu/menu_repository.dart';
 import '../models/menu_product.dart';
 import '../routing/customer_routes.dart';
 import '../session/qr_session.dart';
@@ -14,10 +14,12 @@ class MenuPage extends StatefulWidget {
     super.key,
     required this.tableRoute,
     required this.sessionAccess,
+    required this.menuRepository,
   });
 
   final CustomerTableRoute tableRoute;
   final QrSessionAccess sessionAccess;
+  final MenuRepository menuRepository;
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -26,15 +28,61 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage> {
   final _searchController = TextEditingController();
   final Map<String, int> _cart = {};
-  String _category = 'Todos';
+  MenuCatalog? _catalog;
+  Object? _loadError;
+  bool _loading = true;
+  String? _categoryId;
   String _query = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMenu();
+  }
+
+  @override
+  void didUpdateWidget(covariant MenuPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.sessionAccess.establishmentId !=
+            widget.sessionAccess.establishmentId ||
+        oldWidget.menuRepository != widget.menuRepository) {
+      _loadMenu();
+    }
+  }
+
+  Future<void> _loadMenu() async {
+    setState(() {
+      _loading = true;
+      _loadError = null;
+    });
+    try {
+      final catalog = await widget.menuRepository.loadPublishedMenu(
+        widget.sessionAccess.establishmentId,
+      );
+      if (!mounted) return;
+      final productIds = catalog.products.map((product) => product.id).toSet();
+      setState(() {
+        _catalog = catalog;
+        _loading = false;
+        _categoryId = null;
+        _cart.removeWhere((productId, _) => !productIds.contains(productId));
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _catalog = null;
+        _loadError = error;
+        _loading = false;
+      });
+    }
+  }
 
   List<MenuProduct> get _visibleProducts {
     final query = _query.trim().toLowerCase();
-    return demoProducts
+    return (_catalog?.products ?? const <MenuProduct>[])
         .where((product) {
           final inCategory =
-              _category == 'Todos' || product.category == _category;
+              _categoryId == null || product.categoryId == _categoryId;
           final matches =
               query.isEmpty ||
               product.name.toLowerCase().contains(query) ||
@@ -47,7 +95,9 @@ class _MenuPageState extends State<MenuPage> {
   int get _itemCount => _cart.values.fold(0, (sum, quantity) => sum + quantity);
 
   int get _total => _cart.entries.fold(0, (sum, entry) {
-    final product = demoProducts.firstWhere((item) => item.id == entry.key);
+    final product = _catalog!.products.firstWhere(
+      (item) => item.id == entry.key,
+    );
     return sum + product.price.amountMinor * entry.value;
   });
 
@@ -148,7 +198,7 @@ class _MenuPageState extends State<MenuPage> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          demoProducts
+                          _catalog!.products
                               .firstWhere((item) => item.id == entry.key)
                               .name,
                         ),
@@ -198,97 +248,128 @@ class _MenuPageState extends State<MenuPage> {
                 tableLabel: widget.sessionAccess.tableName,
               ),
             ),
-            SliverToBoxAdapter(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1240),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextField(
-                          controller: _searchController,
-                          onChanged: (value) => setState(() => _query = value),
-                          decoration: const InputDecoration(
-                            hintText: 'Buscar en el menú',
-                            prefixIcon: Icon(Icons.search_rounded),
+            if (!_loading &&
+                _loadError == null &&
+                _catalog!.categories.isNotEmpty &&
+                _catalog!.products.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1240),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextField(
+                            controller: _searchController,
+                            onChanged: (value) =>
+                                setState(() => _query = value),
+                            decoration: const InputDecoration(
+                              hintText: 'Buscar en el menú',
+                              prefixIcon: Icon(Icons.search_rounded),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 18),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              for (final category in demoCategories)
+                          const SizedBox(height: 18),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
                                 Padding(
                                   padding: const EdgeInsets.only(right: 10),
                                   child: ChoiceChip(
-                                    label: Text(category),
-                                    selected: _category == category,
+                                    label: const Text('Todos'),
+                                    selected: _categoryId == null,
                                     onSelected: (_) =>
-                                        setState(() => _category = category),
+                                        setState(() => _categoryId = null),
                                   ),
                                 ),
-                            ],
+                                for (final category in _catalog!.categories)
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: ChoiceChip(
+                                      label: Text(category.name),
+                                      selected: _categoryId == category.id,
+                                      onSelected: (_) => setState(
+                                        () => _categoryId = category.id,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        Text(
-                          'Elegí algo rico',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          '${_visibleProducts.length} opciones disponibles',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
+                          const SizedBox(height: 24),
+                          Text(
+                            'Elegí algo rico',
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            '${_visibleProducts.length} opciones disponibles',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SliverPadding(
-              padding: EdgeInsets.fromLTRB(
-                20,
-                12,
-                20,
-                _itemCount > 0 ? 110 : 32,
+            if (_loading)
+              const SliverFillRemaining(
+                hasScrollBody: false,
+                child: _MenuLoading(),
+              )
+            else if (_loadError != null)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: _MenuLoadFailure(onRetry: _loadMenu),
+              )
+            else if (_catalog!.categories.isEmpty || _catalog!.products.isEmpty)
+              const SliverFillRemaining(
+                hasScrollBody: false,
+                child: _EmptyCatalog(),
+              )
+            else
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(
+                  20,
+                  12,
+                  20,
+                  _itemCount > 0 ? 110 : 32,
+                ),
+                sliver: _visibleProducts.isEmpty
+                    ? const SliverToBoxAdapter(child: _EmptySearch())
+                    : SliverLayoutBuilder(
+                        builder: (context, constraints) {
+                          final width = constraints.crossAxisExtent;
+                          final columns = width >= 1100
+                              ? 3
+                              : width >= 700
+                              ? 2
+                              : 1;
+                          return SliverGrid(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: columns,
+                                  crossAxisSpacing: 18,
+                                  mainAxisSpacing: 18,
+                                  mainAxisExtent: columns == 1 ? 350 : 370,
+                                ),
+                            delegate: SliverChildBuilderDelegate((
+                              context,
+                              index,
+                            ) {
+                              final product = _visibleProducts[index];
+                              return ProductCard(
+                                product: product,
+                                onAdd: () => _add(product),
+                                onOpen: () => _showProduct(product),
+                              );
+                            }, childCount: _visibleProducts.length),
+                          );
+                        },
+                      ),
               ),
-              sliver: _visibleProducts.isEmpty
-                  ? const SliverToBoxAdapter(child: _EmptySearch())
-                  : SliverLayoutBuilder(
-                      builder: (context, constraints) {
-                        final width = constraints.crossAxisExtent;
-                        final columns = width >= 1100
-                            ? 3
-                            : width >= 700
-                            ? 2
-                            : 1;
-                        return SliverGrid(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: columns,
-                                crossAxisSpacing: 18,
-                                mainAxisSpacing: 18,
-                                mainAxisExtent: columns == 1 ? 350 : 370,
-                              ),
-                          delegate: SliverChildBuilderDelegate((
-                            context,
-                            index,
-                          ) {
-                            final product = _visibleProducts[index];
-                            return ProductCard(
-                              product: product,
-                              onAdd: () => _add(product),
-                              onOpen: () => _showProduct(product),
-                            );
-                          }, childCount: _visibleProducts.length),
-                        );
-                      },
-                    ),
-            ),
           ],
         ),
       ),
@@ -333,6 +414,64 @@ class _MenuPageState extends State<MenuPage> {
                 ),
               ),
             ),
+    );
+  }
+}
+
+class _MenuLoading extends StatelessWidget {
+  const _MenuLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Semantics(
+        label: 'Cargando el menú',
+        child: const CircularProgressIndicator(),
+      ),
+    );
+  }
+}
+
+class _MenuLoadFailure extends StatelessWidget {
+  const _MenuLoadFailure({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(MesaFlowSpacing.lg),
+        child: MesaFlowFeedbackPanel(
+          title: 'No pudimos cargar el menú',
+          message: 'Revisá tu conexión e intentá nuevamente.',
+          tone: MesaFlowFeedbackTone.error,
+          action: FilledButton.icon(
+            key: const ValueKey('retry-menu'),
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded),
+            label: const Text('Reintentar'),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyCatalog extends StatelessWidget {
+  const _EmptyCatalog();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.all(MesaFlowSpacing.lg),
+        child: MesaFlowFeedbackPanel(
+          title: 'El menú todavía no está publicado',
+          message: 'Consultá al personal por las opciones disponibles.',
+          tone: MesaFlowFeedbackTone.info,
+        ),
+      ),
     );
   }
 }
