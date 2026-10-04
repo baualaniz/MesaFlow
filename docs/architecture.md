@@ -404,3 +404,21 @@ widgets usan un repositorio en memoria sin sustituir el camino productivo.
 `imagePath` solo selecciona una presentación del asset empaquetado. El cliente no
 depende de Firebase Storage, por lo que el MVP conserva el funcionamiento sin
 bucket de pago.
+
+## Selección de producto — Etapa 22
+
+`ProductDetailSheet` presenta la información del catálogo y devuelve una
+`ProductSelection`; no escribe Firestore ni conoce el futuro formato del carrito
+persistente. La selección se construye mediante `OrderItemContract`, reutilizando
+los mismos límites que el backend aplicará al confirmar un pedido.
+
+Cantidad y dinero se validan juntos. El máximo es el menor entre 99 y la cantidad
+que mantiene `priceMinor × quantity` dentro de `maxMinorAmount`. Las notas se
+normalizan con `trim`, una cadena vacía se transforma en `null` y el máximo de 300
+caracteres pertenece al fixture de contratos compartido por Dart y TypeScript.
+
+Mientras no existe el estado persistente de la Etapa 23, `MenuPage` conserva una
+lista local de selecciones. Producto y nota iguales se combinan; notas diferentes
+forman líneas separadas. Cada línea guarda su subtotal validado, y el total visible
+solo suma enteros. Esta estructura es deliberadamente temporal y se perderá al
+recargar hasta que el carrito se ligue a la sesión.

@@ -12,6 +12,7 @@
     "maxMinorAmount": 9000000000000,
     "maxOrderItems": 50,
     "maxItemQuantity": 99,
+    "maxItemNotesLength": 300,
     "currencyFractionDigits": 2
   },
   "timestampFormat": "UTC RFC3339 with millisecond precision"

@@ -26,6 +26,7 @@ export const CONTRACT_LIMITS = Object.freeze({
   maxMinorAmount: 9_000_000_000_000,
   maxOrderItems: 50,
   maxItemQuantity: 99,
+  maxItemNotesLength: 300,
   currencyFractionDigits: 2
 });
 
@@ -196,7 +197,9 @@ export function parseOrderItem(value: unknown): OrderItemContract {
     unitPriceMinor,
     quantity,
     lineTotalMinor,
-    notes: value.notes === null ? null : parseString(value.notes, "notes", 1, 300)
+    notes: value.notes === null
+      ? null
+      : parseString(value.notes, "notes", 1, CONTRACT_LIMITS.maxItemNotesLength)
   });
 }
 

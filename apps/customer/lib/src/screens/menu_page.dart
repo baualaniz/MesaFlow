@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import '../contracts/domain_contracts.dart';
 import '../menu/menu_repository.dart';
 import '../models/menu_product.dart';
+import '../models/product_selection.dart';
 import '../routing/customer_routes.dart';
 import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
 import '../widgets/product_card.dart';
+import '../widgets/product_detail_sheet.dart';
 import '../widgets/feedback_panel.dart';
 
 class MenuPage extends StatefulWidget {
@@ -27,7 +29,7 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   final _searchController = TextEditingController();
-  final Map<String, int> _cart = {};
+  final List<ProductSelection> _cart = [];
   MenuCatalog? _catalog;
   Object? _loadError;
   bool _loading = true;
@@ -65,7 +67,9 @@ class _MenuPageState extends State<MenuPage> {
         _catalog = catalog;
         _loading = false;
         _categoryId = null;
-        _cart.removeWhere((productId, _) => !productIds.contains(productId));
+        _cart.removeWhere(
+          (selection) => !productIds.contains(selection.product.id),
+        );
       });
     } catch (error) {
       if (!mounted) return;
@@ -92,14 +96,11 @@ class _MenuPageState extends State<MenuPage> {
         .toList(growable: false);
   }
 
-  int get _itemCount => _cart.values.fold(0, (sum, quantity) => sum + quantity);
+  int get _itemCount =>
+      _cart.fold(0, (sum, selection) => sum + selection.quantity);
 
-  int get _total => _cart.entries.fold(0, (sum, entry) {
-    final product = _catalog!.products.firstWhere(
-      (item) => item.id == entry.key,
-    );
-    return sum + product.price.amountMinor * entry.value;
-  });
+  int get _total =>
+      _cart.fold(0, (sum, selection) => sum + selection.lineTotal.amountMinor);
 
   @override
   void dispose() {
@@ -108,66 +109,64 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   void _add(MenuProduct product) {
-    setState(
-      () => _cart.update(product.id, (value) => value + 1, ifAbsent: () => 1),
+    _addSelection(ProductSelection.create(product: product, quantity: 1));
+  }
+
+  void _addSelection(ProductSelection selection) {
+    final existingIndex = _cart.indexWhere(
+      (item) =>
+          item.product.id == selection.product.id &&
+          item.notes == selection.notes,
     );
+    ProductSelection next = selection;
+    if (existingIndex >= 0) {
+      try {
+        final existing = _cart[existingIndex];
+        next = ProductSelection.create(
+          product: selection.product,
+          quantity: existing.quantity + selection.quantity,
+          notes: selection.notes,
+        );
+      } on FormatException {
+        _showCartMessage(
+          'Este producto admite hasta '
+          '${maxQuantityForProduct(selection.product)} unidades por línea.',
+        );
+        return;
+      }
+    }
+    setState(() {
+      if (existingIndex >= 0) {
+        _cart[existingIndex] = next;
+      } else {
+        _cart.add(next);
+      }
+    });
+    _showCartMessage(
+      '${selection.quantity} × ${selection.product.name} agregado al pedido',
+    );
+  }
+
+  void _showCartMessage(String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
           duration: const Duration(milliseconds: 900),
-          content: Text('${product.name} agregado al pedido'),
+          content: Text(message),
         ),
       );
   }
 
-  void _showProduct(MenuProduct product) {
-    showModalBottomSheet<void>(
+  Future<void> _showProduct(MenuProduct product) async {
+    final selection = await showModalBottomSheet<ProductSelection>(
       context: context,
       isScrollControlled: true,
       backgroundColor: MesaFlowColors.white,
       showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Image.asset(
-                    'assets/images/mesa-demo.png',
-                    fit: BoxFit.cover,
-                    alignment: product.imageAlignment,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                product.name,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                product.description,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 20),
-              FilledButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _add(product);
-                },
-                icon: const Icon(Icons.add_rounded),
-                label: Text('Agregar · ${formatPrice(product.price)}'),
-              ),
-            ],
-          ),
-        ),
-      ),
+      builder: (context) => ProductDetailSheet(product: product),
     );
+    if (selection != null && mounted) _addSelection(selection);
   }
 
   void _showCart() {
@@ -175,60 +174,75 @@ class _MenuPageState extends State<MenuPage> {
       context: context,
       showDragHandle: true,
       builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Tu pedido',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 18),
-              for (final entry in _cart.entries)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 7),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: MesaFlowColors.softGreen,
-                        child: Text('${entry.value}'),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          _catalog!.products
-                              .firstWhere((item) => item.id == entry.key)
-                              .name,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Tu pedido',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 18),
+                for (final selection in _cart)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 7),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: MesaFlowColors.softGreen,
+                          child: Text('${selection.quantity}'),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(selection.product.name),
+                              if (selection.notes case final notes?)
+                                Text(
+                                  notes,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(formatPrice(selection.lineTotal)),
+                      ],
+                    ),
+                  ),
+                const Divider(height: 28),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Total'),
+                    Text(
+                      formatPrice(
+                        Money(
+                          amountMinor: _total,
+                          currency: _cart.first.product.price.currency,
                         ),
                       ),
-                    ],
-                  ),
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ],
                 ),
-              const Divider(height: 28),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Total'),
-                  Text(
-                    formatPrice(Money(amountMinor: _total, currency: 'ARS')),
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              FilledButton(
-                onPressed: () {},
-                child: const Text('Continuar pedido'),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Demo visual: la confirmación se conectará a Firebase en las próximas etapas.',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
+                const SizedBox(height: 18),
+                FilledButton(
+                  onPressed: () {},
+                  child: const Text('Continuar pedido'),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Demo visual: la confirmación se conectará a Firebase en las próximas etapas.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -408,7 +422,12 @@ class _MenuPageState extends State<MenuPage> {
                     const SizedBox(width: 12),
                     const Expanded(child: Text('Ver pedido')),
                     Text(
-                      formatPrice(Money(amountMinor: _total, currency: 'ARS')),
+                      formatPrice(
+                        Money(
+                          amountMinor: _total,
+                          currency: _cart.first.product.price.currency,
+                        ),
+                      ),
                     ),
                   ],
                 ),

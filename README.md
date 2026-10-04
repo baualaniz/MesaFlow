@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 21** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 22** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -26,6 +26,9 @@ las recargas recuperan únicamente una participación vigente en Firestore.
 Después del canje, el cliente lee desde Firestore solo categorías activas y
 productos activos/disponibles del establecimiento validado, con búsqueda,
 filtros y estados de carga, vacío y reintento.
+El detalle de cada producto permite elegir una cantidad válida, agregar una nota
+de hasta 300 caracteres y calcular el subtotal con enteros antes de incorporarlo
+al resumen temporal del pedido.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -53,6 +56,7 @@ encuentran en:
 - `docs/stage-19-routing.md`
 - `docs/stage-20-qr-exchange.md`
 - `docs/stage-21-dynamic-menu.md`
+- `docs/stage-22-product-detail.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 

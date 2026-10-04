@@ -42,6 +42,7 @@ void main() {
     expect(maxMinorAmount, limits['maxMinorAmount']);
     expect(maxOrderItems, limits['maxOrderItems']);
     expect(maxItemQuantity, limits['maxItemQuantity']);
+    expect(maxItemNotesLength, limits['maxItemNotesLength']);
     expect(currencyFractionDigits, limits['currencyFractionDigits']);
   });
 

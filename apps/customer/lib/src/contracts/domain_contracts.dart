@@ -61,6 +61,7 @@ const assistanceStatusWireValues = [
 const maxMinorAmount = 9000000000000;
 const maxOrderItems = 50;
 const maxItemQuantity = 99;
+const maxItemNotesLength = 300;
 const currencyFractionDigits = 2;
 
 final _idPattern = RegExp(r'^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$');
@@ -279,7 +280,9 @@ class OrderItemContract {
       unitPriceMinor: unitPrice,
       quantity: quantity,
       lineTotalMinor: lineTotal,
-      notes: notes == null ? null : _string(notes, 'notes', 1, 300),
+      notes: notes == null
+          ? null
+          : _string(notes, 'notes', 1, maxItemNotesLength),
     );
   }
 
