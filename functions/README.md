@@ -3,9 +3,10 @@
 Cloud Functions 2nd gen en TypeScript para los límites de confianza de MesaFlow:
 canje de QR, pedidos, pagos, webhooks, agregados y notificaciones.
 
-Esta etapa incorpora la base ejecutable y una función HTTP `health`. Todo puede
-compilarse y probarse con `demo-mesaflow`; no requiere Blaze, credenciales ni
-recursos reales mientras se use el Emulator Suite.
+La base ejecutable incluye `health`, canje/restauración de sesión QR y creación
+transaccional de pedidos. Todo puede compilarse y probarse con `demo-mesaflow`;
+no requiere Blaze, credenciales ni recursos reales mientras se use el Emulator
+Suite.
 
 ## Comandos
 
@@ -24,6 +25,11 @@ el proyecto local `demo-mesaflow` con `test:emulators`.
 La Etapa 13 agrega consultas tipadas de menú publicado y vistas operativas de
 pedidos. Sus índices canónicos viven en `firestore.indexes.json`; los repositorios
 siempre consultan una subcolección previamente acotada al establecimiento.
+
+La Etapa 24 incorpora la callable `createOrder`. El cliente envía únicamente IDs,
+cantidades y notas; la Function valida al participante, vuelve a leer catálogo y
+precios, crea el snapshot y actualiza el consumo de la sesión en una transacción
+idempotente. `test:emulators` comprueba el flujo real y limpia sus fixtures.
 
 La función emulada queda en:
 

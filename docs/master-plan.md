@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–23 completadas en alcance local. La siguiente etapa crea
-el pedido mediante una Function transaccional que recalcula precios en servidor.
+Estado actual: Etapas 1–24 completadas en alcance local. La siguiente etapa
+mostrará el seguimiento en tiempo real y recuperará pedidos de la sesión.
 
 ## Fases 1–10: base y Firebase
 
@@ -109,6 +109,8 @@ el pedido mediante una Function transaccional que recalcula precios en servidor.
 | 20 | Completa localmente: Auth anónima, canje/restore callable, hash, antirreplay, rotación y 31 tests Flutter más 12 de Functions aprobados | `docs/stage-20-qr-exchange.md` |
 | 21 | Completa localmente: menú Firestore aislado por tenant, búsqueda, filtros, estados recuperables, build Web y 38 tests Flutter aprobados | `docs/stage-21-dynamic-menu.md` |
 | 22 | Completa localmente: detalle visual, cantidad, notas, subtotales enteros, resumen desplazable y 43 tests Flutter aprobados | `docs/stage-22-product-detail.md` |
+| 23 | Completa localmente: carrito persistente aislado por sesión, edición, vaciado, precios vigentes y 53 tests Flutter aprobados | `docs/stage-23-persistent-cart.md` |
+| 24 | Completa localmente: pedido transaccional, precio servidor, idempotencia, confirmación UI, 57 tests Flutter y 16 de Functions aprobados | `docs/stage-24-create-order.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

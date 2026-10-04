@@ -5,6 +5,7 @@ import { onRequest } from "firebase-functions/v2/https";
 import { handleHealthRequest } from "./health.js";
 
 export { exchangeQrSession, restoreQrSession } from "./qr-session-callable.js";
+export { createOrder } from "./create-order-callable.js";
 
 initializeApp();
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../cart/cart_store.dart';
 import '../routing/customer_routes.dart';
 import '../menu/menu_repository.dart';
+import '../order/order_gateway.dart';
 import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
 import '../widgets/feedback_panel.dart';
@@ -15,6 +16,7 @@ class SessionGatePage extends StatefulWidget {
     required this.gateway,
     required this.menuRepository,
     this.cartStore = const EphemeralCartStore(),
+    this.orderGateway = const UnavailableOrderGateway(),
     required this.onTokenConsumed,
     this.token,
   });
@@ -23,6 +25,7 @@ class SessionGatePage extends StatefulWidget {
   final QrSessionGateway gateway;
   final MenuRepository menuRepository;
   final CartStore cartStore;
+  final OrderGateway orderGateway;
   final String? token;
   final VoidCallback onTokenConsumed;
 
@@ -113,6 +116,7 @@ class _SessionGatePageState extends State<SessionGatePage> {
         sessionAccess: _access!,
         menuRepository: widget.menuRepository,
         cartStore: widget.cartStore,
+        orderGateway: widget.orderGateway,
       );
     }
     final failure = _failure ?? QrSessionFailure.unavailable;

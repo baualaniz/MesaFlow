@@ -3,9 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mesaflow_customer/main.dart';
 import 'package:mesaflow_customer/src/config/app_environment.dart';
 import 'package:mesaflow_customer/src/contracts/domain_contracts.dart';
+import 'package:mesaflow_customer/src/order/order_gateway.dart';
 
 import 'helpers/test_cart_store.dart';
 import 'helpers/test_menu_repository.dart';
+import 'helpers/test_order_gateway.dart';
 import 'helpers/test_qr_session_gateway.dart';
 
 void main() {
@@ -202,5 +204,84 @@ void main() {
 
     expect(find.text('Ver pedido'), findsOneWidget);
     expect(find.text('\$ 12.900'), findsWidgets);
+  });
+
+  testWidgets('envía el borrador, vacía el carrito y confirma el pedido', (
+    tester,
+  ) async {
+    final store = TestCartStore();
+    final orders = TestOrderGateway();
+    await tester.pumpWidget(
+      MesaFlowApp(
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+        cartStore: store,
+        orderGateway: orders,
+      ),
+    );
+    await tester.pumpAndSettle();
+    final addButton = find.byKey(const ValueKey('add-burger-casa'));
+    await tester.ensureVisible(addButton);
+    await tester.pumpAndSettle();
+    await tester.tap(addButton);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('open-cart')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('submit-order')));
+    await tester.pumpAndSettle();
+
+    expect(orders.requestIds, hasLength(1));
+    expect(orders.requestIds.single, matches(RegExp(r'^[a-f0-9]{32}$')));
+    expect(orders.submittedLines.single.single.product.id, 'burger-casa');
+    expect(find.byKey(const ValueKey('order-confirmation')), findsOneWidget);
+    expect(find.text('Pedido enviado'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('order-confirmation')),
+        matching: find.text('\$ 12.900'),
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('close-order-confirmation')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ver pedido'), findsNothing);
+  });
+
+  testWidgets('un reintento conserva el identificador y no duplica el pedido', (
+    tester,
+  ) async {
+    final orders = TestOrderGateway(
+      failure: OrderFailure.unavailable,
+      failuresRemaining: 1,
+    );
+    await tester.pumpWidget(
+      MesaFlowApp(
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+        orderGateway: orders,
+      ),
+    );
+    await tester.pumpAndSettle();
+    final addButton = find.byKey(const ValueKey('add-burger-casa'));
+    await tester.ensureVisible(addButton);
+    await tester.pumpAndSettle();
+    await tester.tap(addButton);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('open-cart')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('submit-order')));
+    await tester.pumpAndSettle();
+    expect(orders.requestIds, hasLength(1));
+    expect(find.text('Enviar pedido'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('submit-order')));
+    await tester.pumpAndSettle();
+
+    expect(orders.requestIds, hasLength(2));
+    expect(orders.requestIds.first, orders.requestIds.last);
+    expect(find.byKey(const ValueKey('order-confirmation')), findsOneWidget);
   });
 }

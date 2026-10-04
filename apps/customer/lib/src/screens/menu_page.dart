@@ -6,6 +6,7 @@ import '../contracts/domain_contracts.dart';
 import '../menu/menu_repository.dart';
 import '../models/menu_product.dart';
 import '../models/product_selection.dart';
+import '../order/order_gateway.dart';
 import '../routing/customer_routes.dart';
 import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
@@ -21,12 +22,14 @@ class MenuPage extends StatefulWidget {
     required this.sessionAccess,
     required this.menuRepository,
     required this.cartStore,
+    required this.orderGateway,
   });
 
   final CustomerTableRoute tableRoute;
   final QrSessionAccess sessionAccess;
   final MenuRepository menuRepository;
   final CartStore cartStore;
+  final OrderGateway orderGateway;
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -193,13 +196,50 @@ class _MenuPageState extends State<MenuPage> {
     if (selection != null && mounted) await _addSelection(selection);
   }
 
-  void _showCart() {
-    showModalBottomSheet<void>(
+  Future<void> _showCart() async {
+    final order = await showModalBottomSheet<CreatedOrder>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (context) =>
-          CartSheet(controller: _cartController, onMessage: _showCartMessage),
+      builder: (context) => CartSheet(
+        controller: _cartController,
+        session: widget.sessionAccess,
+        orderGateway: widget.orderGateway,
+        onMessage: _showCartMessage,
+      ),
+    );
+    if (order == null || !mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        key: const ValueKey('order-confirmation'),
+        icon: const Icon(Icons.check_circle_outline_rounded),
+        title: const Text('Pedido enviado'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'La cocina ya recibió tu pedido.',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text('Referencia: ${order.id.substring(0, 8).toUpperCase()}'),
+            Text(
+              formatPrice(
+                Money(amountMinor: order.totalMinor, currency: order.currency),
+              ),
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ],
+        ),
+        actions: [
+          FilledButton(
+            key: const ValueKey('close-order-confirmation'),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Entendido'),
+          ),
+        ],
+      ),
     );
   }
 

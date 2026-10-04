@@ -440,3 +440,31 @@ se reconstruyen desde ese catálogo. Un documento corrupto, con campos extra o d
 otra sesión se elimina de forma segura. Este almacenamiento mejora continuidad,
 pero nunca es una fuente confiable: la Function de creación de pedido de la
 Etapa 24 volverá a validar sesión, catálogo, disponibilidad y precios en servidor.
+
+## Creación transaccional del pedido — Etapa 24
+
+`createOrder` es una callable autenticada. El cliente envía contexto de la sesión,
+un `requestId` aleatorio y líneas limitadas a `productId`, cantidad y nota. El
+contrato rechaza campos adicionales: precio, nombre, moneda, subtotal y total no
+pueden cruzar ese límite desde Flutter.
+
+El ID definitivo deriva de SHA-256 sobre UID y `requestId`. La Function lo busca
+antes de procesar la operación; un reintento devuelve el mismo snapshot y no
+vuelve a incrementar el consumo. Si aún no existe, una transacción comprueba:
+
+- establecimiento, mesa y sesión activa `open`;
+- participante autenticado y vigente;
+- productos y categorías activos, disponibles y del tenant correcto;
+- moneda coherente y límites enteros del contrato.
+
+Después toma nombre, moneda y precio directamente de Firestore, calcula líneas y
+total, crea un `OrderContract` en estado `created` y actualiza `subtotalMinor` y
+`balanceMinor` de la sesión en la misma transacción. Una falla no deja escrituras
+parciales. Las reglas siguen negando escrituras directas del cliente; solo Admin
+SDK dentro de Functions realiza la operación.
+
+Flutter llama la Function mediante `OrderGateway`. El carrito se limpia después
+de una respuesta exitosa y presenta referencia y total confirmados por servidor.
+Ante una falla conserva sus líneas y reutiliza el mismo `requestId`; si el usuario
+modifica el contenido, genera uno nuevo. El despliegue cloud continúa diferido:
+todo este recorrido está verificado con Auth, Firestore y Functions Emulator.

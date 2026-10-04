@@ -4,6 +4,7 @@ import { deleteApp, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
 import { buildQrExchangeId, hashQrToken } from "../functions/lib/qr-session.js";
+import { buildOrderId } from "../functions/lib/create-order.js";
 import {
   assertLocalEmulatorEnvironment,
   DEMO_PROJECT_ID,
@@ -24,6 +25,8 @@ const users = [];
 let app;
 let firestore;
 let originalTable;
+let originalSession;
+const createdOrderIds = [];
 
 async function jsonRequest(url, { method = "POST", body, token } = {}) {
   const response = await fetch(url, {
@@ -70,6 +73,12 @@ try {
   assert.equal(tableSnapshot.exists, true, "Primero debe cargarse el seed demo");
   originalTable = tableSnapshot.data();
   assert.equal(originalTable.qrTokenHash, hashQrToken(tokenV1));
+  const sessionRef = firestore.doc(
+    "establishments/mesa-flow-demo/tableSessions/sesion-mesa-01"
+  );
+  const sessionSnapshot = await sessionRef.get();
+  assert.equal(sessionSnapshot.exists, true);
+  originalSession = sessionSnapshot.data();
 
   const first = await anonymousUser();
   const exchanged = await callable("exchangeQrSession", { ...context, token: tokenV1 }, first.idToken);
@@ -80,6 +89,55 @@ try {
   const restored = await callable("restoreQrSession", context, first.idToken);
   assert.equal(restored.status, 200);
   assert.equal(restored.data.result.sessionId, "sesion-mesa-01");
+
+  const orderRequestId = "0123456789abcdef0123456789abcdef";
+  const orderDraft = {
+    establishmentId: "mesa-flow-demo",
+    sessionId: "sesion-mesa-01",
+    tableId: "mesa-01",
+    requestId: orderRequestId,
+    items: [{ productId: "burger-casa", quantity: 2, notes: "Sin cebolla" }]
+  };
+  const created = await callable("createOrder", orderDraft, first.idToken);
+  assert.equal(created.status, 200);
+  assert.equal(created.data.result.totalMinor, 2580000);
+  assert.equal(created.data.result.currency, "ARS");
+  const orderId = buildOrderId(first.localId, orderRequestId);
+  createdOrderIds.push(orderId);
+  assert.equal(created.data.result.orderId, orderId);
+  const repeated = await callable("createOrder", orderDraft, first.idToken);
+  assert.equal(repeated.status, 200);
+  assert.equal(repeated.data.result.orderId, orderId);
+  const order = (await firestore.doc(
+    `establishments/mesa-flow-demo/orders/${orderId}`
+  ).get()).data();
+  assert.equal(order.items[0].unitPriceMinor, 1290000);
+  assert.equal(order.items[0].lineTotalMinor, 2580000);
+  assert.equal(order.totalMinor, 2580000);
+  const updatedSession = (await sessionRef.get()).data();
+  assert.equal(
+    updatedSession.subtotalMinor,
+    originalSession.subtotalMinor + 2580000,
+    "El reintento no debe sumar el pedido dos veces"
+  );
+  const manipulated = await callable("createOrder", {
+    ...orderDraft,
+    requestId: "1123456789abcdef0123456789abcdef",
+    items: [{
+      productId: "burger-casa",
+      quantity: 2,
+      notes: null,
+      unitPriceMinor: 1
+    }]
+  }, first.idToken);
+  assertCallableError(manipulated, "INVALID_ARGUMENT");
+  const unavailable = await callable("createOrder", {
+    ...orderDraft,
+    requestId: "2123456789abcdef0123456789abcdef",
+    items: [{ productId: "salmon-limon", quantity: 1, notes: null }]
+  }, first.idToken);
+  assertCallableError(unavailable, "FAILED_PRECONDITION");
+  console.log("[OK] Pedido transaccional recalcula precio y el reintento no duplica consumo");
 
   const replay = await callable("exchangeQrSession", { ...context, token: tokenV1 }, first.idToken);
   assertCallableError(replay, "ALREADY_EXISTS");
@@ -111,6 +169,16 @@ try {
         qrTokenHash: originalTable.qrTokenHash,
         qrVersion: originalTable.qrVersion
       });
+      if (originalSession) {
+        await firestore.doc(
+          "establishments/mesa-flow-demo/tableSessions/sesion-mesa-01"
+        ).set(originalSession);
+      }
+      for (const orderId of createdOrderIds) {
+        await firestore.doc(
+          `establishments/mesa-flow-demo/orders/${orderId}`
+        ).delete();
+      }
       for (const user of users) {
         const participant = firestore.doc(
           `establishments/mesa-flow-demo/tableSessions/sesion-mesa-01/participants/${user.localId}`

@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 23** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 24** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -31,6 +31,9 @@ de hasta 300 caracteres y calcular el subtotal con enteros antes de incorporarlo
 al pedido. El carrito queda guardado por establecimiento y sesión en el
 dispositivo, permite editar, eliminar o vaciar líneas y vuelve a calcular los
 totales con el catálogo vigente al recargar.
+El botón **Enviar pedido** llama a una Function autenticada: el servidor valida
+mesa, sesión y participante, vuelve a leer productos y precios, crea el snapshot
+del pedido y actualiza el consumo en una transacción idempotente.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -60,6 +63,7 @@ encuentran en:
 - `docs/stage-21-dynamic-menu.md`
 - `docs/stage-22-product-detail.md`
 - `docs/stage-23-persistent-cart.md`
+- `docs/stage-24-create-order.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -89,10 +93,10 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 95
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 99
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, seis de Hosting, cinco del
-seed de presentación, siete del seed demo, tres de FlutterFire, ocho de contratos y 12 de Functions), más
+seed de presentación, siete del seed demo, tres de FlutterFire, ocho de contratos y 16 de Functions), más
 el lint y build TypeScript. Este comando no consulta servicios remotos.
 
 Los contratos compartidos tienen además siete pruebas Dart contra los mismos
@@ -161,6 +165,8 @@ aislamiento entre tenants, tipos, tamaños, extensión, metadata exacta, rutas y
 actualizaciones.
 También canjea un QR con un usuario anónimo, restaura la sesión y demuestra que
 replay, alteración y rotación fallan antes de limpiar sus fixtures.
+Con esa misma sesión crea un pedido transaccional, comprueba el precio recalculado,
+la idempotencia y el incremento único del consumo, y elimina el pedido temporal.
 
 La misma prueba carga además el dataset completo de la Etapa 16 y confirma una
 segunda aplicación sin cambios: 4 roles, 10 mesas, 18 productos, 4 pedidos y 3
