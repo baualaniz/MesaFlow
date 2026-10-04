@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mesaflow_customer/main.dart';
+import 'package:mesaflow_customer/src/config/app_environment.dart';
 import 'package:mesaflow_customer/src/contracts/domain_contracts.dart';
 
-import 'helpers/test_qr_session_gateway.dart';
+import 'helpers/test_cart_store.dart';
 import 'helpers/test_menu_repository.dart';
+import 'helpers/test_qr_session_gateway.dart';
 
 void main() {
   testWidgets('muestra el menú demo y agrega un producto', (tester) async {
@@ -140,5 +142,65 @@ void main() {
       ),
     );
     expect(editable.controller.text.length, maxItemNotesLength);
+  });
+
+  testWidgets('permite editar y eliminar una línea desde el pedido', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MesaFlowApp(
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+      ),
+    );
+    await tester.pumpAndSettle();
+    final addButton = find.byKey(const ValueKey('add-burger-casa'));
+    await tester.ensureVisible(addButton);
+    await tester.pumpAndSettle();
+    await tester.tap(addButton);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('open-cart')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('cart-increase-burger-casa-0')));
+    await tester.pumpAndSettle();
+    expect(find.text('\$ 25.800'), findsWidgets);
+    await tester.tap(find.byKey(const ValueKey('cart-decrease-burger-casa-0')));
+    await tester.pumpAndSettle();
+    expect(find.text('\$ 12.900'), findsWidgets);
+    await tester.tap(find.byKey(const ValueKey('cart-remove-burger-casa-0')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tu pedido está vacío'), findsOneWidget);
+  });
+
+  testWidgets('restaura el pedido luego de recrear la aplicación', (
+    tester,
+  ) async {
+    final store = TestCartStore();
+    Widget buildApp() => MesaFlowApp(
+      environment: AppEnvironment.development,
+      initialLocation: '/e/mesa-flow-demo/table/mesa-01',
+      qrSessionGateway: TestQrSessionGateway.active,
+      menuRepository: TestMenuRepository.published,
+      cartStore: store,
+    );
+
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
+    final addButton = find.byKey(const ValueKey('add-burger-casa'));
+    await tester.ensureVisible(addButton);
+    await tester.pumpAndSettle();
+    await tester.tap(addButton);
+    await tester.pumpAndSettle();
+    expect(find.text('Ver pedido'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ver pedido'), findsOneWidget);
+    expect(find.text('\$ 12.900'), findsWidgets);
   });
 }

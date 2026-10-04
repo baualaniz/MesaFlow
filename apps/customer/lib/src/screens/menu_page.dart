@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../cart/cart_controller.dart';
+import '../cart/cart_store.dart';
 import '../contracts/domain_contracts.dart';
 import '../menu/menu_repository.dart';
 import '../models/menu_product.dart';
@@ -7,9 +9,10 @@ import '../models/product_selection.dart';
 import '../routing/customer_routes.dart';
 import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
+import '../widgets/cart_sheet.dart';
+import '../widgets/feedback_panel.dart';
 import '../widgets/product_card.dart';
 import '../widgets/product_detail_sheet.dart';
-import '../widgets/feedback_panel.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({
@@ -17,11 +20,13 @@ class MenuPage extends StatefulWidget {
     required this.tableRoute,
     required this.sessionAccess,
     required this.menuRepository,
+    required this.cartStore,
   });
 
   final CustomerTableRoute tableRoute;
   final QrSessionAccess sessionAccess;
   final MenuRepository menuRepository;
+  final CartStore cartStore;
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -29,30 +34,56 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   final _searchController = TextEditingController();
-  final List<ProductSelection> _cart = [];
+  late CartController _cartController;
   MenuCatalog? _catalog;
   Object? _loadError;
   bool _loading = true;
   String? _categoryId;
   String _query = '';
+  int _loadGeneration = 0;
 
   @override
   void initState() {
     super.initState();
+    _cartController = _createCartController();
+    _cartController.addListener(_onCartChanged);
     _loadMenu();
   }
 
   @override
   void didUpdateWidget(covariant MenuPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.sessionAccess.establishmentId !=
+    final cartScopeChanged =
+        oldWidget.sessionAccess.establishmentId !=
             widget.sessionAccess.establishmentId ||
-        oldWidget.menuRepository != widget.menuRepository) {
+        oldWidget.sessionAccess.sessionId != widget.sessionAccess.sessionId ||
+        oldWidget.cartStore != widget.cartStore;
+    if (cartScopeChanged) {
+      _cartController.removeListener(_onCartChanged);
+      _cartController.dispose();
+      _cartController = _createCartController();
+      _cartController.addListener(_onCartChanged);
+    }
+    if (cartScopeChanged || oldWidget.menuRepository != widget.menuRepository) {
       _loadMenu();
     }
   }
 
+  CartController _createCartController() => CartController(
+    store: widget.cartStore,
+    scope: CartScope(
+      establishmentId: widget.sessionAccess.establishmentId,
+      sessionId: widget.sessionAccess.sessionId,
+    ),
+  );
+
+  void _onCartChanged() {
+    if (mounted) setState(() {});
+  }
+
   Future<void> _loadMenu() async {
+    final generation = ++_loadGeneration;
+    final cartController = _cartController;
     setState(() {
       _loading = true;
       _loadError = null;
@@ -61,18 +92,28 @@ class _MenuPageState extends State<MenuPage> {
       final catalog = await widget.menuRepository.loadPublishedMenu(
         widget.sessionAccess.establishmentId,
       );
-      if (!mounted) return;
-      final productIds = catalog.products.map((product) => product.id).toSet();
+      await cartController.restore(catalog);
+      if (!mounted ||
+          generation != _loadGeneration ||
+          cartController != _cartController) {
+        return;
+      }
       setState(() {
         _catalog = catalog;
         _loading = false;
         _categoryId = null;
-        _cart.removeWhere(
-          (selection) => !productIds.contains(selection.product.id),
-        );
       });
+      if (cartController.restoredWithError) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _showCartMessage(
+              'El carrito guardado no era válido y se reinició de forma segura.',
+            );
+          }
+        });
+      }
     } catch (error) {
-      if (!mounted) return;
+      if (!mounted || generation != _loadGeneration) return;
       setState(() {
         _catalog = null;
         _loadError = error;
@@ -96,55 +137,38 @@ class _MenuPageState extends State<MenuPage> {
         .toList(growable: false);
   }
 
-  int get _itemCount =>
-      _cart.fold(0, (sum, selection) => sum + selection.quantity);
+  int get _itemCount => _cartController.itemCount;
 
-  int get _total =>
-      _cart.fold(0, (sum, selection) => sum + selection.lineTotal.amountMinor);
+  int get _total => _cartController.totalMinor;
 
   @override
   void dispose() {
+    _cartController.removeListener(_onCartChanged);
+    _cartController.dispose();
     _searchController.dispose();
     super.dispose();
   }
 
-  void _add(MenuProduct product) {
-    _addSelection(ProductSelection.create(product: product, quantity: 1));
+  Future<void> _add(MenuProduct product) async {
+    await _addSelection(ProductSelection.create(product: product, quantity: 1));
   }
 
-  void _addSelection(ProductSelection selection) {
-    final existingIndex = _cart.indexWhere(
-      (item) =>
-          item.product.id == selection.product.id &&
-          item.notes == selection.notes,
-    );
-    ProductSelection next = selection;
-    if (existingIndex >= 0) {
-      try {
-        final existing = _cart[existingIndex];
-        next = ProductSelection.create(
-          product: selection.product,
-          quantity: existing.quantity + selection.quantity,
-          notes: selection.notes,
-        );
-      } on FormatException {
-        _showCartMessage(
-          'Este producto admite hasta '
-          '${maxQuantityForProduct(selection.product)} unidades por línea.',
-        );
-        return;
-      }
-    }
-    setState(() {
-      if (existingIndex >= 0) {
-        _cart[existingIndex] = next;
-      } else {
-        _cart.add(next);
-      }
-    });
-    _showCartMessage(
-      '${selection.quantity} × ${selection.product.name} agregado al pedido',
-    );
+  Future<void> _addSelection(ProductSelection selection) async {
+    final result = await _cartController.add(selection);
+    if (!mounted) return;
+    final message = switch (result) {
+      CartMutationResult.success =>
+        '${selection.quantity} × ${selection.product.name} agregado al pedido',
+      CartMutationResult.quantityLimit =>
+        'Este producto admite hasta '
+            '${maxQuantityForProduct(selection.product)} unidades por línea.',
+      CartMutationResult.itemLimit =>
+        'El pedido alcanzó el máximo de $maxOrderItems líneas.',
+      CartMutationResult.busy => 'Esperá a que termine el cambio anterior.',
+      CartMutationResult.persistenceError =>
+        'No pudimos guardar el producto. Intentá nuevamente.',
+    };
+    _showCartMessage(message);
   }
 
   void _showCartMessage(String message) {
@@ -166,86 +190,16 @@ class _MenuPageState extends State<MenuPage> {
       showDragHandle: true,
       builder: (context) => ProductDetailSheet(product: product),
     );
-    if (selection != null && mounted) _addSelection(selection);
+    if (selection != null && mounted) await _addSelection(selection);
   }
 
   void _showCart() {
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Tu pedido',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 18),
-                for (final selection in _cart)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 7),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: MesaFlowColors.softGreen,
-                          child: Text('${selection.quantity}'),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(selection.product.name),
-                              if (selection.notes case final notes?)
-                                Text(
-                                  notes,
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(formatPrice(selection.lineTotal)),
-                      ],
-                    ),
-                  ),
-                const Divider(height: 28),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Total'),
-                    Text(
-                      formatPrice(
-                        Money(
-                          amountMinor: _total,
-                          currency: _cart.first.product.price.currency,
-                        ),
-                      ),
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                FilledButton(
-                  onPressed: () {},
-                  child: const Text('Continuar pedido'),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Demo visual: la confirmación se conectará a Firebase en las próximas etapas.',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      builder: (context) =>
+          CartSheet(controller: _cartController, onMessage: _showCartMessage),
     );
   }
 
@@ -425,7 +379,12 @@ class _MenuPageState extends State<MenuPage> {
                       formatPrice(
                         Money(
                           amountMinor: _total,
-                          currency: _cart.first.product.price.currency,
+                          currency: _cartController
+                              .lines
+                              .first
+                              .product
+                              .price
+                              .currency,
                         ),
                       ),
                     ),

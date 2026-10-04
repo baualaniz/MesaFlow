@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../cart/cart_store.dart';
 import '../config/app_environment.dart';
 import '../menu/menu_repository.dart';
 import '../screens/entry_page.dart';
@@ -14,6 +15,7 @@ GoRouter createCustomerRouter({
   required AppEnvironment environment,
   required QrSessionGateway qrSessionGateway,
   required MenuRepository menuRepository,
+  required CartStore cartStore,
   String? initialLocation,
 }) {
   return GoRouter(
@@ -45,6 +47,7 @@ GoRouter createCustomerRouter({
             tableRoute: tableRoute,
             gateway: qrSessionGateway,
             menuRepository: menuRepository,
+            cartStore: cartStore,
             token: tokens.length == 1 ? tokens.single : null,
             onTokenConsumed: () => context.replace(tableRoute.location),
           );
@@ -61,12 +64,14 @@ class MesaFlowRouterApp extends StatefulWidget {
     required this.environment,
     required this.qrSessionGateway,
     required this.menuRepository,
+    required this.cartStore,
     this.initialLocation,
   });
 
   final AppEnvironment environment;
   final QrSessionGateway qrSessionGateway;
   final MenuRepository menuRepository;
+  final CartStore cartStore;
   final String? initialLocation;
 
   @override
@@ -78,6 +83,7 @@ class _MesaFlowRouterAppState extends State<MesaFlowRouterApp> {
     environment: widget.environment,
     qrSessionGateway: widget.qrSessionGateway,
     menuRepository: widget.menuRepository,
+    cartStore: widget.cartStore,
     initialLocation: widget.initialLocation,
   );
 

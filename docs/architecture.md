@@ -417,8 +417,26 @@ que mantiene `priceMinor × quantity` dentro de `maxMinorAmount`. Las notas se
 normalizan con `trim`, una cadena vacía se transforma en `null` y el máximo de 300
 caracteres pertenece al fixture de contratos compartido por Dart y TypeScript.
 
-Mientras no existe el estado persistente de la Etapa 23, `MenuPage` conserva una
-lista local de selecciones. Producto y nota iguales se combinan; notas diferentes
-forman líneas separadas. Cada línea guarda su subtotal validado, y el total visible
-solo suma enteros. Esta estructura es deliberadamente temporal y se perderá al
-recargar hasta que el carrito se ligue a la sesión.
+`ProductSelection` también es la entrada validada del carrito de la Etapa 23.
+Producto y nota iguales se combinan; notas diferentes forman líneas separadas.
+Cada línea guarda su subtotal validado, y el total visible solo suma enteros.
+
+## Carrito persistente por sesión — Etapa 23
+
+`CartController` concentra restauración, combinación de líneas, edición,
+eliminación, vaciado y totales. Antes de publicar un cambio en memoria, espera que
+`CartStore` lo persista; si el guardado falla, la interfaz conserva el último
+estado confirmado y permite reintentar.
+
+La implementación Web usa `SharedPreferencesAsync`, cuyo respaldo en navegador
+es almacenamiento local. La clave incluye versión de esquema,
+`establishmentId` y `sessionId`, por lo que dos sesiones de mesa no comparten el
+mismo documento. El valor solo contiene `productId`, cantidad y nota: no guarda
+tokens, identidad, precio ni totales.
+
+Al restaurar, el cliente vuelve a resolver cada ID contra el catálogo publicado
+actual. Los productos ausentes se descartan y precio, moneda, nombre y subtotal
+se reconstruyen desde ese catálogo. Un documento corrupto, con campos extra o de
+otra sesión se elimina de forma segura. Este almacenamiento mejora continuidad,
+pero nunca es una fuente confiable: la Function de creación de pedido de la
+Etapa 24 volverá a validar sesión, catálogo, disponibilidad y precios en servidor.

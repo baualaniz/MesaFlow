@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'src/app.dart';
+import 'src/cart/shared_preferences_cart_store.dart';
 import 'src/config/app_environment.dart';
 import 'src/firebase/firebase_bootstrap.dart';
 import 'src/menu/firestore_menu_repository.dart';
@@ -19,6 +20,7 @@ Future<void> main() async {
       environment: environment,
       qrSessionGateway: FirebaseQrSessionGateway(),
       menuRepository: FirestoreMenuRepository(),
+      cartStore: SharedPreferencesCartStore(),
     ),
   );
 }

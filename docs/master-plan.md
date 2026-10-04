@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–22 completadas en alcance local. La siguiente etapa es el
-carrito persistente por sesión con edición y totales deterministas.
+Estado actual: Etapas 1–23 completadas en alcance local. La siguiente etapa crea
+el pedido mediante una Function transaccional que recalcula precios en servidor.
 
 ## Fases 1–10: base y Firebase
 
