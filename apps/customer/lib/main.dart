@@ -16,15 +16,20 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
   final environment = AppEnvironment.fromCompileTime();
-  await initializeMesaFlowFirebase(environment);
+  final firebase = await initializeMesaFlowFirebase(environment);
   runApp(
     MesaFlowApp(
       environment: environment,
-      qrSessionGateway: FirebaseQrSessionGateway(),
-      menuRepository: FirestoreMenuRepository(),
+      qrSessionGateway: FirebaseQrSessionGateway(
+        auth: firebase.auth,
+        functions: firebase.functions,
+      ),
+      menuRepository: FirestoreMenuRepository(firestore: firebase.firestore),
       cartStore: SharedPreferencesCartStore(),
-      orderGateway: FirebaseOrderGateway(),
-      orderTrackingRepository: FirestoreOrderTrackingRepository(),
+      orderGateway: FirebaseOrderGateway(functions: firebase.functions),
+      orderTrackingRepository: FirestoreOrderTrackingRepository(
+        firestore: firebase.firestore,
+      ),
     ),
   );
 }

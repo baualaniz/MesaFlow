@@ -45,7 +45,11 @@ final class FirebaseQrSessionGateway implements QrSessionGateway {
         throw const QrSessionException(QrSessionFailure.unavailable);
       }
       return user;
-    } on FirebaseAuthException {
+    } on FirebaseAuthException catch (error) {
+      debugPrint(
+        'MesaFlow anonymous authentication failed '
+        '[${error.code}]: ${error.message}',
+      );
       throw const QrSessionException(QrSessionFailure.unavailable);
     }
   }
@@ -77,6 +81,9 @@ final class FirebaseQrSessionGateway implements QrSessionGateway {
       final result = await _functions.httpsCallable(name).call(data);
       return QrSessionAccess.fromCallableData(result.data);
     } on FirebaseFunctionsException catch (error) {
+      debugPrint(
+        'MesaFlow callable $name failed [${error.code}]: ${error.message}',
+      );
       throw QrSessionException(switch (error.code) {
         'already-exists' => QrSessionFailure.alreadyUsed,
         'invalid-argument' || 'permission-denied' => QrSessionFailure.invalidQr,
