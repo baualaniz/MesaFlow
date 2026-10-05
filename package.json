@@ -23,7 +23,7 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config && npm run test:firestore-indexes && npm run test:storage-config && npm run test:secrets-config && npm run test:hosting-config && npm run test:presentation-seed && npm run test:demo-seed && npm run test:customer-config && npm run test:contracts && npm run functions:check",
+    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config && npm run test:firestore-indexes && npm run test:storage-config && npm run test:secrets-config && npm run test:mercado-pago-config && npm run test:hosting-config && npm run test:presentation-seed && npm run test:demo-seed && npm run test:customer-config && npm run test:contracts && npm run functions:check",
     "check:repo": "node ./scripts/check-repository.mjs",
     "test:config": "node --test ./scripts/firebase-projects.test.mjs ./scripts/emulator-config.test.mjs",
     "test:tooling": "node --test ./scripts/tooling-dependencies.test.mjs ./scripts/java-runtime.test.mjs",
@@ -32,6 +32,7 @@
     "test:firestore-indexes": "node --test ./scripts/firestore-indexes.test.mjs",
     "test:storage-config": "node --test ./scripts/storage-config.test.mjs",
     "test:secrets-config": "node --test ./scripts/secrets-config.test.mjs",
+    "test:mercado-pago-config": "node --test ./scripts/mercado-pago-config.test.mjs",
     "test:hosting-config": "node --test ./scripts/hosting-config.test.mjs",
     "test:presentation-seed": "node --test ./scripts/presentation-seed.test.mjs",
     "test:demo-seed": "node --test ./scripts/demo-seed.test.mjs",
@@ -48,6 +49,7 @@
     "firebase:seed:demo": "node ./scripts/seed-demo-emulator.mjs",
     "storage:check": "node ./scripts/check-storage-config.mjs",
     "secrets:check": "node ./scripts/check-secrets-config.mjs",
+    "mercado-pago:check": "node ./scripts/check-mercado-pago-config.mjs",
     "hosting:check": "node ./scripts/check-hosting-config.mjs",
     "hosting:build": "node ./scripts/build-hosting.mjs",
     "functions:build": "npm run build --workspace @mesaflow/functions",

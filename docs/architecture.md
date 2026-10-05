@@ -530,3 +530,26 @@ gateway inyectado. La hoja muestra consumo, pagado, saldo, cantidad de pedidos y
 productos; permite reintentar y actualizar. **Pedir la cuenta** reutiliza la
 solicitud `bill` de la Etapa 26, por lo que conserva autenticación, deduplicación,
 cooldown y estado en tiempo real sin crear un segundo canal operativo.
+
+## Mercado Pago de prueba — Etapa 28
+
+La integración elegida para el MVP es Checkout Pro vía Preferences API en
+Argentina. La aplicación externa **MesaFlow Desarrollo** usa credenciales de
+prueba y un único vendedor demo; producción queda explícitamente deshabilitada en
+`firebase/mercado-pago-policy.json`.
+
+`MERCADO_PAGO_ACCESS_TOKEN` existe únicamente en
+`functions/.secret.local`, protegido por `.gitignore`. El archivo versionado
+contiene solo placeholders y la Function de la Etapa 29 será la única consumidora
+del secreto mediante un binding explícito. Public Key, Client Secret y
+credenciales productivas no forman parte del flujo actual.
+
+`mercado-pago:check` confirma que el archivo está ignorado y realiza una lectura
+de identidad con el Access Token sin imprimir token, ID, correo ni datos del
+titular. La respuesta debe corresponder al sitio argentino y contener la marca de
+usuario de prueba.
+
+El vendedor único es deliberadamente un alcance de demostración. Antes de operar
+como SaaS real donde cada restaurante recibe su dinero, el modelo deberá migrar a
+OAuth por establecimiento y almacenamiento individual cifrado; un token global
+no se reutilizará para cobrar por múltiples comercios reales.

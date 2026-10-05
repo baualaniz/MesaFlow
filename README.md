@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 27** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 28** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -40,6 +40,9 @@ Firestore después de recargar la aplicación.
 El botón **Tu cuenta** solicita al servidor un resumen recalculado desde pedidos
 no cancelados y pagos aprobados. Muestra consumo, pagos y saldo, y permite pedir
 la cuenta reutilizando el canal seguro de asistencia de la mesa.
+La aplicación **MesaFlow Desarrollo** de Mercado Pago usa Checkout Pro mediante
+Preferences API con un vendedor argentino de prueba validado. Su Access Token
+permanece únicamente en un archivo local ignorado; producción sigue deshabilitada.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -73,6 +76,7 @@ encuentran en:
 - `docs/stage-25-order-tracking.md`
 - `docs/stage-26-assistance.md`
 - `docs/stage-27-consumption.md`
+- `docs/stage-28-mercado-pago.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -102,10 +106,11 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 108
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 113
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, seis de Hosting, cinco del
-seed de presentación, siete del seed demo, tres de FlutterFire, diez de contratos y 23 de Functions), más
+cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
+diez de contratos y 23 de Functions), más
 el lint y build TypeScript. Este comando no consulta servicios remotos.
 
 Los contratos compartidos tienen además siete pruebas Dart contra los mismos

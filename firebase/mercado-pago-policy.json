@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "provider": "mercado_pago",
+  "applicationName": "MesaFlow Desarrollo",
+  "checkoutProduct": "checkout_pro",
+  "checkoutApi": "preferences",
+  "credentialMode": "test",
+  "country": "AR",
+  "siteId": "MLA",
+  "merchantModel": "single_demo_seller",
+  "productionMultiTenantModel": "oauth_per_establishment",
+  "accessTokenSecret": "MERCADO_PAGO_ACCESS_TOKEN",
+  "localSecretsFile": "functions/.secret.local",
+  "identityEndpoint": "https://api.mercadolibre.com/users/me",
+  "productionEnabled": false,
+  "requiresRealCard": false
+}
