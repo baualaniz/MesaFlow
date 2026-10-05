@@ -7,6 +7,7 @@ import 'package:mesaflow_customer/src/widgets/status_badge.dart';
 
 import 'helpers/test_qr_session_gateway.dart';
 import 'helpers/test_menu_repository.dart';
+import 'helpers/test_order_tracking_repository.dart';
 
 void main() {
   test('el tema usa tipografías, radios y estados semánticos de MesaFlow', () {
@@ -82,5 +83,36 @@ void main() {
       );
     }
     await tester.binding.setSurfaceSize(null);
+  });
+
+  testWidgets('el seguimiento de pedidos no desborda en pantalla móvil', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(320, 720));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final tracking = TestOrderTrackingRepository([
+      testTrackedOrder(
+        status: 'preparing',
+        statusTimestamps: const {
+          'created': '2026-09-17T12:15:00.000Z',
+          'preparing': '2026-09-17T12:17:00.000Z',
+        },
+      ),
+    ]);
+    addTearDown(tracking.dispose);
+
+    await tester.pumpWidget(
+      MesaFlowApp(
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+        orderTrackingRepository: tracking,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('open-order-tracking')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('En preparación'), findsWidgets);
+    expect(tester.takeException(), isNull);
   });
 }

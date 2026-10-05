@@ -468,3 +468,27 @@ de una respuesta exitosa y presenta referencia y total confirmados por servidor.
 Ante una falla conserva sus líneas y reutiliza el mismo `requestId`; si el usuario
 modifica el contenido, genera uno nuevo. El despliegue cloud continúa diferido:
 todo este recorrido está verificado con Auth, Firestore y Functions Emulator.
+
+## Seguimiento de pedidos — Etapa 25
+
+`FirestoreOrderTrackingRepository` escucha `orders` dentro del establecimiento
+validado y exige `sessionId == sesión activa`, con orden por `createdAt`. No existe
+una consulta global ni se toma el tenant directamente de la URL. Esta forma
+coincide con las reglas de participante y con el índice compuesto ya versionado.
+
+Cada snapshot atraviesa nuevamente `OrderContract`. El adaptador exige
+`Timestamp` de Firestore, normaliza su precisión a milisegundos UTC y comprueba
+que establecimiento, sesión e ID pertenezcan al contexto esperado. Un documento
+mal formado no se presenta como un pedido válido.
+
+`OrderTrackingController` mantiene una sola suscripción para el contexto activo,
+descarta respuestas tardías de suscripciones reemplazadas y expone carga, datos y
+error recuperable. Al reconstruir la aplicación se crea una suscripción nueva y
+Firestore vuelve a entregar los pedidos de la sesión, sin depender de una copia
+local ni del carrito ya vaciado.
+
+La hoja **Tus pedidos** muestra primero el más reciente, el snapshot de líneas y
+total, y un timeline desde recibido hasta completado. Los pedidos cancelados usan
+un cierre específico. Si la conexión cae, se conserva la última información; si
+todavía no había datos se ofrece reintentar. Las transiciones operativas siguen
+reservadas para el panel y la Function de la Etapa 33: el cliente solo observa.

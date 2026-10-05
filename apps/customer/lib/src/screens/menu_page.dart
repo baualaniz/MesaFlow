@@ -7,11 +7,14 @@ import '../menu/menu_repository.dart';
 import '../models/menu_product.dart';
 import '../models/product_selection.dart';
 import '../order/order_gateway.dart';
+import '../order/order_tracking_controller.dart';
+import '../order/order_tracking_repository.dart';
 import '../routing/customer_routes.dart';
 import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
 import '../widgets/cart_sheet.dart';
 import '../widgets/feedback_panel.dart';
+import '../widgets/order_tracking_sheet.dart';
 import '../widgets/product_card.dart';
 import '../widgets/product_detail_sheet.dart';
 
@@ -23,6 +26,7 @@ class MenuPage extends StatefulWidget {
     required this.menuRepository,
     required this.cartStore,
     required this.orderGateway,
+    required this.orderTrackingRepository,
   });
 
   final CustomerTableRoute tableRoute;
@@ -30,6 +34,7 @@ class MenuPage extends StatefulWidget {
   final MenuRepository menuRepository;
   final CartStore cartStore;
   final OrderGateway orderGateway;
+  final OrderTrackingRepository orderTrackingRepository;
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -38,6 +43,7 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage> {
   final _searchController = TextEditingController();
   late CartController _cartController;
+  late OrderTrackingController _orderTrackingController;
   MenuCatalog? _catalog;
   Object? _loadError;
   bool _loading = true;
@@ -50,6 +56,9 @@ class _MenuPageState extends State<MenuPage> {
     super.initState();
     _cartController = _createCartController();
     _cartController.addListener(_onCartChanged);
+    _orderTrackingController = _createOrderTrackingController();
+    _orderTrackingController.addListener(_onOrderTrackingChanged);
+    _orderTrackingController.start();
     _loadMenu();
   }
 
@@ -67,6 +76,14 @@ class _MenuPageState extends State<MenuPage> {
       _cartController = _createCartController();
       _cartController.addListener(_onCartChanged);
     }
+    if (cartScopeChanged ||
+        oldWidget.orderTrackingRepository != widget.orderTrackingRepository) {
+      _orderTrackingController.removeListener(_onOrderTrackingChanged);
+      _orderTrackingController.dispose();
+      _orderTrackingController = _createOrderTrackingController();
+      _orderTrackingController.addListener(_onOrderTrackingChanged);
+      _orderTrackingController.start();
+    }
     if (cartScopeChanged || oldWidget.menuRepository != widget.menuRepository) {
       _loadMenu();
     }
@@ -80,7 +97,18 @@ class _MenuPageState extends State<MenuPage> {
     ),
   );
 
+  OrderTrackingController _createOrderTrackingController() =>
+      OrderTrackingController(
+        repository: widget.orderTrackingRepository,
+        establishmentId: widget.sessionAccess.establishmentId,
+        sessionId: widget.sessionAccess.sessionId,
+      );
+
   void _onCartChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _onOrderTrackingChanged() {
     if (mounted) setState(() {});
   }
 
@@ -148,6 +176,8 @@ class _MenuPageState extends State<MenuPage> {
   void dispose() {
     _cartController.removeListener(_onCartChanged);
     _cartController.dispose();
+    _orderTrackingController.removeListener(_onOrderTrackingChanged);
+    _orderTrackingController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -209,7 +239,7 @@ class _MenuPageState extends State<MenuPage> {
       ),
     );
     if (order == null || !mounted) return;
-    await showDialog<void>(
+    final openTracking = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         key: const ValueKey('order-confirmation'),
@@ -233,13 +263,30 @@ class _MenuPageState extends State<MenuPage> {
           ],
         ),
         actions: [
-          FilledButton(
+          TextButton(
             key: const ValueKey('close-order-confirmation'),
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Entendido'),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Seguir eligiendo'),
+          ),
+          FilledButton.icon(
+            key: const ValueKey('open-tracking-after-order'),
+            onPressed: () => Navigator.pop(context, true),
+            icon: const Icon(Icons.receipt_long_outlined),
+            label: const Text('Ver seguimiento'),
           ),
         ],
       ),
+    );
+    if (openTracking == true && mounted) _showOrderTracking();
+  }
+
+  void _showOrderTracking() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) =>
+          OrderTrackingSheet(controller: _orderTrackingController),
     );
   }
 
@@ -251,9 +298,10 @@ class _MenuPageState extends State<MenuPage> {
           slivers: [
             SliverToBoxAdapter(
               child: _Header(
-                itemCount: _itemCount,
+                orderCount: _orderTrackingController.orders.length,
                 establishmentName: widget.sessionAccess.establishmentName,
                 tableLabel: widget.sessionAccess.tableName,
+                onOrders: _showOrderTracking,
               ),
             ),
             if (!_loading &&
@@ -496,14 +544,16 @@ class _EmptyCatalog extends StatelessWidget {
 
 class _Header extends StatelessWidget {
   const _Header({
-    required this.itemCount,
+    required this.orderCount,
     required this.establishmentName,
     required this.tableLabel,
+    required this.onOrders,
   });
 
-  final int itemCount;
+  final int orderCount;
   final String establishmentName;
   final String tableLabel;
+  final VoidCallback onOrders;
 
   @override
   Widget build(BuildContext context) {
@@ -522,14 +572,15 @@ class _Header extends StatelessWidget {
                     const _BrandMark(),
                     const Spacer(),
                     Semantics(
-                      label: '$itemCount productos en el pedido',
+                      label: '$orderCount pedidos de la sesión',
                       child: Badge(
-                        isLabelVisible: itemCount > 0,
-                        label: Text('$itemCount'),
+                        isLabelVisible: orderCount > 0,
+                        label: Text('$orderCount'),
                         child: IconButton(
-                          onPressed: () {},
-                          tooltip: 'Pedido',
-                          icon: const Icon(Icons.shopping_bag_outlined),
+                          key: const ValueKey('open-order-tracking'),
+                          onPressed: onOrders,
+                          tooltip: 'Tus pedidos',
+                          icon: const Icon(Icons.receipt_long_outlined),
                         ),
                       ),
                     ),

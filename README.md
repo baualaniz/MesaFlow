@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 24** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 25** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -34,6 +34,9 @@ totales con el catálogo vigente al recargar.
 El botón **Enviar pedido** llama a una Function autenticada: el servidor valida
 mesa, sesión y participante, vuelve a leer productos y precios, crea el snapshot
 del pedido y actualiza el consumo en una transacción idempotente.
+La sección **Tus pedidos** escucha en tiempo real únicamente los pedidos de la
+sesión validada, muestra su contenido y timeline de estados, y los recupera desde
+Firestore después de recargar la aplicación.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -64,6 +67,7 @@ encuentran en:
 - `docs/stage-22-product-detail.md`
 - `docs/stage-23-persistent-cart.md`
 - `docs/stage-24-create-order.md`
+- `docs/stage-25-order-tracking.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 

@@ -5,6 +5,7 @@ import '../cart/cart_store.dart';
 import '../config/app_environment.dart';
 import '../menu/menu_repository.dart';
 import '../order/order_gateway.dart';
+import '../order/order_tracking_repository.dart';
 import '../screens/entry_page.dart';
 import '../screens/invalid_link_page.dart';
 import '../screens/session_gate_page.dart';
@@ -18,6 +19,7 @@ GoRouter createCustomerRouter({
   required MenuRepository menuRepository,
   required CartStore cartStore,
   required OrderGateway orderGateway,
+  required OrderTrackingRepository orderTrackingRepository,
   String? initialLocation,
 }) {
   return GoRouter(
@@ -51,6 +53,7 @@ GoRouter createCustomerRouter({
             menuRepository: menuRepository,
             cartStore: cartStore,
             orderGateway: orderGateway,
+            orderTrackingRepository: orderTrackingRepository,
             token: tokens.length == 1 ? tokens.single : null,
             onTokenConsumed: () => context.replace(tableRoute.location),
           );
@@ -69,6 +72,7 @@ class MesaFlowRouterApp extends StatefulWidget {
     required this.menuRepository,
     required this.cartStore,
     required this.orderGateway,
+    required this.orderTrackingRepository,
     this.initialLocation,
   });
 
@@ -77,6 +81,7 @@ class MesaFlowRouterApp extends StatefulWidget {
   final MenuRepository menuRepository;
   final CartStore cartStore;
   final OrderGateway orderGateway;
+  final OrderTrackingRepository orderTrackingRepository;
   final String? initialLocation;
 
   @override
@@ -90,6 +95,7 @@ class _MesaFlowRouterAppState extends State<MesaFlowRouterApp> {
     menuRepository: widget.menuRepository,
     cartStore: widget.cartStore,
     orderGateway: widget.orderGateway,
+    orderTrackingRepository: widget.orderTrackingRepository,
     initialLocation: widget.initialLocation,
   );
 

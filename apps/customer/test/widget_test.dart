@@ -8,6 +8,7 @@ import 'package:mesaflow_customer/src/order/order_gateway.dart';
 import 'helpers/test_cart_store.dart';
 import 'helpers/test_menu_repository.dart';
 import 'helpers/test_order_gateway.dart';
+import 'helpers/test_order_tracking_repository.dart';
 import 'helpers/test_qr_session_gateway.dart';
 
 void main() {
@@ -283,5 +284,93 @@ void main() {
     expect(orders.requestIds, hasLength(2));
     expect(orders.requestIds.first, orders.requestIds.last);
     expect(find.byKey(const ValueKey('order-confirmation')), findsOneWidget);
+  });
+
+  testWidgets('recupera pedidos y refleja cambios de estado en tiempo real', (
+    tester,
+  ) async {
+    final tracking = TestOrderTrackingRepository([testTrackedOrder()]);
+    Widget buildApp() => MesaFlowApp(
+      environment: AppEnvironment.development,
+      initialLocation: '/e/mesa-flow-demo/table/mesa-01',
+      qrSessionGateway: TestQrSessionGateway.active,
+      menuRepository: TestMenuRepository.published,
+      orderTrackingRepository: tracking,
+    );
+
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('open-order-tracking')));
+    await tester.pumpAndSettle();
+    expect(find.text('Tus pedidos'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('order-status-pedido-prueba')),
+        matching: find.text('Pedido recibido'),
+      ),
+      findsOneWidget,
+    );
+
+    tracking.emit([
+      testTrackedOrder(
+        status: 'preparing',
+        statusTimestamps: {
+          'created': '2026-09-17T12:15:00.000Z',
+          'confirmed': '2026-09-17T12:16:00.000Z',
+          'preparing': '2026-09-17T12:18:00.000Z',
+        },
+      ),
+    ]);
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('order-status-pedido-prueba')),
+        matching: find.text('En preparación'),
+      ),
+      findsOneWidget,
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('open-order-tracking')));
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('order-status-pedido-prueba')),
+        matching: find.text('En preparación'),
+      ),
+      findsOneWidget,
+    );
+    await tracking.dispose();
+  });
+
+  testWidgets('permite reintentar si se interrumpe el seguimiento', (
+    tester,
+  ) async {
+    final tracking = TestOrderTrackingRepository();
+    addTearDown(tracking.dispose);
+    await tester.pumpWidget(
+      MesaFlowApp(
+        environment: AppEnvironment.development,
+        initialLocation: '/e/mesa-flow-demo/table/mesa-01',
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+        orderTrackingRepository: tracking,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('open-order-tracking')));
+    await tester.pumpAndSettle();
+    expect(find.text('Todavía no hay pedidos'), findsOneWidget);
+
+    tracking.emitError(Exception('conexión interrumpida'));
+    await tester.pumpAndSettle();
+    expect(find.text('No pudimos cargar tus pedidos'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('retry-order-tracking')));
+    await tester.pumpAndSettle();
+    expect(find.text('Todavía no hay pedidos'), findsOneWidget);
   });
 }
