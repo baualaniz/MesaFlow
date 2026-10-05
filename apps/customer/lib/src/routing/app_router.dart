@@ -5,6 +5,7 @@ import '../cart/cart_store.dart';
 import '../assistance/assistance_gateway.dart';
 import '../assistance/assistance_repository.dart';
 import '../config/app_environment.dart';
+import '../consumption/consumption_gateway.dart';
 import '../menu/menu_repository.dart';
 import '../order/order_gateway.dart';
 import '../order/order_tracking_repository.dart';
@@ -24,6 +25,7 @@ GoRouter createCustomerRouter({
   required OrderTrackingRepository orderTrackingRepository,
   required AssistanceGateway assistanceGateway,
   required AssistanceRepository assistanceRepository,
+  required ConsumptionGateway consumptionGateway,
   String? initialLocation,
 }) {
   return GoRouter(
@@ -60,6 +62,7 @@ GoRouter createCustomerRouter({
             orderTrackingRepository: orderTrackingRepository,
             assistanceGateway: assistanceGateway,
             assistanceRepository: assistanceRepository,
+            consumptionGateway: consumptionGateway,
             token: tokens.length == 1 ? tokens.single : null,
             onTokenConsumed: () => context.replace(tableRoute.location),
           );
@@ -81,6 +84,7 @@ class MesaFlowRouterApp extends StatefulWidget {
     required this.orderTrackingRepository,
     required this.assistanceGateway,
     required this.assistanceRepository,
+    required this.consumptionGateway,
     this.initialLocation,
   });
 
@@ -92,6 +96,7 @@ class MesaFlowRouterApp extends StatefulWidget {
   final OrderTrackingRepository orderTrackingRepository;
   final AssistanceGateway assistanceGateway;
   final AssistanceRepository assistanceRepository;
+  final ConsumptionGateway consumptionGateway;
   final String? initialLocation;
 
   @override
@@ -108,6 +113,7 @@ class _MesaFlowRouterAppState extends State<MesaFlowRouterApp> {
     orderTrackingRepository: widget.orderTrackingRepository,
     assistanceGateway: widget.assistanceGateway,
     assistanceRepository: widget.assistanceRepository,
+    consumptionGateway: widget.consumptionGateway,
     initialLocation: widget.initialLocation,
   );
 

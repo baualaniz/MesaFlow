@@ -4,6 +4,7 @@ import 'cart/cart_store.dart';
 import 'assistance/assistance_gateway.dart';
 import 'assistance/assistance_repository.dart';
 import 'config/app_environment.dart';
+import 'consumption/consumption_gateway.dart';
 import 'menu/menu_repository.dart';
 import 'order/order_gateway.dart';
 import 'order/order_tracking_repository.dart';
@@ -21,6 +22,7 @@ class MesaFlowApp extends StatelessWidget {
     this.orderTrackingRepository = const EmptyOrderTrackingRepository(),
     this.assistanceGateway = const UnavailableAssistanceGateway(),
     this.assistanceRepository = const EmptyAssistanceRepository(),
+    this.consumptionGateway = const UnavailableConsumptionGateway(),
     this.initialLocation,
   });
 
@@ -32,6 +34,7 @@ class MesaFlowApp extends StatelessWidget {
   final OrderTrackingRepository orderTrackingRepository;
   final AssistanceGateway assistanceGateway;
   final AssistanceRepository assistanceRepository;
+  final ConsumptionGateway consumptionGateway;
   final String? initialLocation;
 
   @override
@@ -45,6 +48,7 @@ class MesaFlowApp extends StatelessWidget {
       orderTrackingRepository: orderTrackingRepository,
       assistanceGateway: assistanceGateway,
       assistanceRepository: assistanceRepository,
+      consumptionGateway: consumptionGateway,
       initialLocation: initialLocation,
     );
   }

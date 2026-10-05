@@ -11,6 +11,7 @@ import {
   parseIsoTimestamp,
   parseMoney,
   parseOrder,
+  parsePayment,
   parseProduct,
   PAYMENT_STATUSES,
   ROLES,
@@ -94,4 +95,14 @@ test("solicitud de asistencia valida tipo, estado e identidades", () => {
     ...fixtures.assistanceRequest,
     unexpected: true
   }));
+});
+
+test("pago valida proveedor, estado, importe y moneda", () => {
+  const payment = parsePayment(fixtures.payment);
+  assert.equal(payment.provider, "mercado_pago");
+  assert.equal(payment.status, "approved");
+  assert.equal(payment.amountMinor, 1290000);
+  assert.throws(() => parsePayment({ ...fixtures.payment, provider: "otro" }));
+  assert.throws(() => parsePayment({ ...fixtures.payment, status: "paid" }));
+  assert.throws(() => parsePayment({ ...fixtures.payment, unexpected: true }));
 });

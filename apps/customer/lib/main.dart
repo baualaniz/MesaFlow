@@ -6,6 +6,7 @@ import 'src/assistance/firebase_assistance_gateway.dart';
 import 'src/assistance/firestore_assistance_repository.dart';
 import 'src/cart/shared_preferences_cart_store.dart';
 import 'src/config/app_environment.dart';
+import 'src/consumption/firebase_consumption_gateway.dart';
 import 'src/firebase/firebase_bootstrap.dart';
 import 'src/menu/firestore_menu_repository.dart';
 import 'src/order/firebase_order_gateway.dart';
@@ -37,6 +38,9 @@ Future<void> main() async {
       ),
       assistanceRepository: FirestoreAssistanceRepository(
         firestore: firebase.firestore,
+      ),
+      consumptionGateway: FirebaseConsumptionGateway(
+        functions: firebase.functions,
       ),
     ),
   );

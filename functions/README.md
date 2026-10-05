@@ -3,10 +3,10 @@
 Cloud Functions 2nd gen en TypeScript para los límites de confianza de MesaFlow:
 canje de QR, pedidos, pagos, webhooks, agregados y notificaciones.
 
-La base ejecutable incluye `health`, canje/restauración de sesión QR y creación
-transaccional de pedidos. Todo puede compilarse y probarse con `demo-mesaflow`;
-no requiere Blaze, credenciales ni recursos reales mientras se use el Emulator
-Suite.
+La base ejecutable incluye `health`, canje/restauración de sesión QR, creación
+transaccional de pedidos, asistencia y cálculo verificado del consumo. Todo puede
+compilarse y probarse con `demo-mesaflow`; no requiere Blaze, credenciales ni
+recursos reales mientras se use el Emulator Suite.
 
 ## Comandos
 
@@ -30,6 +30,11 @@ La Etapa 24 incorpora la callable `createOrder`. El cliente envía únicamente I
 cantidades y notas; la Function valida al participante, vuelve a leer catálogo y
 precios, crea el snapshot y actualiza el consumo de la sesión en una transacción
 idempotente. `test:emulators` comprueba el flujo real y limpia sus fixtures.
+
+Las Etapas 26 y 27 agregan las callables de asistencia y
+`getSessionConsumption`. Esta última recompone el subtotal desde pedidos no
+cancelados, descuenta únicamente pagos aprobados y rechaza cualquier divergencia
+con el resumen guardado de la sesión.
 
 La función emulada queda en:
 

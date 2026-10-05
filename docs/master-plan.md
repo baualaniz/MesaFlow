@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–26 completadas en alcance local. La siguiente etapa
-calculará el consumo, mostrará el saldo y permitirá solicitar la cuenta.
+Estado actual: Etapas 1–27 completadas en alcance local. La siguiente etapa
+preparará la configuración sandbox y los secretos de Mercado Pago.
 
 ## Fases 1–10: base y Firebase
 
@@ -113,6 +113,7 @@ calculará el consumo, mostrará el saldo y permitirá solicitar la cuenta.
 | 24 | Completa localmente: pedido transaccional, precio servidor, idempotencia, confirmación UI, 57 tests Flutter y 16 de Functions aprobados | `docs/stage-24-create-order.md` |
 | 25 | Completa localmente: listener por sesión, timeline, recuperación, estados de error/reintento y 63 tests Flutter aprobados | `docs/stage-25-order-tracking.md` |
 | 26 | Completa localmente: creación/cancelación transaccional, estados realtime, documento único por sesión, cooldown y 70 tests Flutter más 19 de Functions aprobados | `docs/stage-26-assistance.md` |
+| 27 | Completa localmente: consumo reconstruido desde pedidos/pagos, saldo validado en servidor, pedido de cuenta integrado y 73 tests Flutter más 23 de Functions aprobados | `docs/stage-27-consumption.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

@@ -10,10 +10,12 @@ import {
   parseIsoTimestamp,
   parseAssistanceRequest,
   parseOrder,
+  parsePayment,
   parseProduct,
   type IsoTimestamp,
   type AssistanceRequestContract,
   type OrderContract,
+  type PaymentContract,
   type ProductContract
 } from "@mesaflow/contracts";
 
@@ -110,6 +112,23 @@ export const assistanceRequestConverter = createConverter<AssistanceRequestContr
       ...request,
       createdAt: timestampToIso(request.createdAt, "createdAt"),
       updatedAt: timestampToIso(request.updatedAt, "updatedAt")
+    };
+  }
+);
+
+export const paymentConverter = createConverter<PaymentContract>(
+  parsePayment,
+  (payment) => ({
+    ...payment,
+    createdAt: isoToTimestamp(payment.createdAt),
+    updatedAt: isoToTimestamp(payment.updatedAt)
+  }),
+  (raw) => {
+    const payment = record(raw, "Payment Firestore");
+    return {
+      ...payment,
+      createdAt: timestampToIso(payment.createdAt, "createdAt"),
+      updatedAt: timestampToIso(payment.updatedAt, "updatedAt")
     };
   }
 );

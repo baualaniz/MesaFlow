@@ -8,6 +8,7 @@ import 'package:mesaflow_customer/src/order/order_gateway.dart';
 import 'helpers/test_cart_store.dart';
 import 'helpers/test_assistance_gateway.dart';
 import 'helpers/test_assistance_repository.dart';
+import 'helpers/test_consumption_gateway.dart';
 import 'helpers/test_menu_repository.dart';
 import 'helpers/test_order_gateway.dart';
 import 'helpers/test_order_tracking_repository.dart';
@@ -433,5 +434,40 @@ void main() {
     expect(find.text('En camino'), findsOneWidget);
     expect(find.byKey(const ValueKey('cancel-assistance')), findsNothing);
     expect(find.byKey(const ValueKey('request-waiter')), findsNothing);
+  });
+
+  testWidgets('muestra el consumo verificado y permite pedir la cuenta', (
+    tester,
+  ) async {
+    final consumption = TestConsumptionGateway();
+    final assistance = TestAssistanceGateway();
+    await tester.pumpWidget(
+      MesaFlowApp(
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+        consumptionGateway: consumption,
+        assistanceGateway: assistance,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('open-consumption')));
+    await tester.pumpAndSettle();
+    expect(find.text('Tu cuenta'), findsOneWidget);
+    expect(find.text(r'$ 19.400'), findsOneWidget);
+    expect(find.text(r'$ 25.600'), findsOneWidget);
+    expect(find.text(r'$ 6.200'), findsOneWidget);
+    expect(find.text('2 pedidos · 3 productos'), findsOneWidget);
+    expect(consumption.calls, 1);
+
+    await tester.tap(
+      find.byKey(const ValueKey('request-bill-from-consumption')),
+    );
+    await tester.pumpAndSettle();
+    expect(assistance.createdTypes, [AssistanceType.bill]);
+
+    await tester.tap(find.byKey(const ValueKey('refresh-consumption')));
+    await tester.pumpAndSettle();
+    expect(consumption.calls, 2);
   });
 }

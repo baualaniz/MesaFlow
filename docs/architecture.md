@@ -505,3 +505,28 @@ los reintentos y pestañas paralelas en una sola solicitud activa; una transacci
 impide carreras y aplica 60 segundos de espera luego de `resolved` o
 `cancelled`. Flutter escucha ese documento exacto, vuelve a validar el contrato
 y muestra `pending`, `acknowledged`, `resolved` o `cancelled` sin recargar.
+
+## Consumo y cuenta — Etapa 27
+
+`getSessionConsumption` es una callable autenticada y de solo lectura. Recibe
+únicamente `establishmentId`, `sessionId` y `tableId`; la identidad proviene de
+Firebase Auth. Antes de calcular vuelve a validar establecimiento, mesa, sesión,
+participante y pertenencia de todos los documentos al mismo tenant.
+
+Dentro de una transacción de lectura obtiene la sesión, sus pedidos y sus pagos.
+El consumo incluye todos los pedidos excepto `cancelled`; el importe pagado solo
+incluye pagos `approved`. Los estados pendientes, rechazados, cancelados,
+reembolsados o con contracargo no reducen el saldo. Todos los importes siguen
+siendo enteros minor y cada documento debe usar la moneda del establecimiento.
+
+El resultado reconstruido se compara con `subtotalMinor`, `paidMinor` y
+`balanceMinor` almacenados en `tableSessions`. Una diferencia produce
+`consumption-inconsistent`: nunca se corrige silenciosamente ni se muestra al
+cliente un total ambiguo. El cálculo no requiere un índice compuesto nuevo,
+porque ambas lecturas filtran solo por `sessionId`.
+
+Flutter abre **Tu cuenta** desde el encabezado y carga el resumen mediante un
+gateway inyectado. La hoja muestra consumo, pagado, saldo, cantidad de pedidos y
+productos; permite reintentar y actualizar. **Pedir la cuenta** reutiliza la
+solicitud `bill` de la Etapa 26, por lo que conserva autenticación, deduplicación,
+cooldown y estado en tiempo real sin crear un segundo canal operativo.

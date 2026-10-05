@@ -6,6 +6,8 @@ import '../assistance/assistance_gateway.dart';
 import '../assistance/assistance_repository.dart';
 import '../cart/cart_store.dart';
 import '../contracts/domain_contracts.dart';
+import '../consumption/consumption_controller.dart';
+import '../consumption/consumption_gateway.dart';
 import '../menu/menu_repository.dart';
 import '../models/menu_product.dart';
 import '../models/product_selection.dart';
@@ -16,6 +18,7 @@ import '../routing/customer_routes.dart';
 import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
 import '../widgets/cart_sheet.dart';
+import '../widgets/consumption_sheet.dart';
 import '../widgets/assistance_sheet.dart';
 import '../widgets/feedback_panel.dart';
 import '../widgets/order_tracking_sheet.dart';
@@ -33,6 +36,7 @@ class MenuPage extends StatefulWidget {
     required this.orderTrackingRepository,
     required this.assistanceGateway,
     required this.assistanceRepository,
+    required this.consumptionGateway,
   });
 
   final CustomerTableRoute tableRoute;
@@ -43,6 +47,7 @@ class MenuPage extends StatefulWidget {
   final OrderTrackingRepository orderTrackingRepository;
   final AssistanceGateway assistanceGateway;
   final AssistanceRepository assistanceRepository;
+  final ConsumptionGateway consumptionGateway;
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -53,6 +58,7 @@ class _MenuPageState extends State<MenuPage> {
   late CartController _cartController;
   late OrderTrackingController _orderTrackingController;
   late AssistanceController _assistanceController;
+  late ConsumptionController _consumptionController;
   MenuCatalog? _catalog;
   Object? _loadError;
   bool _loading = true;
@@ -71,6 +77,7 @@ class _MenuPageState extends State<MenuPage> {
     _assistanceController = _createAssistanceController();
     _assistanceController.addListener(_onAssistanceChanged);
     _assistanceController.start();
+    _consumptionController = _createConsumptionController();
     _loadMenu();
   }
 
@@ -108,6 +115,11 @@ class _MenuPageState extends State<MenuPage> {
     if (cartScopeChanged || oldWidget.menuRepository != widget.menuRepository) {
       _loadMenu();
     }
+    if (cartScopeChanged ||
+        oldWidget.consumptionGateway != widget.consumptionGateway) {
+      _consumptionController.dispose();
+      _consumptionController = _createConsumptionController();
+    }
   }
 
   CartController _createCartController() => CartController(
@@ -128,6 +140,11 @@ class _MenuPageState extends State<MenuPage> {
   AssistanceController _createAssistanceController() => AssistanceController(
     repository: widget.assistanceRepository,
     gateway: widget.assistanceGateway,
+    session: widget.sessionAccess,
+  );
+
+  ConsumptionController _createConsumptionController() => ConsumptionController(
+    gateway: widget.consumptionGateway,
     session: widget.sessionAccess,
   );
 
@@ -211,6 +228,7 @@ class _MenuPageState extends State<MenuPage> {
     _orderTrackingController.dispose();
     _assistanceController.removeListener(_onAssistanceChanged);
     _assistanceController.dispose();
+    _consumptionController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -332,6 +350,19 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
+  void _showConsumption() {
+    _consumptionController.load();
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => ConsumptionSheet(
+        controller: _consumptionController,
+        assistanceController: _assistanceController,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -346,6 +377,7 @@ class _MenuPageState extends State<MenuPage> {
                 tableLabel: widget.sessionAccess.tableName,
                 onOrders: _showOrderTracking,
                 onAssistance: _showAssistance,
+                onConsumption: _showConsumption,
               ),
             ),
             if (!_loading &&
@@ -594,6 +626,7 @@ class _Header extends StatelessWidget {
     required this.tableLabel,
     required this.onOrders,
     required this.onAssistance,
+    required this.onConsumption,
   });
 
   final int orderCount;
@@ -602,6 +635,7 @@ class _Header extends StatelessWidget {
   final String tableLabel;
   final VoidCallback onOrders;
   final VoidCallback onAssistance;
+  final VoidCallback onConsumption;
 
   @override
   Widget build(BuildContext context) {
@@ -618,6 +652,15 @@ class _Header extends StatelessWidget {
                 Row(
                   children: [
                     const Expanded(child: _BrandMark()),
+                    Semantics(
+                      label: 'Ver cuenta de la mesa',
+                      child: IconButton(
+                        key: const ValueKey('open-consumption'),
+                        onPressed: onConsumption,
+                        tooltip: 'Tu cuenta',
+                        icon: const Icon(Icons.account_balance_wallet_outlined),
+                      ),
+                    ),
                     Semantics(
                       label: assistanceActive
                           ? 'Solicitud de asistencia activa'

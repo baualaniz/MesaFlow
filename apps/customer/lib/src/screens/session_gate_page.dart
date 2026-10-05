@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../cart/cart_store.dart';
 import '../assistance/assistance_gateway.dart';
 import '../assistance/assistance_repository.dart';
+import '../consumption/consumption_gateway.dart';
 import '../routing/customer_routes.dart';
 import '../menu/menu_repository.dart';
 import '../order/order_gateway.dart';
@@ -23,6 +24,7 @@ class SessionGatePage extends StatefulWidget {
     this.orderTrackingRepository = const EmptyOrderTrackingRepository(),
     this.assistanceGateway = const UnavailableAssistanceGateway(),
     this.assistanceRepository = const EmptyAssistanceRepository(),
+    this.consumptionGateway = const UnavailableConsumptionGateway(),
     required this.onTokenConsumed,
     this.token,
   });
@@ -35,6 +37,7 @@ class SessionGatePage extends StatefulWidget {
   final OrderTrackingRepository orderTrackingRepository;
   final AssistanceGateway assistanceGateway;
   final AssistanceRepository assistanceRepository;
+  final ConsumptionGateway consumptionGateway;
   final String? token;
   final VoidCallback onTokenConsumed;
 
@@ -129,6 +132,7 @@ class _SessionGatePageState extends State<SessionGatePage> {
         orderTrackingRepository: widget.orderTrackingRepository,
         assistanceGateway: widget.assistanceGateway,
         assistanceRepository: widget.assistanceRepository,
+        consumptionGateway: widget.consumptionGateway,
       );
     }
     final failure = _failure ?? QrSessionFailure.unavailable;

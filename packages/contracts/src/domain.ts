@@ -301,3 +301,47 @@ export function parseAssistanceRequest(value: unknown): AssistanceRequestContrac
     updatedAt: parseIsoTimestamp(value.updatedAt)
   });
 }
+
+const PAYMENT_FIELDS = [
+  "establishmentId", "sessionId", "provider", "externalId", "idempotencyKey",
+  "status", "amountMinor", "currency", "providerStatus", "createdAt", "updatedAt"
+] as const;
+
+export interface PaymentContract {
+  readonly establishmentId: string;
+  readonly sessionId: string;
+  readonly provider: "mercado_pago";
+  readonly externalId: string | null;
+  readonly idempotencyKey: string;
+  readonly status: PaymentStatus;
+  readonly amountMinor: number;
+  readonly currency: CurrencyCode;
+  readonly providerStatus: string | null;
+  readonly createdAt: IsoTimestamp;
+  readonly updatedAt: IsoTimestamp;
+}
+
+export function parsePayment(value: unknown): PaymentContract {
+  assertRecord(value, "Payment");
+  assertExactKeys(value, PAYMENT_FIELDS, "Payment");
+  if (value.provider !== "mercado_pago") {
+    throw new TypeError("provider no pertenece a los proveedores permitidos.");
+  }
+  return Object.freeze({
+    establishmentId: parseId(value.establishmentId, "establishmentId"),
+    sessionId: parseId(value.sessionId, "sessionId"),
+    provider: "mercado_pago" as const,
+    externalId: value.externalId === null
+      ? null
+      : parseString(value.externalId, "externalId", 1, 200),
+    idempotencyKey: parseString(value.idempotencyKey, "idempotencyKey", 1, 200),
+    status: parseEnum(value.status, PAYMENT_STATUSES, "status"),
+    amountMinor: parseMinorAmount(value.amountMinor, "amountMinor"),
+    currency: parseCurrency(value.currency),
+    providerStatus: value.providerStatus === null
+      ? null
+      : parseString(value.providerStatus, "providerStatus", 1, 200),
+    createdAt: parseIsoTimestamp(value.createdAt),
+    updatedAt: parseIsoTimestamp(value.updatedAt)
+  });
+}

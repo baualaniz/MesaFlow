@@ -127,6 +127,24 @@ try {
     originalSession.subtotalMinor + 2580000,
     "El reintento no debe sumar el pedido dos veces"
   );
+  const consumption = await callable("getSessionConsumption", {
+    establishmentId: "mesa-flow-demo",
+    sessionId: "sesion-mesa-01",
+    tableId: "mesa-01"
+  }, first.idToken);
+  assert.equal(consumption.status, 200);
+  assert.equal(consumption.data.result.currency, "ARS");
+  assert.equal(
+    consumption.data.result.subtotalMinor,
+    updatedSession.subtotalMinor
+  );
+  assert.equal(consumption.data.result.paidMinor, updatedSession.paidMinor);
+  assert.equal(
+    consumption.data.result.balanceMinor,
+    updatedSession.subtotalMinor - updatedSession.paidMinor
+  );
+  assert.equal(consumption.data.result.orderCount >= 1, true);
+  assert.equal(consumption.data.result.itemCount >= 2, true);
   const manipulated = await callable("createOrder", {
     ...orderDraft,
     requestId: "1123456789abcdef0123456789abcdef",
@@ -145,6 +163,7 @@ try {
   }, first.idToken);
   assertCallableError(unavailable, "FAILED_PRECONDITION");
   console.log("[OK] Pedido transaccional recalcula precio y el reintento no duplica consumo");
+  console.log("[OK] Consumo recompone pedidos y pagos con saldo verificado en servidor");
 
   const assistanceContext = {
     establishmentId: "mesa-flow-demo",
