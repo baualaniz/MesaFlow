@@ -112,4 +112,16 @@ void main() {
       throwsFormatException,
     );
   });
+
+  test('asistencia valida tipo, estado e identidades', () {
+    final json = _object(fixtures['assistanceRequest']);
+    final request = AssistanceRequestContract.fromJson(json);
+    expect(request.type, AssistanceType.waiter);
+    expect(request.status, AssistanceStatus.pending);
+    expect(request.isActive, isTrue);
+    expect(
+      () => AssistanceRequestContract.fromJson({...json, 'type': 'kitchen'}),
+      throwsFormatException,
+    );
+  });
 }

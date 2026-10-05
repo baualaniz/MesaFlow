@@ -104,8 +104,8 @@
     }
   ],
   "assistanceRequests": [
-    { "id": "asistencia-mesa-01", "sessionId": "sesion-mesa-01", "tableId": "mesa-01", "customerUid": "demo-guest-01", "type": "waiter", "status": "pending", "acknowledgedBy": null, "resolvedBy": null, "createdAt": "2026-09-17T11:58:00.000Z", "updatedAt": "2026-09-17T11:58:00.000Z" },
-    { "id": "asistencia-mesa-02", "sessionId": "sesion-mesa-02", "tableId": "mesa-02", "customerUid": "demo-guest-02", "type": "bill", "status": "acknowledged", "acknowledgedBy": "demo-staff", "resolvedBy": null, "createdAt": "2026-09-17T11:45:00.000Z", "updatedAt": "2026-09-17T11:47:00.000Z" }
+    { "id": "sesion-mesa-01", "sessionId": "sesion-mesa-01", "tableId": "mesa-01", "customerUid": "demo-guest-01", "type": "waiter", "status": "resolved", "acknowledgedBy": "demo-staff", "resolvedBy": "demo-staff", "createdAt": "2026-09-17T11:58:00.000Z", "updatedAt": "2026-09-17T11:59:00.000Z" },
+    { "id": "sesion-mesa-02", "sessionId": "sesion-mesa-02", "tableId": "mesa-02", "customerUid": "demo-guest-02", "type": "bill", "status": "acknowledged", "acknowledgedBy": "demo-staff", "resolvedBy": null, "createdAt": "2026-09-17T11:45:00.000Z", "updatedAt": "2026-09-17T11:47:00.000Z" }
   ],
   "payments": [
     { "id": "pago-mesa-02", "sessionId": "sesion-mesa-02", "provider": "mercado_pago", "externalId": null, "idempotencyKey": "demo-payment-mesa-02", "status": "pending", "amountMinor": 1530000, "providerStatus": "demo_pending", "createdAt": "2026-09-17T11:50:00.000Z", "updatedAt": "2026-09-17T11:50:00.000Z" },

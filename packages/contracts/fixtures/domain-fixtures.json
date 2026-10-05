@@ -49,6 +49,18 @@
     "createdAt": "2026-09-17T12:00:00.000Z",
     "updatedAt": "2026-09-17T12:00:00.000Z"
   },
+  "assistanceRequest": {
+    "establishmentId": "mesa-flow-demo",
+    "sessionId": "sesion-presentacion",
+    "tableId": "mesa-01",
+    "customerUid": "presentation-guest",
+    "type": "waiter",
+    "status": "pending",
+    "acknowledgedBy": null,
+    "resolvedBy": null,
+    "createdAt": "2026-09-17T12:00:00.000Z",
+    "updatedAt": "2026-09-17T12:00:00.000Z"
+  },
   "invalid": {
     "money": [
       { "amountMinor": -1, "currency": "ARS" },

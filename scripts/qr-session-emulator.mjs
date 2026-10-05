@@ -26,6 +26,7 @@ let app;
 let firestore;
 let originalTable;
 let originalSession;
+let originalAssistance;
 const createdOrderIds = [];
 
 async function jsonRequest(url, { method = "POST", body, token } = {}) {
@@ -79,6 +80,12 @@ try {
   const sessionSnapshot = await sessionRef.get();
   assert.equal(sessionSnapshot.exists, true);
   originalSession = sessionSnapshot.data();
+  const assistanceRef = firestore.doc(
+    "establishments/mesa-flow-demo/assistanceRequests/sesion-mesa-01"
+  );
+  const assistanceSnapshot = await assistanceRef.get();
+  assert.equal(assistanceSnapshot.exists, true);
+  originalAssistance = assistanceSnapshot.data();
 
   const first = await anonymousUser();
   const exchanged = await callable("exchangeQrSession", { ...context, token: tokenV1 }, first.idToken);
@@ -139,6 +146,42 @@ try {
   assertCallableError(unavailable, "FAILED_PRECONDITION");
   console.log("[OK] Pedido transaccional recalcula precio y el reintento no duplica consumo");
 
+  const assistanceContext = {
+    establishmentId: "mesa-flow-demo",
+    sessionId: "sesion-mesa-01",
+    tableId: "mesa-01"
+  };
+  const assistance = await callable(
+    "createAssistanceRequest",
+    { ...assistanceContext, type: "waiter" },
+    first.idToken
+  );
+  assert.equal(assistance.status, 200);
+  assert.equal(assistance.data.result.requestId, "sesion-mesa-01");
+  assert.equal(assistance.data.result.status, "pending");
+  const repeatedAssistance = await callable(
+    "createAssistanceRequest",
+    { ...assistanceContext, type: "bill" },
+    first.idToken
+  );
+  assert.equal(repeatedAssistance.status, 200);
+  assert.equal(repeatedAssistance.data.result.type, "waiter");
+  assert.equal(repeatedAssistance.data.result.status, "pending");
+  const cancelledAssistance = await callable(
+    "cancelAssistanceRequest",
+    assistanceContext,
+    first.idToken
+  );
+  assert.equal(cancelledAssistance.status, 200);
+  assert.equal(cancelledAssistance.data.result.status, "cancelled");
+  const rateLimitedAssistance = await callable(
+    "createAssistanceRequest",
+    { ...assistanceContext, type: "other" },
+    first.idToken
+  );
+  assertCallableError(rateLimitedAssistance, "FAILED_PRECONDITION");
+  console.log("[OK] Asistencia crea, evita duplicados, cancela y limita reintentos");
+
   const replay = await callable("exchangeQrSession", { ...context, token: tokenV1 }, first.idToken);
   assertCallableError(replay, "ALREADY_EXISTS");
   console.log("[OK] QR válido abre y restaura sesión; replay del mismo UID rechazado");
@@ -173,6 +216,11 @@ try {
         await firestore.doc(
           "establishments/mesa-flow-demo/tableSessions/sesion-mesa-01"
         ).set(originalSession);
+      }
+      if (originalAssistance) {
+        await firestore.doc(
+          "establishments/mesa-flow-demo/assistanceRequests/sesion-mesa-01"
+        ).set(originalAssistance);
       }
       for (const orderId of createdOrderIds) {
         await firestore.doc(

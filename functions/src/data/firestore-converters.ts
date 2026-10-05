@@ -8,9 +8,11 @@ import {
 
 import {
   parseIsoTimestamp,
+  parseAssistanceRequest,
   parseOrder,
   parseProduct,
   type IsoTimestamp,
+  type AssistanceRequestContract,
   type OrderContract,
   type ProductContract
 } from "@mesaflow/contracts";
@@ -91,6 +93,23 @@ export const orderConverter = createConverter<OrderContract>(
       ),
       createdAt: timestampToIso(order.createdAt, "createdAt"),
       updatedAt: timestampToIso(order.updatedAt, "updatedAt")
+    };
+  }
+);
+
+export const assistanceRequestConverter = createConverter<AssistanceRequestContract>(
+  parseAssistanceRequest,
+  (request) => ({
+    ...request,
+    createdAt: isoToTimestamp(request.createdAt),
+    updatedAt: isoToTimestamp(request.updatedAt)
+  }),
+  (raw) => {
+    const request = record(raw, "AssistanceRequest Firestore");
+    return {
+      ...request,
+      createdAt: timestampToIso(request.createdAt, "createdAt"),
+      updatedAt: timestampToIso(request.updatedAt, "updatedAt")
     };
   }
 );

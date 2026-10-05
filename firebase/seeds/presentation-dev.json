@@ -247,7 +247,7 @@
       }
     },
     {
-      "path": "establishments/mesa-flow-demo/assistanceRequests/asistencia-presentacion",
+      "path": "establishments/mesa-flow-demo/assistanceRequests/sesion-presentacion",
       "data": {
         "establishmentId": "mesa-flow-demo",
         "sessionId": "sesion-presentacion",

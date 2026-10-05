@@ -6,6 +6,10 @@ import { handleHealthRequest } from "./health.js";
 
 export { exchangeQrSession, restoreQrSession } from "./qr-session-callable.js";
 export { createOrder } from "./create-order-callable.js";
+export {
+  cancelAssistanceRequest,
+  createAssistanceRequest
+} from "./assistance-request-callable.js";
 
 initializeApp();
 

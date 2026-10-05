@@ -262,3 +262,42 @@ export function parseOrder(value: unknown): OrderContract {
     updatedAt: parseIsoTimestamp(value.updatedAt)
   });
 }
+
+const ASSISTANCE_REQUEST_FIELDS = [
+  "establishmentId", "sessionId", "tableId", "customerUid", "type", "status",
+  "acknowledgedBy", "resolvedBy", "createdAt", "updatedAt"
+] as const;
+
+export interface AssistanceRequestContract {
+  readonly establishmentId: string;
+  readonly sessionId: string;
+  readonly tableId: string;
+  readonly customerUid: string;
+  readonly type: AssistanceType;
+  readonly status: AssistanceStatus;
+  readonly acknowledgedBy: string | null;
+  readonly resolvedBy: string | null;
+  readonly createdAt: IsoTimestamp;
+  readonly updatedAt: IsoTimestamp;
+}
+
+export function parseAssistanceRequest(value: unknown): AssistanceRequestContract {
+  assertRecord(value, "AssistanceRequest");
+  assertExactKeys(value, ASSISTANCE_REQUEST_FIELDS, "AssistanceRequest");
+  return Object.freeze({
+    establishmentId: parseId(value.establishmentId, "establishmentId"),
+    sessionId: parseId(value.sessionId, "sessionId"),
+    tableId: parseId(value.tableId, "tableId"),
+    customerUid: parseId(value.customerUid, "customerUid"),
+    type: parseEnum(value.type, ASSISTANCE_TYPES, "type"),
+    status: parseEnum(value.status, ASSISTANCE_STATUSES, "status"),
+    acknowledgedBy: value.acknowledgedBy === null
+      ? null
+      : parseId(value.acknowledgedBy, "acknowledgedBy"),
+    resolvedBy: value.resolvedBy === null
+      ? null
+      : parseId(value.resolvedBy, "resolvedBy"),
+    createdAt: parseIsoTimestamp(value.createdAt),
+    updatedAt: parseIsoTimestamp(value.updatedAt)
+  });
+}

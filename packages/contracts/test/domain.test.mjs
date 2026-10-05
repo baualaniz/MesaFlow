@@ -7,6 +7,7 @@ import {
   CONTRACT_LIMITS,
   minorToDecimalString,
   ORDER_STATUSES,
+  parseAssistanceRequest,
   parseIsoTimestamp,
   parseMoney,
   parseOrder,
@@ -79,4 +80,18 @@ test("pedido rechaza enums y totales manipulados", () => {
   const badTotal = structuredClone(fixtures.order);
   badTotal.totalMinor += 100;
   assert.throws(() => parseOrder(badTotal));
+});
+
+test("solicitud de asistencia valida tipo, estado e identidades", () => {
+  const request = parseAssistanceRequest(fixtures.assistanceRequest);
+  assert.equal(request.type, "waiter");
+  assert.equal(request.status, "pending");
+  assert.throws(() => parseAssistanceRequest({
+    ...fixtures.assistanceRequest,
+    type: "kitchen"
+  }));
+  assert.throws(() => parseAssistanceRequest({
+    ...fixtures.assistanceRequest,
+    unexpected: true
+  }));
 });

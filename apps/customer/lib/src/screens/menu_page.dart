@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../cart/cart_controller.dart';
+import '../assistance/assistance_controller.dart';
+import '../assistance/assistance_gateway.dart';
+import '../assistance/assistance_repository.dart';
 import '../cart/cart_store.dart';
 import '../contracts/domain_contracts.dart';
 import '../menu/menu_repository.dart';
@@ -13,6 +16,7 @@ import '../routing/customer_routes.dart';
 import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
 import '../widgets/cart_sheet.dart';
+import '../widgets/assistance_sheet.dart';
 import '../widgets/feedback_panel.dart';
 import '../widgets/order_tracking_sheet.dart';
 import '../widgets/product_card.dart';
@@ -27,6 +31,8 @@ class MenuPage extends StatefulWidget {
     required this.cartStore,
     required this.orderGateway,
     required this.orderTrackingRepository,
+    required this.assistanceGateway,
+    required this.assistanceRepository,
   });
 
   final CustomerTableRoute tableRoute;
@@ -35,6 +41,8 @@ class MenuPage extends StatefulWidget {
   final CartStore cartStore;
   final OrderGateway orderGateway;
   final OrderTrackingRepository orderTrackingRepository;
+  final AssistanceGateway assistanceGateway;
+  final AssistanceRepository assistanceRepository;
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -44,6 +52,7 @@ class _MenuPageState extends State<MenuPage> {
   final _searchController = TextEditingController();
   late CartController _cartController;
   late OrderTrackingController _orderTrackingController;
+  late AssistanceController _assistanceController;
   MenuCatalog? _catalog;
   Object? _loadError;
   bool _loading = true;
@@ -59,6 +68,9 @@ class _MenuPageState extends State<MenuPage> {
     _orderTrackingController = _createOrderTrackingController();
     _orderTrackingController.addListener(_onOrderTrackingChanged);
     _orderTrackingController.start();
+    _assistanceController = _createAssistanceController();
+    _assistanceController.addListener(_onAssistanceChanged);
+    _assistanceController.start();
     _loadMenu();
   }
 
@@ -84,6 +96,15 @@ class _MenuPageState extends State<MenuPage> {
       _orderTrackingController.addListener(_onOrderTrackingChanged);
       _orderTrackingController.start();
     }
+    if (cartScopeChanged ||
+        oldWidget.assistanceGateway != widget.assistanceGateway ||
+        oldWidget.assistanceRepository != widget.assistanceRepository) {
+      _assistanceController.removeListener(_onAssistanceChanged);
+      _assistanceController.dispose();
+      _assistanceController = _createAssistanceController();
+      _assistanceController.addListener(_onAssistanceChanged);
+      _assistanceController.start();
+    }
     if (cartScopeChanged || oldWidget.menuRepository != widget.menuRepository) {
       _loadMenu();
     }
@@ -104,11 +125,21 @@ class _MenuPageState extends State<MenuPage> {
         sessionId: widget.sessionAccess.sessionId,
       );
 
+  AssistanceController _createAssistanceController() => AssistanceController(
+    repository: widget.assistanceRepository,
+    gateway: widget.assistanceGateway,
+    session: widget.sessionAccess,
+  );
+
   void _onCartChanged() {
     if (mounted) setState(() {});
   }
 
   void _onOrderTrackingChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _onAssistanceChanged() {
     if (mounted) setState(() {});
   }
 
@@ -178,6 +209,8 @@ class _MenuPageState extends State<MenuPage> {
     _cartController.dispose();
     _orderTrackingController.removeListener(_onOrderTrackingChanged);
     _orderTrackingController.dispose();
+    _assistanceController.removeListener(_onAssistanceChanged);
+    _assistanceController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -290,6 +323,15 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
+  void _showAssistance() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => AssistanceSheet(controller: _assistanceController),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -299,9 +341,11 @@ class _MenuPageState extends State<MenuPage> {
             SliverToBoxAdapter(
               child: _Header(
                 orderCount: _orderTrackingController.orders.length,
+                assistanceActive: _assistanceController.hasActiveRequest,
                 establishmentName: widget.sessionAccess.establishmentName,
                 tableLabel: widget.sessionAccess.tableName,
                 onOrders: _showOrderTracking,
+                onAssistance: _showAssistance,
               ),
             ),
             if (!_loading &&
@@ -545,15 +589,19 @@ class _EmptyCatalog extends StatelessWidget {
 class _Header extends StatelessWidget {
   const _Header({
     required this.orderCount,
+    required this.assistanceActive,
     required this.establishmentName,
     required this.tableLabel,
     required this.onOrders,
+    required this.onAssistance,
   });
 
   final int orderCount;
+  final bool assistanceActive;
   final String establishmentName;
   final String tableLabel;
   final VoidCallback onOrders;
+  final VoidCallback onAssistance;
 
   @override
   Widget build(BuildContext context) {
@@ -569,8 +617,21 @@ class _Header extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const _BrandMark(),
-                    const Spacer(),
+                    const Expanded(child: _BrandMark()),
+                    Semantics(
+                      label: assistanceActive
+                          ? 'Solicitud de asistencia activa'
+                          : 'Pedir asistencia',
+                      child: Badge(
+                        isLabelVisible: assistanceActive,
+                        child: IconButton(
+                          key: const ValueKey('open-assistance'),
+                          onPressed: onAssistance,
+                          tooltip: 'Pedir asistencia',
+                          icon: const Icon(Icons.notifications_none_rounded),
+                        ),
+                      ),
+                    ),
                     Semantics(
                       label: '$orderCount pedidos de la sesión',
                       child: Badge(
@@ -640,7 +701,15 @@ class _BrandMark extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 11),
-        Text('MesaFlow', style: Theme.of(context).textTheme.titleLarge),
+        Flexible(
+          child: Text(
+            'MesaFlow',
+            maxLines: 1,
+            overflow: TextOverflow.fade,
+            softWrap: false,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+        ),
       ],
     );
   }

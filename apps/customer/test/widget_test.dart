@@ -6,6 +6,8 @@ import 'package:mesaflow_customer/src/contracts/domain_contracts.dart';
 import 'package:mesaflow_customer/src/order/order_gateway.dart';
 
 import 'helpers/test_cart_store.dart';
+import 'helpers/test_assistance_gateway.dart';
+import 'helpers/test_assistance_repository.dart';
 import 'helpers/test_menu_repository.dart';
 import 'helpers/test_order_gateway.dart';
 import 'helpers/test_order_tracking_repository.dart';
@@ -372,5 +374,64 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('retry-order-tracking')));
     await tester.pumpAndSettle();
     expect(find.text('Todavía no hay pedidos'), findsOneWidget);
+  });
+
+  testWidgets('crea, muestra y cancela una solicitud de asistencia', (
+    tester,
+  ) async {
+    final repository = TestAssistanceRepository();
+    final gateway = TestAssistanceGateway();
+    addTearDown(repository.dispose);
+    await tester.pumpWidget(
+      MesaFlowApp(
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+        assistanceRepository: repository,
+        assistanceGateway: gateway,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('open-assistance')));
+    await tester.pumpAndSettle();
+    expect(find.text('Asistencia en tu mesa'), findsOneWidget);
+    expect(find.text('Llamar al mozo'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('request-bill')));
+    await tester.pumpAndSettle();
+    expect(gateway.createdTypes, [AssistanceType.bill]);
+
+    repository.emit(testAssistanceRequest(type: 'bill'));
+    await tester.pumpAndSettle();
+    expect(find.text('Pedido de cuenta'), findsOneWidget);
+    expect(find.text('Enviada'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('cancel-assistance')));
+    await tester.pumpAndSettle();
+    expect(gateway.cancelCount, 1);
+  });
+
+  testWidgets('una solicitud reconocida bloquea duplicados y cancelación', (
+    tester,
+  ) async {
+    final repository = TestAssistanceRepository(
+      testAssistanceRequest(status: 'acknowledged'),
+    );
+    addTearDown(repository.dispose);
+    await tester.pumpWidget(
+      MesaFlowApp(
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+        assistanceRepository: repository,
+        assistanceGateway: TestAssistanceGateway(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('open-assistance')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('En camino'), findsOneWidget);
+    expect(find.byKey(const ValueKey('cancel-assistance')), findsNothing);
+    expect(find.byKey(const ValueKey('request-waiter')), findsNothing);
   });
 }

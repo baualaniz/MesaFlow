@@ -407,3 +407,85 @@ OrderStatus _parseOrderStatus(Object? value) {
   if (index < 0) _invalid('status no pertenece al enum permitido.');
   return OrderStatus.values[index];
 }
+
+class AssistanceRequestContract {
+  const AssistanceRequestContract({
+    required this.establishmentId,
+    required this.sessionId,
+    required this.tableId,
+    required this.customerUid,
+    required this.type,
+    required this.status,
+    required this.acknowledgedBy,
+    required this.resolvedBy,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory AssistanceRequestContract.fromJson(Map<String, Object?> json) {
+    _expectKeys(json, _assistanceRequestFields, 'AssistanceRequest');
+    final acknowledgedBy = json['acknowledgedBy'];
+    final resolvedBy = json['resolvedBy'];
+    return AssistanceRequestContract(
+      establishmentId: parseContractId(
+        json['establishmentId'],
+        'establishmentId',
+      ),
+      sessionId: parseContractId(json['sessionId'], 'sessionId'),
+      tableId: parseContractId(json['tableId'], 'tableId'),
+      customerUid: parseContractId(json['customerUid'], 'customerUid'),
+      type: _parseAssistanceType(json['type']),
+      status: _parseAssistanceStatus(json['status']),
+      acknowledgedBy: acknowledgedBy == null
+          ? null
+          : parseContractId(acknowledgedBy, 'acknowledgedBy'),
+      resolvedBy: resolvedBy == null
+          ? null
+          : parseContractId(resolvedBy, 'resolvedBy'),
+      createdAt: parseIsoTimestamp(json['createdAt']),
+      updatedAt: parseIsoTimestamp(json['updatedAt']),
+    );
+  }
+
+  final String establishmentId;
+  final String sessionId;
+  final String tableId;
+  final String customerUid;
+  final AssistanceType type;
+  final AssistanceStatus status;
+  final String? acknowledgedBy;
+  final String? resolvedBy;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  bool get isActive =>
+      status == AssistanceStatus.pending ||
+      status == AssistanceStatus.acknowledged;
+}
+
+const _assistanceRequestFields = {
+  'establishmentId',
+  'sessionId',
+  'tableId',
+  'customerUid',
+  'type',
+  'status',
+  'acknowledgedBy',
+  'resolvedBy',
+  'createdAt',
+  'updatedAt',
+};
+
+AssistanceType _parseAssistanceType(Object? value) {
+  if (value is! String) _invalid('type no pertenece al enum permitido.');
+  final index = assistanceTypeWireValues.indexOf(value);
+  if (index < 0) _invalid('type no pertenece al enum permitido.');
+  return AssistanceType.values[index];
+}
+
+AssistanceStatus _parseAssistanceStatus(Object? value) {
+  if (value is! String) _invalid('status no pertenece al enum permitido.');
+  final index = assistanceStatusWireValues.indexOf(value);
+  if (index < 0) _invalid('status no pertenece al enum permitido.');
+  return AssistanceStatus.values[index];
+}

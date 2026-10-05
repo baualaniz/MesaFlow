@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'src/app.dart';
+import 'src/assistance/firebase_assistance_gateway.dart';
+import 'src/assistance/firestore_assistance_repository.dart';
 import 'src/cart/shared_preferences_cart_store.dart';
 import 'src/config/app_environment.dart';
 import 'src/firebase/firebase_bootstrap.dart';
@@ -28,6 +30,12 @@ Future<void> main() async {
       cartStore: SharedPreferencesCartStore(),
       orderGateway: FirebaseOrderGateway(functions: firebase.functions),
       orderTrackingRepository: FirestoreOrderTrackingRepository(
+        firestore: firebase.firestore,
+      ),
+      assistanceGateway: FirebaseAssistanceGateway(
+        functions: firebase.functions,
+      ),
+      assistanceRepository: FirestoreAssistanceRepository(
         firestore: firebase.firestore,
       ),
     ),

@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–25 completadas en alcance local. La siguiente etapa
-permitirá crear, consultar y cancelar solicitudes de asistencia.
+Estado actual: Etapas 1–26 completadas en alcance local. La siguiente etapa
+calculará el consumo, mostrará el saldo y permitirá solicitar la cuenta.
 
 ## Fases 1–10: base y Firebase
 
@@ -112,6 +112,7 @@ permitirá crear, consultar y cancelar solicitudes de asistencia.
 | 23 | Completa localmente: carrito persistente aislado por sesión, edición, vaciado, precios vigentes y 53 tests Flutter aprobados | `docs/stage-23-persistent-cart.md` |
 | 24 | Completa localmente: pedido transaccional, precio servidor, idempotencia, confirmación UI, 57 tests Flutter y 16 de Functions aprobados | `docs/stage-24-create-order.md` |
 | 25 | Completa localmente: listener por sesión, timeline, recuperación, estados de error/reintento y 63 tests Flutter aprobados | `docs/stage-25-order-tracking.md` |
+| 26 | Completa localmente: creación/cancelación transaccional, estados realtime, documento único por sesión, cooldown y 70 tests Flutter más 19 de Functions aprobados | `docs/stage-26-assistance.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

@@ -131,7 +131,7 @@ globales accidentales. Los documentos globales solo resuelven identidad o slugs.
 | `.../categories/{categoryId}` | `name`, `description`, `sortOrder`, `active`, timestamps | Organización del menú |
 | `.../products/{productId}` | `categoryId`, `name`, `description`, `priceMinor`, `currency`, `imagePath`, `available`, `active`, timestamps | Producto vendible |
 | `.../orders/{orderId}` | `sessionId`, `tableId`, `customerUid`, `status`, `items`, `totals`, `statusTimestamps`, timestamps | Snapshot inmutable de líneas y total |
-| `.../assistanceRequests/{requestId}` | `sessionId`, `tableId`, `type`, `status`, `customerUid`, timestamps | Llamado de mesa |
+| `.../assistanceRequests/{sessionId}` | `sessionId`, `tableId`, `type`, `status`, `customerUid`, timestamps | Llamado actual de la mesa con límite antiabuso |
 | `.../payments/{paymentId}` | `sessionId`, `provider`, `externalId`, `idempotencyKey`, `status`, `amountMinor`, timestamps | Resultado conciliable del proveedor |
 | `.../dailyMetrics/{yyyy-MM-dd}` | importes, conteos, `productQuantities`, `updatedAt` | Dashboard económico y barato |
 | `.../settings/public` | marca, horarios, contacto, flags públicos | Configuración legible por cliente |
@@ -234,7 +234,7 @@ planes en el proyecto de desarrollo real.
 | Configuración/miembros | Total | Lectura y gestión no-owner | No | No | No |
 | Menú y disponibilidad | Total | Total | Disponibilidad | Lectura | Lectura pública activa |
 | Pedidos | Total | Total | Confirmar/entregar/cancelar permitido | Preparar/listo | Crear y leer los propios/de sesión |
-| Asistencia | Total | Total | Atender/resolver | Lectura opcional | Crear y leer la propia |
+| Asistencia | Total | Total | Atender/resolver | Lectura opcional | Crear y leer la de su sesión |
 | Pagos/ventas/métricas | Total | Lectura | Sin importes agregados | No | Pago/lectura de su sesión |
 | Mesas/QR | Total | Total | Abrir/cerrar sesión | No | Canjear QR válido |
 
@@ -492,3 +492,16 @@ total, y un timeline desde recibido hasta completado. Los pedidos cancelados usa
 un cierre específico. Si la conexión cae, se conserva la última información; si
 todavía no había datos se ofrece reintentar. Las transiciones operativas siguen
 reservadas para el panel y la Function de la Etapa 33: el cliente solo observa.
+
+## Asistencia desde la mesa — Etapa 26
+
+`createAssistanceRequest` y `cancelAssistanceRequest` reciben únicamente el
+contexto de sesión y, al crear, uno de los tipos canónicos. El backend valida
+Auth, establecimiento, mesa, sesión, participante y `settings/public` antes de
+escribir. Las reglas no habilitan escrituras directas desde Flutter.
+
+Cada sesión usa `assistanceRequests/{sessionId}`. La identidad estable convierte
+los reintentos y pestañas paralelas en una sola solicitud activa; una transacción
+impide carreras y aplica 60 segundos de espera luego de `resolved` o
+`cancelled`. Flutter escucha ese documento exacto, vuelve a validar el contrato
+y muestra `pending`, `acknowledged`, `resolved` o `cancelled` sin recargar.

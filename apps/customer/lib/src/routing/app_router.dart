@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../cart/cart_store.dart';
+import '../assistance/assistance_gateway.dart';
+import '../assistance/assistance_repository.dart';
 import '../config/app_environment.dart';
 import '../menu/menu_repository.dart';
 import '../order/order_gateway.dart';
@@ -20,6 +22,8 @@ GoRouter createCustomerRouter({
   required CartStore cartStore,
   required OrderGateway orderGateway,
   required OrderTrackingRepository orderTrackingRepository,
+  required AssistanceGateway assistanceGateway,
+  required AssistanceRepository assistanceRepository,
   String? initialLocation,
 }) {
   return GoRouter(
@@ -54,6 +58,8 @@ GoRouter createCustomerRouter({
             cartStore: cartStore,
             orderGateway: orderGateway,
             orderTrackingRepository: orderTrackingRepository,
+            assistanceGateway: assistanceGateway,
+            assistanceRepository: assistanceRepository,
             token: tokens.length == 1 ? tokens.single : null,
             onTokenConsumed: () => context.replace(tableRoute.location),
           );
@@ -73,6 +79,8 @@ class MesaFlowRouterApp extends StatefulWidget {
     required this.cartStore,
     required this.orderGateway,
     required this.orderTrackingRepository,
+    required this.assistanceGateway,
+    required this.assistanceRepository,
     this.initialLocation,
   });
 
@@ -82,6 +90,8 @@ class MesaFlowRouterApp extends StatefulWidget {
   final CartStore cartStore;
   final OrderGateway orderGateway;
   final OrderTrackingRepository orderTrackingRepository;
+  final AssistanceGateway assistanceGateway;
+  final AssistanceRepository assistanceRepository;
   final String? initialLocation;
 
   @override
@@ -96,6 +106,8 @@ class _MesaFlowRouterAppState extends State<MesaFlowRouterApp> {
     cartStore: widget.cartStore,
     orderGateway: widget.orderGateway,
     orderTrackingRepository: widget.orderTrackingRepository,
+    assistanceGateway: widget.assistanceGateway,
+    assistanceRepository: widget.assistanceRepository,
     initialLocation: widget.initialLocation,
   );
 
