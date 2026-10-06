@@ -4,10 +4,13 @@ import { loginRedirectFor, safeInternalRedirect } from "./guards";
 
 describe("guards del panel", () => {
   it("envía al login conservando una ruta interna segura", () => {
-    expect(loginRedirectFor(false, "/operacion/pedidos")).toEqual({
+    const destination = loginRedirectFor(false, "/operacion/pedidos");
+    expect(destination).toEqual({
       to: "/login",
       search: { redirect: "/operacion/pedidos" }
     });
+    expect(Object.isExtensible(destination)).toBe(true);
+    expect(Object.isExtensible(destination?.search)).toBe(true);
   });
 
   it("permite continuar a un usuario autenticado", () => {

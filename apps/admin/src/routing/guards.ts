@@ -11,8 +11,10 @@ export function loginRedirectFor(
   requestedPath: string
 ): { readonly to: "/login"; readonly search: { readonly redirect: string } } | null {
   if (authenticated) return null;
-  return Object.freeze({
+  // TanStack Router completa este objeto con metadatos como statusCode.
+  // Debe conservarse mutable aunque su tipo público sea de solo lectura.
+  return {
     to: "/login" as const,
-    search: Object.freeze({ redirect: safeInternalRedirect(requestedPath) })
-  });
+    search: { redirect: safeInternalRedirect(requestedPath) }
+  };
 }
