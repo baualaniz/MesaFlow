@@ -11,5 +11,16 @@ export const whatsappVerifyToken = defineSecret("WHATSAPP_VERIFY_TOKEN");
 
 export const whatsappPhoneNumberId = defineString(
   "WHATSAPP_PHONE_NUMBER_ID",
-  { description: "Identificador backend del número de WhatsApp Cloud API" }
+  {
+    default: "UNCONFIGURED",
+    description: "Identificador backend del número de WhatsApp Cloud API"
+  }
+);
+
+export const customerPublicBaseUrl = defineString(
+  "CUSTOMER_PUBLIC_BASE_URL",
+  {
+    default: "https://mesaflow-desarrollo.web.app",
+    description: "Origen HTTPS público de la app cliente para retornos de pago"
+  }
 );

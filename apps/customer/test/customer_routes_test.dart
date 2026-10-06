@@ -48,4 +48,27 @@ void main() {
       );
     }
   });
+
+  test('acepta solo retornos internos canónicos desde el checkout', () {
+    expect(
+      safePaymentReturnLocation('/e/mesa-flow-demo/table/mesa-01'),
+      '/e/mesa-flow-demo/table/mesa-01',
+    );
+    for (final value in [
+      'https://example.com/e/mesa-flow-demo/table/mesa-01',
+      '//example.com/e/mesa-flow-demo/table/mesa-01',
+      '/e/mesa-flow-demo/table/../admin',
+      '/e/mesa-flow-demo/table/mesa-01?token=robado',
+    ]) {
+      expect(safePaymentReturnLocation(value), isNull);
+    }
+  });
+
+  test('reconoce únicamente resultados de retorno conocidos', () {
+    expect(
+      PaymentReturnResultParsing.tryParse('success'),
+      PaymentReturnResult.success,
+    );
+    expect(PaymentReturnResultParsing.tryParse('approved'), isNull);
+  });
 }

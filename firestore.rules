@@ -184,6 +184,10 @@ service cloud.firestore {
         allow write: if false;
       }
 
+      match /paymentPreferences/{intentId} {
+        allow read, write: if false;
+      }
+
       match /dailyMetrics/{date} {
         allow get: if resource.data.establishmentId == establishmentId
           && hasRole(establishmentId, ['owner', 'manager']);

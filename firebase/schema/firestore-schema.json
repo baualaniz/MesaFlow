@@ -73,6 +73,11 @@
       "idStrategy": "firestore-auto-id"
     },
     {
+      "key": "paymentPreferences",
+      "path": "establishments/{establishmentId}/paymentPreferences/{intentId}",
+      "idStrategy": "sha256-establishment-session"
+    },
+    {
       "key": "dailyMetrics",
       "path": "establishments/{establishmentId}/dailyMetrics/{localDate}",
       "idStrategy": "yyyy-MM-dd"

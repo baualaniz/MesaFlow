@@ -31,7 +31,7 @@ test("la política fija base default Standard nativa en São Paulo", () => {
 test("el manifiesto contiene todas las rutas canónicas", () => {
   assert.equal(validateFirestoreSchema(schema), schema);
   assert.equal(schema.rootCollections.length, 4);
-  assert.equal(schema.tenantCollections.length, 13);
+  assert.equal(schema.tenantCollections.length, 14);
 });
 
 test("las rutas siempre quedan bajo el tenant indicado", () => {

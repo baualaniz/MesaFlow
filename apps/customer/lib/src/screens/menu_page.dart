@@ -14,6 +14,9 @@ import '../models/product_selection.dart';
 import '../order/order_gateway.dart';
 import '../order/order_tracking_controller.dart';
 import '../order/order_tracking_repository.dart';
+import '../payment/checkout_launcher.dart';
+import '../payment/payment_controller.dart';
+import '../payment/payment_gateway.dart';
 import '../routing/customer_routes.dart';
 import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
@@ -37,6 +40,8 @@ class MenuPage extends StatefulWidget {
     required this.assistanceGateway,
     required this.assistanceRepository,
     required this.consumptionGateway,
+    required this.paymentGateway,
+    required this.checkoutLauncher,
   });
 
   final CustomerTableRoute tableRoute;
@@ -48,6 +53,8 @@ class MenuPage extends StatefulWidget {
   final AssistanceGateway assistanceGateway;
   final AssistanceRepository assistanceRepository;
   final ConsumptionGateway consumptionGateway;
+  final PaymentGateway paymentGateway;
+  final CheckoutLauncher checkoutLauncher;
 
   @override
   State<MenuPage> createState() => _MenuPageState();
@@ -59,6 +66,7 @@ class _MenuPageState extends State<MenuPage> {
   late OrderTrackingController _orderTrackingController;
   late AssistanceController _assistanceController;
   late ConsumptionController _consumptionController;
+  late PaymentController _paymentController;
   MenuCatalog? _catalog;
   Object? _loadError;
   bool _loading = true;
@@ -78,6 +86,7 @@ class _MenuPageState extends State<MenuPage> {
     _assistanceController.addListener(_onAssistanceChanged);
     _assistanceController.start();
     _consumptionController = _createConsumptionController();
+    _paymentController = _createPaymentController();
     _loadMenu();
   }
 
@@ -120,6 +129,12 @@ class _MenuPageState extends State<MenuPage> {
       _consumptionController.dispose();
       _consumptionController = _createConsumptionController();
     }
+    if (cartScopeChanged ||
+        oldWidget.paymentGateway != widget.paymentGateway ||
+        oldWidget.checkoutLauncher != widget.checkoutLauncher) {
+      _paymentController.dispose();
+      _paymentController = _createPaymentController();
+    }
   }
 
   CartController _createCartController() => CartController(
@@ -145,6 +160,12 @@ class _MenuPageState extends State<MenuPage> {
 
   ConsumptionController _createConsumptionController() => ConsumptionController(
     gateway: widget.consumptionGateway,
+    session: widget.sessionAccess,
+  );
+
+  PaymentController _createPaymentController() => PaymentController(
+    gateway: widget.paymentGateway,
+    launcher: widget.checkoutLauncher,
     session: widget.sessionAccess,
   );
 
@@ -229,6 +250,7 @@ class _MenuPageState extends State<MenuPage> {
     _assistanceController.removeListener(_onAssistanceChanged);
     _assistanceController.dispose();
     _consumptionController.dispose();
+    _paymentController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -359,6 +381,7 @@ class _MenuPageState extends State<MenuPage> {
       builder: (context) => ConsumptionSheet(
         controller: _consumptionController,
         assistanceController: _assistanceController,
+        paymentController: _paymentController,
       ),
     );
   }

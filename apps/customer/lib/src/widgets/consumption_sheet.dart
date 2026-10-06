@@ -5,6 +5,8 @@ import '../assistance/assistance_gateway.dart';
 import '../consumption/consumption_controller.dart';
 import '../consumption/consumption_gateway.dart';
 import '../contracts/domain_contracts.dart';
+import '../payment/payment_controller.dart';
+import '../payment/payment_gateway.dart';
 import '../theme/mesaflow_theme.dart';
 import 'feedback_panel.dart';
 import 'product_card.dart';
@@ -14,15 +16,21 @@ class ConsumptionSheet extends StatelessWidget {
     super.key,
     required this.controller,
     required this.assistanceController,
+    required this.paymentController,
   });
 
   final ConsumptionController controller;
   final AssistanceController assistanceController;
+  final PaymentController paymentController;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([controller, assistanceController]),
+      animation: Listenable.merge([
+        controller,
+        assistanceController,
+        paymentController,
+      ]),
       builder: (context, _) => SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
@@ -51,6 +59,41 @@ class ConsumptionSheet extends StatelessWidget {
                 else if (controller.summary case final summary?) ...[
                   _SummaryCard(summary: summary),
                   const SizedBox(height: 18),
+                  if (summary.balanceMinor > 0) ...[
+                    FilledButton.icon(
+                      key: const ValueKey('start-mercado-pago'),
+                      onPressed: paymentController.busy
+                          ? null
+                          : paymentController.start,
+                      icon: paymentController.busy
+                          ? const SizedBox.square(
+                              dimension: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.open_in_new_rounded),
+                      label: const Text('Pagar con Mercado Pago'),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'El checkout se abre en Mercado Pago. El regreso a MesaFlow no confirma la acreditación.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    if (paymentController.failure case final failure?) ...[
+                      const SizedBox(height: 12),
+                      MaterialBanner(
+                        content: Text(_paymentFailureMessage(failure)),
+                        leading: const Icon(Icons.error_outline_rounded),
+                        actions: [
+                          TextButton(
+                            onPressed: paymentController.clearFailure,
+                            child: const Text('Cerrar'),
+                          ),
+                        ],
+                      ),
+                    ],
+                    const SizedBox(height: 18),
+                  ],
                   _BillAction(controller: assistanceController),
                   if (assistanceController.actionFailure
                       case final failure?) ...[
@@ -82,6 +125,19 @@ class ConsumptionSheet extends StatelessWidget {
     );
   }
 }
+
+String _paymentFailureMessage(PaymentFailure failure) => switch (failure) {
+  PaymentFailure.balanceUnavailable =>
+    'La mesa ya no tiene saldo pendiente para pagar.',
+  PaymentFailure.inProgress =>
+    'El pago se está preparando. Esperá unos segundos e intentá nuevamente.',
+  PaymentFailure.sessionUnavailable =>
+    'La sesión de esta mesa ya no permite iniciar pagos.',
+  PaymentFailure.providerUnavailable =>
+    'Mercado Pago no está disponible en este momento.',
+  PaymentFailure.unavailable =>
+    'No pudimos abrir el checkout. Revisá tu conexión e intentá nuevamente.',
+};
 
 String _assistanceFailureMessage(AssistanceFailure failure) =>
     switch (failure) {

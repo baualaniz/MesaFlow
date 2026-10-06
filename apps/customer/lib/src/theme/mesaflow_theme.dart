@@ -63,40 +63,42 @@ abstract final class MesaFlowTheme {
     );
 
     return base.copyWith(
-      textTheme: base.textTheme.apply(fontFamily: 'Inter').copyWith(
-        displaySmall: base.textTheme.displaySmall?.copyWith(
-          fontFamily: 'Poppins',
-          fontWeight: FontWeight.w700,
-          color: MesaFlowColors.charcoal,
-          letterSpacing: -1,
-        ),
-        headlineMedium: base.textTheme.headlineMedium?.copyWith(
-          fontFamily: 'Poppins',
-          fontWeight: FontWeight.w700,
-          color: MesaFlowColors.charcoal,
-        ),
-        titleLarge: base.textTheme.titleLarge?.copyWith(
-          fontFamily: 'Poppins',
-          fontWeight: FontWeight.w600,
-        ),
-        titleMedium: base.textTheme.titleMedium?.copyWith(
-          fontFamily: 'Poppins',
-          fontWeight: FontWeight.w600,
-        ),
-        bodyLarge: base.textTheme.bodyLarge?.copyWith(
-          fontFamily: 'Inter',
-          height: 1.5,
-        ),
-        bodyMedium: base.textTheme.bodyMedium?.copyWith(
-          fontFamily: 'Inter',
-          height: 1.45,
-        ),
-        bodySmall: base.textTheme.bodySmall?.copyWith(
-          fontFamily: 'Inter',
-          height: 1.4,
-          color: MesaFlowColors.mediumGray,
-        ),
-      ),
+      textTheme: base.textTheme
+          .apply(fontFamily: 'Inter')
+          .copyWith(
+            displaySmall: base.textTheme.displaySmall?.copyWith(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w700,
+              color: MesaFlowColors.charcoal,
+              letterSpacing: -1,
+            ),
+            headlineMedium: base.textTheme.headlineMedium?.copyWith(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w700,
+              color: MesaFlowColors.charcoal,
+            ),
+            titleLarge: base.textTheme.titleLarge?.copyWith(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+            ),
+            titleMedium: base.textTheme.titleMedium?.copyWith(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+            ),
+            bodyLarge: base.textTheme.bodyLarge?.copyWith(
+              fontFamily: 'Inter',
+              height: 1.5,
+            ),
+            bodyMedium: base.textTheme.bodyMedium?.copyWith(
+              fontFamily: 'Inter',
+              height: 1.45,
+            ),
+            bodySmall: base.textTheme.bodySmall?.copyWith(
+              fontFamily: 'Inter',
+              height: 1.4,
+              color: MesaFlowColors.mediumGray,
+            ),
+          ),
       cardTheme: const CardThemeData(
         color: MesaFlowColors.white,
         elevation: 0,

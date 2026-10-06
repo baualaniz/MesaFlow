@@ -87,6 +87,7 @@ async function seed() {
       ["establishments/restaurantA/orders/orderOther", { establishmentId: "restaurantA", sessionId: "sessionOther", status: "created" }],
       ["establishments/restaurantA/assistanceRequests/helpA", { establishmentId: "restaurantA", sessionId: "sessionA", status: "pending" }],
       ["establishments/restaurantA/payments/paymentA", { establishmentId: "restaurantA", sessionId: "sessionA", status: "pending" }],
+      ["establishments/restaurantA/paymentPreferences/intentA", { establishmentId: "restaurantA", sessionId: "sessionA", status: "ready" }],
       ["establishments/restaurantA/dailyMetrics/2026-09-17", { establishmentId: "restaurantA", salesMinor: 0 }],
       ["establishments/restaurantA/settings/public", { establishmentId: "restaurantA", brandName: "Demo" }],
       ["establishments/restaurantA/settings/private", { establishmentId: "restaurantA", secretFlag: false }],
@@ -200,6 +201,7 @@ test("participante activo solo lee su sesión y recursos vinculados", async () =
   await assertSucceeds(getDoc(doc(db, "establishments/restaurantA/orders/orderA")));
   await assertSucceeds(getDoc(doc(db, "establishments/restaurantA/assistanceRequests/helpA")));
   await assertSucceeds(getDoc(doc(db, "establishments/restaurantA/payments/paymentA")));
+  await assertFails(getDoc(doc(db, "establishments/restaurantA/paymentPreferences/intentA")));
   await assertFails(getDoc(doc(db, "establishments/restaurantA/tableSessions/sessionOther")));
   await assertFails(getDoc(doc(db, "establishments/restaurantA/orders/orderOther")));
 });

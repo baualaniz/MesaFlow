@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–28 completadas en alcance local. La siguiente etapa
-creará de forma idempotente la preferencia de Checkout Pro y sus rutas de retorno.
+Estado actual: Etapas 1–29 completadas en alcance local. La siguiente etapa
+implementará el webhook verificado y la conciliación autoritativa del pago.
 
 ## Fases 1–10: base y Firebase
 
@@ -115,6 +115,7 @@ creará de forma idempotente la preferencia de Checkout Pro y sus rutas de retor
 | 26 | Completa localmente: creación/cancelación transaccional, estados realtime, documento único por sesión, cooldown y 70 tests Flutter más 19 de Functions aprobados | `docs/stage-26-assistance.md` |
 | 27 | Completa localmente: consumo reconstruido desde pedidos/pagos, saldo validado en servidor, pedido de cuenta integrado y 73 tests Flutter más 23 de Functions aprobados | `docs/stage-27-consumption.md` |
 | 28 | Completa: aplicación y vendedor de prueba argentinos, Access Token local ignorado, producción deshabilitada, política y 5 pruebas aprobadas | `docs/stage-28-mercado-pago.md` |
+| 29 | Completa localmente: preferencia idempotente, recuperación por referencia externa, apertura segura, retornos no autoritativos, 78 tests Flutter y 28 de Functions aprobados | `docs/stage-29-payment-preference.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

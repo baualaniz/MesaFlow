@@ -9,9 +9,12 @@ import '../consumption/consumption_gateway.dart';
 import '../menu/menu_repository.dart';
 import '../order/order_gateway.dart';
 import '../order/order_tracking_repository.dart';
+import '../payment/checkout_launcher.dart';
+import '../payment/payment_gateway.dart';
 import '../screens/entry_page.dart';
 import '../screens/invalid_link_page.dart';
 import '../screens/session_gate_page.dart';
+import '../screens/payment_return_page.dart';
 import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
 import 'customer_routes.dart';
@@ -26,6 +29,8 @@ GoRouter createCustomerRouter({
   required AssistanceGateway assistanceGateway,
   required AssistanceRepository assistanceRepository,
   required ConsumptionGateway consumptionGateway,
+  required PaymentGateway paymentGateway,
+  required CheckoutLauncher checkoutLauncher,
   String? initialLocation,
 }) {
   return GoRouter(
@@ -48,6 +53,24 @@ GoRouter createCustomerRouter({
         builder: (context, state) => const InvalidLinkPage(),
       ),
       GoRoute(
+        path: CustomerRoutes.paymentReturnPattern,
+        redirect: (context, state) =>
+            PaymentReturnResultParsing.tryParse(
+                  state.pathParameters['result'],
+                ) ==
+                null
+            ? CustomerRoutes.invalidLink
+            : null,
+        builder: (context, state) => PaymentReturnPage(
+          result: PaymentReturnResultParsing.tryParse(
+            state.pathParameters['result'],
+          )!,
+          returnLocation: safePaymentReturnLocation(
+            state.uri.queryParameters['returnTo'],
+          ),
+        ),
+      ),
+      GoRoute(
         path: CustomerRoutes.tablePattern,
         redirect: (context, state) => CustomerSessionRouteGuard.redirect(state),
         builder: (context, state) {
@@ -63,6 +86,8 @@ GoRouter createCustomerRouter({
             assistanceGateway: assistanceGateway,
             assistanceRepository: assistanceRepository,
             consumptionGateway: consumptionGateway,
+            paymentGateway: paymentGateway,
+            checkoutLauncher: checkoutLauncher,
             token: tokens.length == 1 ? tokens.single : null,
             onTokenConsumed: () => context.replace(tableRoute.location),
           );
@@ -85,6 +110,8 @@ class MesaFlowRouterApp extends StatefulWidget {
     required this.assistanceGateway,
     required this.assistanceRepository,
     required this.consumptionGateway,
+    required this.paymentGateway,
+    required this.checkoutLauncher,
     this.initialLocation,
   });
 
@@ -97,6 +124,8 @@ class MesaFlowRouterApp extends StatefulWidget {
   final AssistanceGateway assistanceGateway;
   final AssistanceRepository assistanceRepository;
   final ConsumptionGateway consumptionGateway;
+  final PaymentGateway paymentGateway;
+  final CheckoutLauncher checkoutLauncher;
   final String? initialLocation;
 
   @override
@@ -114,6 +143,8 @@ class _MesaFlowRouterAppState extends State<MesaFlowRouterApp> {
     assistanceGateway: widget.assistanceGateway,
     assistanceRepository: widget.assistanceRepository,
     consumptionGateway: widget.consumptionGateway,
+    paymentGateway: widget.paymentGateway,
+    checkoutLauncher: widget.checkoutLauncher,
     initialLocation: widget.initialLocation,
   );
 

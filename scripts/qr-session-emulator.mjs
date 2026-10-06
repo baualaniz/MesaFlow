@@ -5,6 +5,7 @@ import { getFirestore } from "firebase-admin/firestore";
 
 import { buildQrExchangeId, hashQrToken } from "../functions/lib/qr-session.js";
 import { buildOrderId } from "../functions/lib/create-order.js";
+import { buildPaymentIntentId } from "../functions/lib/create-payment-preference.js";
 import {
   assertLocalEmulatorEnvironment,
   DEMO_PROJECT_ID,
@@ -27,6 +28,7 @@ let firestore;
 let originalTable;
 let originalSession;
 let originalAssistance;
+let paymentIntentId;
 const createdOrderIds = [];
 
 async function jsonRequest(url, { method = "POST", body, token } = {}) {
@@ -220,6 +222,36 @@ try {
   assert.equal(current.status, 200);
   assert.equal(current.data.result.sessionId, "sesion-mesa-01");
   console.log("[OK] QR alterado y versión rotada rechazados; token vigente aceptado");
+
+  const paymentContext = {
+    establishmentId: "mesa-flow-demo",
+    sessionId: "sesion-mesa-01",
+    tableId: "mesa-01"
+  };
+  const preference = await callable(
+    "createPaymentPreference",
+    paymentContext,
+    first.idToken
+  );
+  assert.equal(preference.status, 200);
+  assert.equal(preference.data.result.status, "ready");
+  assert.equal(preference.data.result.amountMinor, consumption.data.result.balanceMinor);
+  assert.match(preference.data.result.checkoutUrl, /^https:\/\/sandbox\.mercadopago\.com\//u);
+  paymentIntentId = buildPaymentIntentId("mesa-flow-demo", "sesion-mesa-01");
+  assert.equal(preference.data.result.intentId, paymentIntentId);
+  assert.equal((await sessionRef.get()).data().status, "payment_pending");
+  const repeatedPreference = await callable(
+    "createPaymentPreference",
+    paymentContext,
+    first.idToken
+  );
+  assert.equal(repeatedPreference.status, 200);
+  assert.equal(repeatedPreference.data.result.preferenceId, preference.data.result.preferenceId);
+  const paymentPreferences = await firestore
+    .collection("establishments/mesa-flow-demo/paymentPreferences")
+    .get();
+  assert.equal(paymentPreferences.docs.filter(({ id }) => id === paymentIntentId).length, 1);
+  console.log("[OK] Preferencia de pago se crea una vez, bloquea pedidos y reutiliza checkout");
 } catch (error) {
   console.error(`Smoke QR falló: ${error.message}`);
   process.exitCode = 1;
@@ -244,6 +276,11 @@ try {
       for (const orderId of createdOrderIds) {
         await firestore.doc(
           `establishments/mesa-flow-demo/orders/${orderId}`
+        ).delete();
+      }
+      if (paymentIntentId) {
+        await firestore.doc(
+          `establishments/mesa-flow-demo/paymentPreferences/${paymentIntentId}`
         ).delete();
       }
       for (const user of users) {

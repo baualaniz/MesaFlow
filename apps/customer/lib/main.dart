@@ -11,6 +11,7 @@ import 'src/firebase/firebase_bootstrap.dart';
 import 'src/menu/firestore_menu_repository.dart';
 import 'src/order/firebase_order_gateway.dart';
 import 'src/order/firestore_order_tracking_repository.dart';
+import 'src/payment/firebase_payment_gateway.dart';
 import 'src/session/firebase_qr_session_gateway.dart';
 
 export 'src/app.dart';
@@ -42,6 +43,7 @@ Future<void> main() async {
       consumptionGateway: FirebaseConsumptionGateway(
         functions: firebase.functions,
       ),
+      paymentGateway: FirebasePaymentGateway(functions: firebase.functions),
     ),
   );
 }

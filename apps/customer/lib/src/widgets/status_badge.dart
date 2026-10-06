@@ -17,27 +17,24 @@ class MesaFlowStatusBadge extends StatelessWidget {
   final IconData? icon;
 
   (Color, Color) get _colors => switch (tone) {
-        MesaFlowBadgeTone.neutral => (
-            MesaFlowColors.ivory,
-            MesaFlowColors.charcoal,
-          ),
-        MesaFlowBadgeTone.success => (
-            MesaFlowColors.successSurface,
-            MesaFlowColors.success,
-          ),
-        MesaFlowBadgeTone.warning => (
-            MesaFlowColors.warningSurface,
-            MesaFlowColors.warning,
-          ),
-        MesaFlowBadgeTone.error => (
-            MesaFlowColors.errorSurface,
-            MesaFlowColors.error,
-          ),
-        MesaFlowBadgeTone.info => (
-            MesaFlowColors.infoSurface,
-            MesaFlowColors.info,
-          ),
-      };
+    MesaFlowBadgeTone.neutral => (
+      MesaFlowColors.ivory,
+      MesaFlowColors.charcoal,
+    ),
+    MesaFlowBadgeTone.success => (
+      MesaFlowColors.successSurface,
+      MesaFlowColors.success,
+    ),
+    MesaFlowBadgeTone.warning => (
+      MesaFlowColors.warningSurface,
+      MesaFlowColors.warning,
+    ),
+    MesaFlowBadgeTone.error => (
+      MesaFlowColors.errorSurface,
+      MesaFlowColors.error,
+    ),
+    MesaFlowBadgeTone.info => (MesaFlowColors.infoSurface, MesaFlowColors.info),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +58,9 @@ class MesaFlowStatusBadge extends StatelessWidget {
               Text(
                 label,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: foreground,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  color: foreground,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ],
           ),

@@ -4,6 +4,7 @@ abstract final class CustomerRoutes {
   static const entry = '/';
   static const invalidLink = '/enlace-invalido';
   static const tablePattern = '/e/:slug/table/:tableId';
+  static const paymentReturnPattern = '/payment/:result';
   static const demoEstablishmentSlug = 'mesa-flow-demo';
   static const demoTableId = 'mesa-01';
   static const demoQrToken = '6d657361666c6f772d64656d6f2d3031';
@@ -18,6 +19,37 @@ abstract final class CustomerRoutes {
     path: demoTable,
     queryParameters: const {'token': demoQrToken},
   ).toString();
+}
+
+enum PaymentReturnResult { success, pending, failure }
+
+extension PaymentReturnResultParsing on PaymentReturnResult {
+  static PaymentReturnResult? tryParse(String? value) => switch (value) {
+    'success' => PaymentReturnResult.success,
+    'pending' => PaymentReturnResult.pending,
+    'failure' => PaymentReturnResult.failure,
+    _ => null,
+  };
+}
+
+String? safePaymentReturnLocation(String? value) {
+  if (value == null) return null;
+  final uri = Uri.tryParse(value);
+  if (uri == null ||
+      uri.hasScheme ||
+      uri.hasAuthority ||
+      uri.query.isNotEmpty ||
+      uri.fragment.isNotEmpty ||
+      uri.pathSegments.length != 4 ||
+      uri.pathSegments[0] != 'e' ||
+      uri.pathSegments[2] != 'table') {
+    return null;
+  }
+  final route = CustomerTableRoute.tryParse({
+    'slug': uri.pathSegments[1],
+    'tableId': uri.pathSegments[3],
+  });
+  return route?.location;
 }
 
 final class CustomerTableRoute {

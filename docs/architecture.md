@@ -164,6 +164,7 @@ tenants. `createdAt` y `updatedAt` son `Timestamp` de servidor.
 | OrderItemSnapshot | `productId: string`, `name: string`, `unitPriceMinor: number`, `quantity: number`, `lineTotalMinor: number`, `notes: string|null` |
 | AssistanceRequest | `establishmentId: string`, `sessionId: string`, `tableId: string`, `customerUid: string`, `type: AssistanceType`, `status: AssistanceStatus`, `acknowledgedBy: string|null`, `resolvedBy: string|null`, timestamps |
 | Payment | `establishmentId: string`, `sessionId: string`, `provider: 'mercado_pago'`, `externalId: string|null`, `idempotencyKey: string`, `status: PaymentStatus`, `amountMinor: number`, `currency: string`, `providerStatus: string|null`, timestamps |
+| PaymentPreference | `establishmentId: string`, `sessionId: string`, `tableId: string`, `customerUid: string`, `provider: 'mercado_pago'`, `status: creating|ready|failed`, `preferenceId: string|null`, `checkoutUrl: string|null`, `amountMinor: number`, `currency: string`, lease y timestamps |
 | DailyMetric | `establishmentId: string`, `date: string`, `salesMinor: number`, `approvedPayments: number`, `completedOrders: number`, `activeOrders: number`, `productQuantities: map<string, number>`, `updatedAt: Timestamp` |
 
 Las referencias se almacenan como IDs y no como `DocumentReference` para facilitar
@@ -173,6 +174,23 @@ cada ID relacionado se valida transaccionalmente en backend.
 La lista preliminar `guestUids` de `tableSessions` se reemplaza en la Etapa 6 por
 la subcolección `participants`. La modificación evita un array creciente y permite
 que las reglas comprueben un UID mediante una lectura de documento predecible.
+
+## Checkout Pro — Etapa 29
+
+`createPaymentPreference` recibe solo el contexto autenticado de mesa. El saldo,
+la moneda, el título y las URLs de retorno se construyen en backend. Cada sesión
+usa un `intentId` SHA-256 determinista y un lease Firestore de corta duración.
+Antes de crear una preferencia, el proveedor busca por `external_reference`; así
+un reintento posterior a una caída recupera el recurso remoto ya existente.
+La misma transacción cambia la sesión de `open` a `payment_pending`, impidiendo
+que nuevos pedidos invaliden el saldo del checkout. Un fallo de proveedor revierte
+esa transición solo si fue realizada por el intento fallido.
+
+La app abre únicamente una URL HTTPS bajo `mercadopago.com`. Las rutas
+`/payment/success|pending|failure` nunca actualizan pagos y tratan todos los
+parámetros del navegador como no confiables. `paymentPreferences` permanece
+cerrada por reglas; `payments` solo será actualizado por la conciliación del
+webhook verificado en la Etapa 30.
 
 ## Identificadores, tiempo y estados
 

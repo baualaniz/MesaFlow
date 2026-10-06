@@ -19,32 +19,32 @@ class MesaFlowFeedbackPanel extends StatelessWidget {
   final Widget? action;
 
   (Color, Color, IconData) get _appearance => switch (tone) {
-        MesaFlowFeedbackTone.neutral => (
-            MesaFlowColors.white,
-            MesaFlowColors.charcoal,
-            Icons.info_outline_rounded,
-          ),
-        MesaFlowFeedbackTone.info => (
-            MesaFlowColors.infoSurface,
-            MesaFlowColors.info,
-            Icons.info_outline_rounded,
-          ),
-        MesaFlowFeedbackTone.success => (
-            MesaFlowColors.successSurface,
-            MesaFlowColors.success,
-            Icons.check_circle_outline_rounded,
-          ),
-        MesaFlowFeedbackTone.warning => (
-            MesaFlowColors.warningSurface,
-            MesaFlowColors.warning,
-            Icons.warning_amber_rounded,
-          ),
-        MesaFlowFeedbackTone.error => (
-            MesaFlowColors.errorSurface,
-            MesaFlowColors.error,
-            Icons.error_outline_rounded,
-          ),
-      };
+    MesaFlowFeedbackTone.neutral => (
+      MesaFlowColors.white,
+      MesaFlowColors.charcoal,
+      Icons.info_outline_rounded,
+    ),
+    MesaFlowFeedbackTone.info => (
+      MesaFlowColors.infoSurface,
+      MesaFlowColors.info,
+      Icons.info_outline_rounded,
+    ),
+    MesaFlowFeedbackTone.success => (
+      MesaFlowColors.successSurface,
+      MesaFlowColors.success,
+      Icons.check_circle_outline_rounded,
+    ),
+    MesaFlowFeedbackTone.warning => (
+      MesaFlowColors.warningSurface,
+      MesaFlowColors.warning,
+      Icons.warning_amber_rounded,
+    ),
+    MesaFlowFeedbackTone.error => (
+      MesaFlowColors.errorSurface,
+      MesaFlowColors.error,
+      Icons.error_outline_rounded,
+    ),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +72,9 @@ class MesaFlowFeedbackPanel extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: foreground,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleMedium?.copyWith(color: foreground),
                   ),
                   const SizedBox(height: MesaFlowSpacing.xxs),
                   Text(message, style: Theme.of(context).textTheme.bodyMedium),

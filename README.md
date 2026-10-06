@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 28** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 29** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -43,6 +43,11 @@ la cuenta reutilizando el canal seguro de asistencia de la mesa.
 La aplicación **MesaFlow Desarrollo** de Mercado Pago usa Checkout Pro mediante
 Preferences API con un vendedor argentino de prueba validado. Su Access Token
 permanece únicamente en un archivo local ignorado; producción sigue deshabilitada.
+Desde **Tu cuenta**, el cliente puede pedir una preferencia cuyo importe se
+recalcula en el backend y abrir el checkout externo. El intento es idempotente,
+se recupera por referencia externa y queda guardado en una colección solo
+servidor. Los retornos `success`, `pending` y `failure` son informativos: ninguno
+acredita el pago; esa autoridad queda reservada al webhook de la Etapa 30.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -77,6 +82,7 @@ encuentran en:
 - `docs/stage-26-assistance.md`
 - `docs/stage-27-consumption.md`
 - `docs/stage-28-mercado-pago.md`
+- `docs/stage-29-payment-preference.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -106,11 +112,11 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 113
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 118
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
-ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, seis de Hosting, cinco del
+ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, seis de Hosting,
 cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-diez de contratos y 23 de Functions), más
+diez de contratos y 28 de Functions), más
 el lint y build TypeScript. Este comando no consulta servicios remotos.
 
 Los contratos compartidos tienen además siete pruebas Dart contra los mismos
@@ -185,6 +191,8 @@ También crea y cancela una solicitud de asistencia, confirma que un reintento n
 la duplica y que el límite temporal bloquea spam inmediato.
 Además reconstruye la cuenta desde los pedidos y pagos de Firestore y comprueba
 que consumo, importe pagado y saldo coincidan con la sesión.
+Finalmente crea dos veces una preferencia de pago para la misma sesión y confirma
+que ambos intentos reutilizan el mismo checkout y un único documento interno.
 
 La misma prueba carga además el dataset completo de la Etapa 16 y confirma una
 segunda aplicación sin cambios: 4 roles, 10 mesas, 18 productos, 4 pedidos y 3

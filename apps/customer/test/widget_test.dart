@@ -466,7 +466,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(assistance.createdTypes, [AssistanceType.bill]);
 
-    await tester.tap(find.byKey(const ValueKey('refresh-consumption')));
+    final refresh = find.byKey(const ValueKey('refresh-consumption'));
+    await tester.ensureVisible(refresh);
+    await tester.tap(refresh);
     await tester.pumpAndSettle();
     expect(consumption.calls, 2);
   });

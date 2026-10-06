@@ -8,6 +8,8 @@ import 'consumption/consumption_gateway.dart';
 import 'menu/menu_repository.dart';
 import 'order/order_gateway.dart';
 import 'order/order_tracking_repository.dart';
+import 'payment/checkout_launcher.dart';
+import 'payment/payment_gateway.dart';
 import 'routing/app_router.dart';
 import 'session/qr_session.dart';
 
@@ -23,6 +25,8 @@ class MesaFlowApp extends StatelessWidget {
     this.assistanceGateway = const UnavailableAssistanceGateway(),
     this.assistanceRepository = const EmptyAssistanceRepository(),
     this.consumptionGateway = const UnavailableConsumptionGateway(),
+    this.paymentGateway = const UnavailablePaymentGateway(),
+    this.checkoutLauncher = const ExternalCheckoutLauncher(),
     this.initialLocation,
   });
 
@@ -35,6 +39,8 @@ class MesaFlowApp extends StatelessWidget {
   final AssistanceGateway assistanceGateway;
   final AssistanceRepository assistanceRepository;
   final ConsumptionGateway consumptionGateway;
+  final PaymentGateway paymentGateway;
+  final CheckoutLauncher checkoutLauncher;
   final String? initialLocation;
 
   @override
@@ -49,6 +55,8 @@ class MesaFlowApp extends StatelessWidget {
       assistanceGateway: assistanceGateway,
       assistanceRepository: assistanceRepository,
       consumptionGateway: consumptionGateway,
+      paymentGateway: paymentGateway,
+      checkoutLauncher: checkoutLauncher,
       initialLocation: initialLocation,
     );
   }

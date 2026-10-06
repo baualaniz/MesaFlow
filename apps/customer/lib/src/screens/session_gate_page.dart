@@ -8,6 +8,8 @@ import '../routing/customer_routes.dart';
 import '../menu/menu_repository.dart';
 import '../order/order_gateway.dart';
 import '../order/order_tracking_repository.dart';
+import '../payment/checkout_launcher.dart';
+import '../payment/payment_gateway.dart';
 import '../session/qr_session.dart';
 import '../theme/mesaflow_theme.dart';
 import '../widgets/feedback_panel.dart';
@@ -25,6 +27,8 @@ class SessionGatePage extends StatefulWidget {
     this.assistanceGateway = const UnavailableAssistanceGateway(),
     this.assistanceRepository = const EmptyAssistanceRepository(),
     this.consumptionGateway = const UnavailableConsumptionGateway(),
+    this.paymentGateway = const UnavailablePaymentGateway(),
+    this.checkoutLauncher = const ExternalCheckoutLauncher(),
     required this.onTokenConsumed,
     this.token,
   });
@@ -38,6 +42,8 @@ class SessionGatePage extends StatefulWidget {
   final AssistanceGateway assistanceGateway;
   final AssistanceRepository assistanceRepository;
   final ConsumptionGateway consumptionGateway;
+  final PaymentGateway paymentGateway;
+  final CheckoutLauncher checkoutLauncher;
   final String? token;
   final VoidCallback onTokenConsumed;
 
@@ -133,6 +139,8 @@ class _SessionGatePageState extends State<SessionGatePage> {
         assistanceGateway: widget.assistanceGateway,
         assistanceRepository: widget.assistanceRepository,
         consumptionGateway: widget.consumptionGateway,
+        paymentGateway: widget.paymentGateway,
+        checkoutLauncher: widget.checkoutLauncher,
       );
     }
     final failure = _failure ?? QrSessionFailure.unavailable;
