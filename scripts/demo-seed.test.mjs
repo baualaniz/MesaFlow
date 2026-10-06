@@ -83,7 +83,8 @@ test("materializa timestamps sin aceptar marcadores inválidos", () => {
 test("el entorno seguro admite solo el proyecto demo y loopback fijo", () => {
   assert.deepEqual(assertSafeDemoSeedEnvironment({}), {
     projectId: "demo-mesaflow",
-    firestoreHost: "127.0.0.1:8080"
+    firestoreHost: "127.0.0.1:8080",
+    authHost: "127.0.0.1:9099"
   });
   assert.doesNotThrow(() => assertSafeDemoSeedEnvironment({
     GCLOUD_PROJECT: "demo-mesaflow",
@@ -93,6 +94,7 @@ test("el entorno seguro admite solo el proyecto demo y loopback fijo", () => {
     { FIREBASE_TOKEN: "not-a-real-token" },
     { GOOGLE_APPLICATION_CREDENTIALS: "account.json" },
     { GCLOUD_PROJECT: "mesaflow-produccion" },
-    { FIRESTORE_EMULATOR_HOST: "firestore.googleapis.com:443" }
+    { FIRESTORE_EMULATOR_HOST: "firestore.googleapis.com:443" },
+    { FIREBASE_AUTH_EMULATOR_HOST: "identitytoolkit.googleapis.com:443" }
   ]) assert.throws(() => assertSafeDemoSeedEnvironment(environment));
 });

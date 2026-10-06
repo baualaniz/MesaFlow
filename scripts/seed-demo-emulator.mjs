@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { isDeepStrictEqual } from "node:util";
 
 import { deleteApp, initializeApp } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
 
 import {
@@ -39,8 +40,29 @@ async function applySeed(firestore, documents) {
   return { changedCount: changed.length, documentCount: prepared.length };
 }
 
+const DEMO_PASSWORD = "MesaFlowDemo31!";
+
+async function applyAuthSeed(auth, users) {
+  for (const user of users) {
+    const profile = {
+      displayName: user.displayName,
+      email: user.email,
+      emailVerified: true,
+      password: DEMO_PASSWORD
+    };
+    try {
+      await auth.getUser(user.id);
+      await auth.updateUser(user.id, profile);
+    } catch (error) {
+      if (error?.code !== "auth/user-not-found") throw error;
+      await auth.createUser({ uid: user.id, ...profile });
+    }
+  }
+}
+
 let app;
 let firestore;
+let auth;
 
 try {
   if (process.argv.length !== 2) throw new Error("Este comando no admite argumentos.");
@@ -48,6 +70,7 @@ try {
   process.env.GCLOUD_PROJECT = environment.projectId;
   process.env.GOOGLE_CLOUD_PROJECT = environment.projectId;
   process.env.FIRESTORE_EMULATOR_HOST = environment.firestoreHost;
+  process.env.FIREBASE_AUTH_EMULATOR_HOST = environment.authHost;
 
   const seed = JSON.parse(await readFile(
     new URL("../firebase/seeds/demo-emulator.json", import.meta.url), "utf8"
@@ -56,9 +79,11 @@ try {
   const documents = buildDemoDocuments(seed);
   app = initializeApp({ projectId: environment.projectId }, "mesaflow-demo-seed");
   firestore = getFirestore(app);
+  auth = getAuth(app);
 
   const first = await applySeed(firestore, documents);
   const second = await applySeed(firestore, documents);
+  await applyAuthSeed(auth, seed.users);
   assert.equal(second.changedCount, 0, "La segunda carga debería ser un no-op idempotente.");
   console.log(
     `[OK] Seed demo local: ${first.documentCount} documentos verificados; ` +
@@ -68,6 +93,7 @@ try {
     `[OK] 4 roles, ${validation.counts.tables} mesas, ${validation.counts.products} productos, ` +
     `${validation.counts.orders} pedidos y ${validation.counts.payments} pagos.`
   );
+  console.log("[OK] 4 cuentas de personal locales sincronizadas para el panel administrativo.");
   console.log("[OK] Segunda aplicación sin cambios; desarrollo y producción no fueron contactados.");
 } catch (error) {
   console.error(error instanceof Error ? error.message : "Falló el seed demo local.");

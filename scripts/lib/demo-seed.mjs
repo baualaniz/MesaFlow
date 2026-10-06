@@ -350,8 +350,17 @@ export function assertSafeDemoSeedEnvironment(env) {
     }
   }
   const expectedHost = `${EMULATOR_HOST}:${EMULATOR_PORTS.firestore}`;
+  const expectedAuthHost = `${EMULATOR_HOST}:${EMULATOR_PORTS.auth}`;
   if (env.FIRESTORE_EMULATOR_HOST && env.FIRESTORE_EMULATOR_HOST !== expectedHost) {
     throw new Error(`El seed demo solo admite Firestore Emulator en ${expectedHost}.`);
   }
-  return { projectId: DEMO_PROJECT_ID, firestoreHost: expectedHost };
+  if (env.FIREBASE_AUTH_EMULATOR_HOST &&
+      env.FIREBASE_AUTH_EMULATOR_HOST !== expectedAuthHost) {
+    throw new Error(`El seed demo solo admite Auth Emulator en ${expectedAuthHost}.`);
+  }
+  return {
+    projectId: DEMO_PROJECT_ID,
+    firestoreHost: expectedHost,
+    authHost: expectedAuthHost
+  };
 }

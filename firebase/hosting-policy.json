@@ -10,9 +10,9 @@
     },
     {
       "name": "admin",
-      "kind": "spa-placeholder",
+      "kind": "spa",
       "public": "apps/admin/hosting",
-      "build": "static-placeholder"
+      "build": "react-typescript-vite"
     },
     {
       "name": "landing",

@@ -28,7 +28,7 @@ try {
   const admin = await get(`http://${EMULATOR_HOST}:${ports[1]}/operacion/pedidos`);
   assert.equal(admin.status, 200);
   assert.match(await admin.text(), /data-hosting-target="admin"/u);
-  console.log(`[OK] Hosting admin: fallback SPA en ${EMULATOR_HOST}:${ports[1]}`);
+  console.log(`[OK] Hosting admin React: fallback SPA en ${EMULATOR_HOST}:${ports[1]}`);
 
   const landing = await get(`http://${EMULATOR_HOST}:${ports[2]}/`);
   assert.equal(landing.status, 200);

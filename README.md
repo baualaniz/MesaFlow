@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 30** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 31** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -53,6 +53,11 @@ en Mercado Pago y concilia de forma transaccional e idempotente el documento de
 pago, el saldo y el estado de la sesión. Una firma falsa no toca Firestore y un
 reintento no duplica importes. Su URL pública y la clave secreta se configurarán
 al desplegar Functions en la Etapa 47; no se activó facturación en esta etapa.
+El panel administrativo ya es una aplicación React + TypeScript responsive con
+Firebase Authentication, inicio/cierre de sesión, recuperación de contraseña y
+rutas privadas. El seed local sincroniza cuentas del personal exclusivamente en
+el emulador y el guard impide que una persona sin sesión abra el dashboard o el
+futuro tablero operativo.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -89,6 +94,7 @@ encuentran en:
 - `docs/stage-28-mercado-pago.md`
 - `docs/stage-29-payment-preference.md`
 - `docs/stage-30-payment-webhook.md`
+- `docs/stage-31-admin-foundation.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -118,12 +124,12 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 124
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 135
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
-ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, seis de Hosting,
+ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
 cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-diez de contratos y 34 de Functions), más
-el lint y build TypeScript. Este comando no consulta servicios remotos.
+diez de contratos, diez del panel y 34 de Functions), más los lint y builds
+TypeScript. Este comando no consulta servicios remotos.
 
 Los contratos compartidos tienen además siete pruebas Dart contra los mismos
 fixtures. Se ejecutan por separado porque requieren el SDK Flutter:
@@ -195,7 +201,8 @@ Con esa misma sesión crea un pedido transaccional, comprueba el precio recalcul
 la idempotencia y el incremento único del consumo, y elimina el pedido temporal.
 También crea y cancela una solicitud de asistencia, confirma que un reintento no
 la duplica y que el límite temporal bloquea spam inmediato.
-Además reconstruye la cuenta desde los pedidos y pagos de Firestore y comprueba
+Además valida el login, la contraseña inválida y la recuperación de clave del
+panel contra Auth Emulator. También reconstruye la cuenta desde los pedidos y pagos de Firestore y comprueba
 que consumo, importe pagado y saldo coincidan con la sesión.
 Finalmente crea dos veces una preferencia de pago para la misma sesión y confirma
 que ambos intentos reutilizan el mismo checkout y un único documento interno.
@@ -219,6 +226,10 @@ npm.cmd run firebase:seed:demo
 
 Después abrí `http://127.0.0.1:4000/firestore`. Repetir el segundo comando es
 seguro: verifica el mismo estado y no duplica documentos.
+
+El mismo seed crea usuarios de personal solo en Auth Emulator. Para el panel
+abrí `http://127.0.0.1:5105` e ingresá con
+`owner@mesaflow.example.invalid` / `MesaFlowDemo31!`.
 
 Los destinos web locales son cliente en `http://127.0.0.1:5100`, panel en
 `http://127.0.0.1:5105` y landing en `http://127.0.0.1:5106`. Firebase informa

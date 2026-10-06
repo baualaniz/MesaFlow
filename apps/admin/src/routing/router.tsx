@@ -1,0 +1,84 @@
+import {
+  Outlet,
+  createRootRouteWithContext,
+  createRoute,
+  createRouter,
+  redirect
+} from "@tanstack/react-router";
+
+import type { AuthContextValue } from "../auth/auth-context";
+import { AdminShell } from "../layouts/admin-shell";
+import { DashboardPage } from "../pages/dashboard-page";
+import { LoginPage } from "../pages/login-page";
+import { OrdersPlaceholderPage } from "../pages/orders-placeholder-page";
+import { ResetPasswordPage } from "../pages/reset-password-page";
+import { loginRedirectFor, safeInternalRedirect } from "./guards";
+
+interface RouterContext {
+  readonly auth: AuthContextValue;
+}
+
+const rootRoute = createRootRouteWithContext<RouterContext>()({
+  component: Outlet
+});
+
+const loginRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/login",
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: safeInternalRedirect(search.redirect)
+  }),
+  beforeLoad: ({ context }) => {
+    if (context.auth.user !== null) throw redirect({ to: "/" });
+  },
+  component: LoginPage
+});
+
+const resetRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/recuperar-clave",
+  beforeLoad: ({ context }) => {
+    if (context.auth.user !== null) throw redirect({ to: "/" });
+  },
+  component: ResetPasswordPage
+});
+
+const authenticatedRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  id: "_authenticated",
+  beforeLoad: ({ context, location }) => {
+    const destination = loginRedirectFor(context.auth.user !== null, location.pathname);
+    if (destination !== null) throw redirect(destination);
+  },
+  component: AdminShell
+});
+
+const dashboardRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/",
+  component: DashboardPage
+});
+
+const ordersRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/operacion/pedidos",
+  component: OrdersPlaceholderPage
+});
+
+const routeTree = rootRoute.addChildren([
+  loginRoute,
+  resetRoute,
+  authenticatedRoute.addChildren([dashboardRoute, ordersRoute])
+]);
+
+export const router = createRouter({
+  routeTree,
+  context: { auth: undefined as never },
+  defaultPreload: "intent"
+});
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}

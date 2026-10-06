@@ -33,9 +33,12 @@ test("Express carga qs corregido y conserva el parsing esperado", () => {
   assert.equal(typeof fromCli("express")(), "function");
 });
 
-test("Firebase CLI conserva parsers compatibles", () => {
+test("Firebase CLI conserva parsers compatibles", async () => {
   assert.equal(typeof fromCli("csv-parse").parse, "function");
-  assert.equal(typeof fromCli("stream-json").parser, "function");
-  assert.equal(typeof fromCli("stream-json/filters/Pick").pick, "function");
-  assert.equal(typeof fromCli("stream-json/streamers/StreamArray").streamArray, "function");
+  const streamJson = await import("stream-json");
+  const pick = await import("stream-json/filters/pick.js");
+  const streamArray = await import("stream-json/streamers/stream-array.js");
+  assert.equal(typeof streamJson.parser, "function");
+  assert.equal(typeof pick.pick, "function");
+  assert.equal(typeof streamArray.streamArray, "function");
 });

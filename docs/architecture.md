@@ -19,7 +19,7 @@ Las reglas de la Etapa 14 autorizan catálogo público, membresías activas y
 participantes de sesión con mínimo privilegio. Todavía no se desplegaron en los
 proyectos cloud; su validación actual se realiza con Emulator Suite.
 
-Firebase CLI queda fijada como dependencia local en 15.28.2 con correcciones
+Firebase CLI queda fijada como dependencia local en 15.32.1 con correcciones
 transitivas documentadas en `tooling-security.md`. No cambia el stack del MVP.
 
 Nota incremental de Etapa 10: Firebase Hosting expone localmente `customer`,
@@ -27,6 +27,20 @@ Nota incremental de Etapa 10: Firebase Hosting expone localmente `customer`,
 SPA; la landing conserva 404. Los sitios reales y sus targets no existen todavía:
 se crearán al desplegar desarrollo en la Etapa 47. La política canónica vive en
 `firebase/hosting-policy.json`.
+
+## Panel administrativo — Etapa 31
+
+El panel es una SPA React + TypeScript compilada por Vite. TanStack Router separa
+las rutas públicas de un layout autenticado y TanStack Query queda como límite de
+cache para los datos operativos de etapas posteriores. Firebase Auth conserva la
+sesión del personal en el navegador; los guards esperan primero la resolución del
+estado real para evitar mostrar contenido privado durante la carga.
+
+Las configuraciones Firebase Web son públicas y están separadas por modo de build.
+El modo local solo conecta Auth a `127.0.0.1:9099` y exige el proyecto fijo
+`demo-mesaflow`. Autenticación no implica autorización: la membresía y el rol del
+establecimiento se resolverán en la Etapa 32 y las reglas/Functions siguen siendo
+la autoridad final.
 
 ## Stack elegido
 
