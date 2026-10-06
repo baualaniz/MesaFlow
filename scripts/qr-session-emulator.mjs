@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHmac } from "node:crypto";
 
 import { deleteApp, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
@@ -6,6 +7,10 @@ import { getFirestore } from "firebase-admin/firestore";
 import { buildQrExchangeId, hashQrToken } from "../functions/lib/qr-session.js";
 import { buildOrderId } from "../functions/lib/create-order.js";
 import { buildPaymentIntentId } from "../functions/lib/create-payment-preference.js";
+import { buildPaymentDocumentId } from
+  "../functions/lib/data/firestore-payment-reconciliation-repository.js";
+import { EMULATOR_WEBHOOK_SECRET } from "../functions/lib/mercado-pago-webhook.js";
+import { buildWebhookEventId } from "../functions/lib/reconcile-payment.js";
 import {
   assertLocalEmulatorEnvironment,
   DEMO_PROJECT_ID,
@@ -29,20 +34,27 @@ let originalTable;
 let originalSession;
 let originalAssistance;
 let paymentIntentId;
+let paymentDocumentId;
+let webhookEventId;
 const createdOrderIds = [];
 
-async function jsonRequest(url, { method = "POST", body, token } = {}) {
+async function jsonRequest(url, { method = "POST", body, token, headers = {} } = {}) {
   const response = await fetch(url, {
     method,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...headers
     },
     body: body === undefined ? undefined : JSON.stringify(body),
     redirect: "error",
     signal: AbortSignal.timeout(15000)
   });
-  return { status: response.status, data: await response.json() };
+  const responseText = await response.text();
+  return {
+    status: response.status,
+    data: responseText.length === 0 ? null : JSON.parse(responseText)
+  };
 }
 
 async function anonymousUser() {
@@ -251,7 +263,71 @@ try {
     .collection("establishments/mesa-flow-demo/paymentPreferences")
     .get();
   assert.equal(paymentPreferences.docs.filter(({ id }) => id === paymentIntentId).length, 1);
+  const globalIntent = (await firestore.doc(`paymentIntents/${paymentIntentId}`).get()).data();
+  assert.equal(globalIntent.status, "ready");
+  assert.equal(globalIntent.amountMinor, preference.data.result.amountMinor);
   console.log("[OK] Preferencia de pago se crea una vez, bloquea pedidos y reutiliza checkout");
+
+  const providerPaymentId = "900001";
+  const requestId = "mesaflow-emulator-payment-900001";
+  const signatureTimestamp = "1791288000";
+  const manifest =
+    `id:${providerPaymentId};request-id:${requestId};ts:${signatureTimestamp};`;
+  const signature = createHmac("sha256", EMULATOR_WEBHOOK_SECRET)
+    .update(manifest)
+    .digest("hex");
+  const webhookBody = {
+    id: 900001,
+    live_mode: false,
+    type: "payment",
+    date_created: "2026-10-06T12:00:00.000Z",
+    api_version: "v1",
+    action: "payment.updated",
+    data: { id: providerPaymentId }
+  };
+  const webhookUrl =
+    `${functionBase}/mercadoPagoWebhook?data.id=${providerPaymentId}`;
+  const webhookHeaders = {
+    "x-request-id": requestId,
+    "x-signature": `ts=${signatureTimestamp},v1=${signature}`
+  };
+  const reconciled = await jsonRequest(webhookUrl, {
+    body: webhookBody,
+    headers: webhookHeaders
+  });
+  assert.equal(reconciled.status, 200);
+  assert.equal(reconciled.data.outcome, "processed");
+  paymentDocumentId = buildPaymentDocumentId(providerPaymentId);
+  webhookEventId = buildWebhookEventId(requestId);
+  const payment = (await firestore.doc(
+    `establishments/mesa-flow-demo/payments/${paymentDocumentId}`
+  ).get()).data();
+  assert.equal(payment.status, "approved");
+  assert.equal(payment.amountMinor, preference.data.result.amountMinor);
+  const paidSession = (await sessionRef.get()).data();
+  assert.equal(paidSession.paidMinor, paidSession.subtotalMinor);
+  assert.equal(paidSession.balanceMinor, 0);
+  assert.equal(paidSession.status, "paid");
+  const repeatedWebhook = await jsonRequest(webhookUrl, {
+    body: webhookBody,
+    headers: webhookHeaders
+  });
+  assert.equal(repeatedWebhook.status, 200);
+  assert.equal(repeatedWebhook.data.outcome, "duplicate");
+  const afterReplay = (await sessionRef.get()).data();
+  assert.equal(afterReplay.paidMinor, paidSession.paidMinor);
+  const invalidWebhook = await jsonRequest(webhookUrl, {
+    body: webhookBody,
+    headers: {
+      "x-request-id": "forged-request",
+      "x-signature": `ts=${signatureTimestamp},v1=invalid`
+    }
+  });
+  assert.equal(invalidWebhook.status, 401);
+  assert.equal((await firestore.collection(
+    "establishments/mesa-flow-demo/payments"
+  ).where("externalId", "==", providerPaymentId).get()).size, 1);
+  console.log("[OK] Webhook firmado concilia el pago y el reintento no duplica el saldo");
 } catch (error) {
   console.error(`Smoke QR falló: ${error.message}`);
   process.exitCode = 1;
@@ -282,6 +358,15 @@ try {
         await firestore.doc(
           `establishments/mesa-flow-demo/paymentPreferences/${paymentIntentId}`
         ).delete();
+        await firestore.doc(`paymentIntents/${paymentIntentId}`).delete();
+      }
+      if (paymentDocumentId) {
+        await firestore.doc(
+          `establishments/mesa-flow-demo/payments/${paymentDocumentId}`
+        ).delete();
+      }
+      if (webhookEventId) {
+        await firestore.doc(`webhookEvents/${webhookEventId}`).delete();
       }
       for (const user of users) {
         const participant = firestore.doc(

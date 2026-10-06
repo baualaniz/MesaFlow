@@ -57,7 +57,9 @@ export function validateFirestoreSchema(schema) {
   }
   const roots = new Set(schema.rootCollections.map(({ key }) => key));
   const tenants = new Set(schema.tenantCollections.map(({ key }) => key));
-  const requiredRoots = ["users", "establishmentSlugs", "establishments", "webhookEvents"];
+  const requiredRoots = [
+    "users", "establishmentSlugs", "establishments", "paymentIntents", "webhookEvents"
+  ];
   const requiredTenants = ["members", "tables", "tableSessions", "tableSessionParticipants", "categories", "products", "orders", "assistanceRequests", "payments", "paymentPreferences", "dailyMetrics", "settings", "qrExchanges", "auditLogs"];
   if (roots.size !== schema.rootCollections.length || tenants.size !== schema.tenantCollections.length ||
       requiredRoots.some((key) => !roots.has(key)) || requiredTenants.some((key) => !tenants.has(key))) {

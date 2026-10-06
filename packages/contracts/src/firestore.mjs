@@ -5,6 +5,7 @@ export const ROOT_COLLECTIONS = Object.freeze({
   users: "users",
   establishmentSlugs: "establishmentSlugs",
   establishments: "establishments",
+  paymentIntents: "paymentIntents",
   webhookEvents: "webhookEvents"
 });
 
@@ -18,6 +19,7 @@ export const TENANT_COLLECTIONS = Object.freeze({
   orders: "orders",
   assistanceRequests: "assistanceRequests",
   payments: "payments",
+  paymentPreferences: "paymentPreferences",
   dailyMetrics: "dailyMetrics",
   settings: "settings",
   qrExchanges: "qrExchanges",

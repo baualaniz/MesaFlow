@@ -54,6 +54,7 @@ export class FirestorePaymentPreferenceRepository implements PaymentPreferenceRe
     const sessionRef = establishmentRef.collection("tableSessions").doc(command.sessionId);
     const participantRef = sessionRef.collection("participants").doc(command.uid);
     const intentRef = establishmentRef.collection("paymentPreferences").doc(command.intentId);
+    const globalIntentRef = this.firestore.collection("paymentIntents").doc(command.intentId);
     const leaseId = randomUUID();
 
     const prepared = await this.firestore.runTransaction(async (transaction) => {
@@ -113,6 +114,21 @@ export class FirestorePaymentPreferenceRepository implements PaymentPreferenceRe
               "El saldo cambió y la preferencia anterior ya no es válida."
             );
           }
+          transaction.set(globalIntentRef, {
+            intentId: command.intentId,
+            establishmentId: command.establishmentId,
+            sessionId: command.sessionId,
+            tableId: command.tableId,
+            customerUid: command.uid,
+            provider: "mercado_pago",
+            status: "ready",
+            preferenceId: result.preferenceId,
+            amountMinor,
+            currency,
+            liveMode: false,
+            createdAt: existingData.createdAt ?? Timestamp.fromDate(command.createdAt),
+            updatedAt: Timestamp.fromDate(command.createdAt)
+          }, { merge: true });
           return { result } as const;
         }
         const leaseExpiresAt = existingData.leaseExpiresAt;
@@ -140,6 +156,21 @@ export class FirestorePaymentPreferenceRepository implements PaymentPreferenceRe
         currency,
         leaseId,
         leaseExpiresAt: Timestamp.fromMillis(command.createdAt.getTime() + LEASE_MILLISECONDS),
+        createdAt: existing.exists ? existing.data()?.createdAt ?? timestamp : timestamp,
+        updatedAt: timestamp
+      });
+      transaction.set(globalIntentRef, {
+        intentId: command.intentId,
+        establishmentId: command.establishmentId,
+        sessionId: command.sessionId,
+        tableId: command.tableId,
+        customerUid: command.uid,
+        provider: "mercado_pago",
+        status: "creating",
+        preferenceId: null,
+        amountMinor,
+        currency,
+        liveMode: false,
         createdAt: existing.exists ? existing.data()?.createdAt ?? timestamp : timestamp,
         updatedAt: timestamp
       });
@@ -191,6 +222,11 @@ export class FirestorePaymentPreferenceRepository implements PaymentPreferenceRe
           leaseExpiresAt: null,
           updatedAt: Timestamp.fromDate(command.createdAt)
         });
+        transaction.update(globalIntentRef, {
+          status: "ready",
+          preferenceId: providerResult.preferenceId,
+          updatedAt: Timestamp.fromDate(command.createdAt)
+        });
         return Object.freeze({
           intentId: command.intentId,
           ...providerResult,
@@ -211,6 +247,10 @@ export class FirestorePaymentPreferenceRepository implements PaymentPreferenceRe
             status: "failed",
             leaseId: null,
             leaseExpiresAt: null,
+            updatedAt: Timestamp.fromDate(command.createdAt)
+          });
+          transaction.update(globalIntentRef, {
+            status: "failed",
             updatedAt: Timestamp.fromDate(command.createdAt)
           });
           if (prepared.transitionedSession && sessionSnapshot.exists &&

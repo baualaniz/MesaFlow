@@ -20,10 +20,16 @@
       "idStrategy": "firestore-auto-id"
     },
     {
+      "key": "paymentIntents",
+      "path": "paymentIntents/{intentId}",
+      "scope": "server-only",
+      "idStrategy": "sha256-establishment-session"
+    },
+    {
       "key": "webhookEvents",
       "path": "webhookEvents/{providerEventId}",
       "scope": "server-only",
-      "idStrategy": "provider-event-id"
+      "idStrategy": "sha256-provider-request-id"
     }
   ],
   "tenantCollections": [

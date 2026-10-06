@@ -124,6 +124,7 @@ globales accidentales. Los documentos globales solo resuelven identidad o slugs.
 | `users/{uid}` | `displayName`, `email`, `createdAt`, `updatedAt` | Perfil global mínimo; no otorga permisos |
 | `establishmentSlugs/{slug}` | `establishmentId`, `active` | Resolución pública controlada del QR |
 | `establishments/{eid}` | `name`, `slug`, `timezone`, `currency`, `active`, timestamps | Tenant raíz |
+| `paymentIntents/{intentId}` | tenant, sesión, importe, moneda, proveedor, estado | Resolución global server-only de referencias de pago |
 | `.../members/{uid}` | `role`, `permissions`, `active`, timestamps | Autorización del personal |
 | `.../tables/{tableId}` | `number`, `name`, `qrTokenHash`, `qrVersion`, `active`, `currentSessionId` | Mesa y credencial QR rotatoria |
 | `.../tableSessions/{sessionId}` | `tableId`, `status`, `openedAt`, `closedAt`, `totals` | Ocupación y cuenta aislada |
@@ -191,6 +192,22 @@ La app abre únicamente una URL HTTPS bajo `mercadopago.com`. Las rutas
 parámetros del navegador como no confiables. `paymentPreferences` permanece
 cerrada por reglas; `payments` solo será actualizado por la conciliación del
 webhook verificado en la Etapa 30.
+
+## Webhook y conciliación — Etapa 30
+
+`mercadoPagoWebhook` es un endpoint público porque Mercado Pago debe invocarlo,
+pero ninguna notificación se considera auténtica hasta validar `x-signature`
+con la clave secreta de la aplicación. Después de la firma, la Function consulta
+el pago por ID en la API del proveedor y compara la respuesta con el intento
+server-only creado antes de abrir Checkout Pro: referencia externa, importe,
+moneda y ambiente deben coincidir.
+
+La conciliación se ejecuta en una única transacción Firestore. Un documento
+determinista en `payments` representa el pago remoto, `webhookEvents` deduplica
+la entrega y la sesión recompone `paidMinor`, `balanceMinor` y su estado. La
+operación también es idempotente entre eventos distintos del mismo pago: solo la
+transición efectiva modifica los totales. Reembolsos y contracargos retiran la
+contribución aprobada; eventos tardíos no degradan un estado más definitivo.
 
 ## Identificadores, tiempo y estados
 

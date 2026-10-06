@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 29** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 30** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -48,6 +48,11 @@ recalcula en el backend y abrir el checkout externo. El intento es idempotente,
 se recupera por referencia externa y queda guardado en una colección solo
 servidor. Los retornos `success`, `pending` y `failure` son informativos: ninguno
 acredita el pago; esa autoridad queda reservada al webhook de la Etapa 30.
+El webhook ya valida la firma con el SDK oficial, consulta el pago directamente
+en Mercado Pago y concilia de forma transaccional e idempotente el documento de
+pago, el saldo y el estado de la sesión. Una firma falsa no toca Firestore y un
+reintento no duplica importes. Su URL pública y la clave secreta se configurarán
+al desplegar Functions en la Etapa 47; no se activó facturación en esta etapa.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -83,6 +88,7 @@ encuentran en:
 - `docs/stage-27-consumption.md`
 - `docs/stage-28-mercado-pago.md`
 - `docs/stage-29-payment-preference.md`
+- `docs/stage-30-payment-webhook.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -112,11 +118,11 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 118
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 124
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, seis de Hosting,
 cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-diez de contratos y 28 de Functions), más
+diez de contratos y 34 de Functions), más
 el lint y build TypeScript. Este comando no consulta servicios remotos.
 
 Los contratos compartidos tienen además siete pruebas Dart contra los mismos

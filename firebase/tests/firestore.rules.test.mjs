@@ -93,6 +93,7 @@ async function seed() {
       ["establishments/restaurantA/settings/private", { establishmentId: "restaurantA", secretFlag: false }],
       ["establishments/restaurantA/auditLogs/logA", { establishmentId: "restaurantA", action: "seed" }],
       ["establishments/restaurantA/qrExchanges/exchangeA", { establishmentId: "restaurantA" }],
+      ["paymentIntents/intentA", { establishmentId: "restaurantA", status: "ready" }],
       ["webhookEvents/eventA", { provider: "test" }]
     ];
     await Promise.all(writes.map(([path, data]) => setDoc(doc(db, path), data)));
@@ -255,6 +256,7 @@ test("miembro inactivo, extraño y membresía de otro tenant no ganan acceso", a
 test("colecciones exclusivas de backend permanecen cerradas", async () => {
   const db = environment.authenticatedContext("ownerA").firestore();
   await assertFails(getDoc(doc(db, "establishments/restaurantA/qrExchanges/exchangeA")));
+  await assertFails(getDoc(doc(db, "paymentIntents/intentA")));
   await assertFails(getDoc(doc(db, "webhookEvents/eventA")));
   await assertFails(setDoc(doc(db, "establishments/restaurantA/members/newMember"), {
     establishmentId: "restaurantA", uid: "newMember", role: "staff", active: true

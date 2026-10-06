@@ -214,6 +214,10 @@ service cloud.firestore {
       }
     }
 
+    match /paymentIntents/{intentId} {
+      allow read, write: if false;
+    }
+
     match /webhookEvents/{eventId} {
       allow read, write: if false;
     }

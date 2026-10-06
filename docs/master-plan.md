@@ -116,6 +116,7 @@ implementará el webhook verificado y la conciliación autoritativa del pago.
 | 27 | Completa localmente: consumo reconstruido desde pedidos/pagos, saldo validado en servidor, pedido de cuenta integrado y 73 tests Flutter más 23 de Functions aprobados | `docs/stage-27-consumption.md` |
 | 28 | Completa: aplicación y vendedor de prueba argentinos, Access Token local ignorado, producción deshabilitada, política y 5 pruebas aprobadas | `docs/stage-28-mercado-pago.md` |
 | 29 | Completa localmente: preferencia idempotente, recuperación por referencia externa, apertura segura, retornos no autoritativos, 78 tests Flutter y 28 de Functions aprobados | `docs/stage-29-payment-preference.md` |
+| 30 | Completa localmente: firma oficial, consulta autoritativa, conciliación idempotente, reintentos, saldo y reglas backend aprobados; URL pública diferida a Etapa 47 | `docs/stage-30-payment-webhook.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 
