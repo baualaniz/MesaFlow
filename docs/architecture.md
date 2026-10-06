@@ -28,7 +28,7 @@ SPA; la landing conserva 404. Los sitios reales y sus targets no existen todaví
 se crearán al desplegar desarrollo en la Etapa 47. La política canónica vive en
 `firebase/hosting-policy.json`.
 
-## Panel administrativo — Etapa 31
+## Panel administrativo — Etapas 31 y 32
 
 El panel es una SPA React + TypeScript compilada por Vite. TanStack Router separa
 las rutas públicas de un layout autenticado y TanStack Query queda como límite de
@@ -37,10 +37,17 @@ sesión del personal en el navegador; los guards esperan primero la resolución 
 estado real para evitar mostrar contenido privado durante la carga.
 
 Las configuraciones Firebase Web son públicas y están separadas por modo de build.
-El modo local solo conecta Auth a `127.0.0.1:9099` y exige el proyecto fijo
-`demo-mesaflow`. Autenticación no implica autorización: la membresía y el rol del
-establecimiento se resolverán en la Etapa 32 y las reglas/Functions siguen siendo
-la autoridad final.
+El modo local conecta Auth y Firestore a loopback y exige el proyecto fijo
+`demo-mesaflow`. Autenticación no implica autorización: el panel lee del perfil
+propio una lista no autoritativa de establecimientos y valida después cada
+membresía directa, activa y vinculada al UID. También valida el contrato del
+establecimiento antes de permitir el shell privado.
+
+El tenant activo se conserva por usuario en almacenamiento local, pero siempre
+se vuelve a contrastar con las membresías vigentes. Una matriz de rol más permiso
+granular filtra la navegación y protege rutas operativas. Es una capa de
+experiencia y defensa en profundidad: Firestore Rules y las Functions son la
+autoridad final aunque se manipule el cliente.
 
 ## Stack elegido
 

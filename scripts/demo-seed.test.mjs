@@ -30,6 +30,8 @@ test("genera rutas únicas bajo el establecimiento demo", () => {
   assert.ok(documents.some(({ path }) => path.endsWith("/members/demo-owner")));
   assert.equal(documents.filter(({ path }) => path.includes("/products/")).length, 18);
   assert.equal(documents.filter(({ path }) => path.includes("/tables/")).length, 10);
+  const ownerProfile = documents.find(({ path }) => path === "users/demo-owner");
+  assert.deepEqual(ownerProfile.data.establishmentIds, ["mesa-flow-demo"]);
 });
 
 test("rechaza producción, otro proyecto y un destino que no sea emulador", () => {

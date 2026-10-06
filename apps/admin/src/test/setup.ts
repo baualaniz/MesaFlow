@@ -1,1 +1,2 @@
-import "@testing-library/jest-dom/vitest";
+// Módulo reservado para una futura configuración global de Vitest.
+export {};

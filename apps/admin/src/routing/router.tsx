@@ -12,10 +12,13 @@ import { DashboardPage } from "../pages/dashboard-page";
 import { LoginPage } from "../pages/login-page";
 import { OrdersPlaceholderPage } from "../pages/orders-placeholder-page";
 import { ResetPasswordPage } from "../pages/reset-password-page";
+import { canAccess } from "../tenant/access-control";
+import type { TenantContextValue } from "../tenant/tenant-context";
 import { loginRedirectFor, safeInternalRedirect } from "./guards";
 
 interface RouterContext {
   readonly auth: AuthContextValue;
+  readonly tenant: TenantContextValue;
 }
 
 const rootRoute = createRootRouteWithContext<RouterContext>()({
@@ -62,6 +65,12 @@ const dashboardRoute = createRoute({
 const ordersRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/operacion/pedidos",
+  beforeLoad: ({ context }) => {
+    const membership = context.tenant.activeAccess?.membership;
+    if (membership === undefined || !canAccess(membership, "orders.view")) {
+      throw redirect({ to: "/" });
+    }
+  },
   component: OrdersPlaceholderPage
 });
 
@@ -73,7 +82,7 @@ const routeTree = rootRoute.addChildren([
 
 export const router = createRouter({
   routeTree,
-  context: { auth: undefined as never },
+  context: { auth: undefined as never, tenant: undefined as never },
   defaultPreload: "intent"
 });
 

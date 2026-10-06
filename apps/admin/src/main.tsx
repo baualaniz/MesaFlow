@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { App } from "./app";
 import { AuthProvider } from "./auth/auth-provider";
+import { TenantProvider } from "./tenant/tenant-provider";
 import "./styles.css";
 
 const root = document.getElementById("root");
@@ -22,7 +23,9 @@ const queryClient = new QueryClient({
 createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider><App /></AuthProvider>
+      <AuthProvider>
+        <TenantProvider><App /></TenantProvider>
+      </AuthProvider>
     </QueryClientProvider>
   </StrictMode>
 );

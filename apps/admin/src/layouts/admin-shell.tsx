@@ -4,22 +4,29 @@ import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../auth/auth-context";
 import { Brand } from "../components/brand";
 import { Icon } from "../components/icon";
+import { canAccess, ROLE_LABELS, type AdminCapability } from "../tenant/access-control";
+import { useActiveTenant, useTenant } from "../tenant/tenant-context";
 
 const navigation = Object.freeze([
-  { to: "/" as const, label: "Resumen", icon: "dashboard" as const },
-  { to: "/operacion/pedidos" as const, label: "Pedidos", icon: "orders" as const },
-  { to: "/" as const, label: "Mesas", icon: "tables" as const, disabled: true },
-  { to: "/" as const, label: "Productos", icon: "products" as const, disabled: true },
-  { to: "/" as const, label: "Equipo", icon: "users" as const, disabled: true }
+  { to: "/" as const, label: "Resumen", icon: "dashboard" as const, capability: "dashboard.view" as AdminCapability },
+  { to: "/operacion/pedidos" as const, label: "Pedidos", icon: "orders" as const, capability: "orders.view" as AdminCapability },
+  { to: "/" as const, label: "Mesas", icon: "tables" as const, capability: "tables.view" as AdminCapability, disabled: true },
+  { to: "/" as const, label: "Productos", icon: "products" as const, capability: "menu.view" as AdminCapability, disabled: true },
+  { to: "/" as const, label: "Equipo", icon: "users" as const, capability: "team.view" as AdminCapability, disabled: true }
 ]);
 
 export function AdminShell() {
   const auth = useAuth();
+  const tenant = useTenant();
+  const active = useActiveTenant();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const displayName = auth.user?.displayName?.trim() || auth.user?.email?.split("@")[0] || "Usuario";
   const initials = displayName.split(/\s+/u).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+  const visibleNavigation = navigation.filter(({ capability }) =>
+    canAccess(active.membership, capability)
+  );
 
   async function closeSession() {
     await auth.signOut();
@@ -38,7 +45,7 @@ export function AdminShell() {
         <div className="sidebar-brand"><Brand /></div>
         <nav aria-label="Navegación principal">
           <p className="nav-label">GESTIÓN</p>
-          {navigation.map((item) => item.disabled ? (
+          {visibleNavigation.map((item) => item.disabled ? (
             <span className="nav-item disabled" key={item.label} aria-disabled="true">
               <Icon name={item.icon} /><span>{item.label}</span><small>Próximamente</small>
             </span>
@@ -72,15 +79,31 @@ export function AdminShell() {
             <Icon name="menu" />
           </button>
           <div className="venue-switcher">
-            <span className="venue-mark">B</span>
-            <span><small>ESTABLECIMIENTO</small><strong>Bistró MesaFlow</strong></span>
+            <span className="venue-mark">{active.establishment.name.slice(0, 1).toUpperCase()}</span>
+            <label>
+              <small>ESTABLECIMIENTO</small>
+              {tenant.accesses.length > 1 ? (
+                <select
+                  aria-label="Establecimiento activo"
+                  onChange={(event) => tenant.selectEstablishment(event.target.value)}
+                  value={active.establishment.id}
+                >
+                  {tenant.accesses.map(({ establishment }) => (
+                    <option key={establishment.id} value={establishment.id}>{establishment.name}</option>
+                  ))}
+                </select>
+              ) : <strong>{active.establishment.name}</strong>}
+            </label>
           </div>
           <div className="topbar-actions">
             <button className="icon-button" aria-label="Notificaciones" type="button"><Icon name="bell" /></button>
             <span className="topbar-divider" />
             <div className="account-summary">
               <span className="avatar">{initials || "MF"}</span>
-              <span><strong>{displayName}</strong><small>{auth.user?.email}</small></span>
+              <span>
+                <strong>{displayName}</strong>
+                <small>{ROLE_LABELS[active.membership.role]} · {auth.user?.email}</small>
+              </span>
             </div>
             <button
               aria-label="Cerrar sesión"

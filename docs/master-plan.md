@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–31 completadas en alcance local. La siguiente etapa
-integrará membresías, selección del establecimiento activo y permisos en el panel.
+Estado actual: Etapas 1–32 completadas en alcance local. La siguiente etapa
+implementará el tablero operativo de pedidos en tiempo real.
 
 ## Fases 1–10: base y Firebase
 
@@ -118,6 +118,7 @@ integrará membresías, selección del establecimiento activo y permisos en el p
 | 29 | Completa localmente: preferencia idempotente, recuperación por referencia externa, apertura segura, retornos no autoritativos, 78 tests Flutter y 28 de Functions aprobados | `docs/stage-29-payment-preference.md` |
 | 30 | Completa localmente: firma oficial, consulta autoritativa, conciliación idempotente, reintentos, saldo y reglas backend aprobados; URL pública diferida a Etapa 47 | `docs/stage-30-payment-webhook.md` |
 | 31 | Completa localmente: React/TypeScript, sistema visual, Firebase Auth, login/logout/reset, rutas privadas, 10 pruebas y flujo emulado aprobados | `docs/stage-31-admin-foundation.md` |
+| 32 | Completa localmente: perfiles, membresías, tenant activo, selector, matriz RBAC, 20 pruebas del panel y bypass entre tenants rechazado | `docs/stage-32-tenant-rbac.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

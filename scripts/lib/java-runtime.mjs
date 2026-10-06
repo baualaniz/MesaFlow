@@ -36,11 +36,11 @@ function installedWindowsJdks() {
 function candidatesFromEnvironment(env) {
   const candidates = [];
   if (env.JAVA_HOME) candidates.push(javaExecutable(path.join(env.JAVA_HOME, "bin")));
+  if (process.platform === "win32") candidates.push(...installedWindowsJdks());
   const pathValue = env.Path ?? env.PATH ?? "";
   for (const entry of pathValue.split(path.delimiter).filter(Boolean)) {
     candidates.push(javaExecutable(entry));
   }
-  if (process.platform === "win32") candidates.push(...installedWindowsJdks());
   return [...new Set(candidates)];
 }
 
@@ -49,6 +49,7 @@ export function resolveJava21Environment(env = process.env) {
     if (!existsSync(executable)) continue;
     const result = spawnSync(executable, ["-version"], {
       encoding: "utf8",
+      timeout: 5_000,
       windowsHide: true
     });
     const major = parseJavaMajor(`${result.stdout ?? ""}\n${result.stderr ?? ""}`);

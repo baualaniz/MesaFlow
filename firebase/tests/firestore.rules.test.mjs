@@ -69,6 +69,8 @@ async function seed() {
       ["establishmentSlugs/restaurante-a", { establishmentId: "restaurantA", active: true }],
       ["establishments/restaurantA", { establishmentId: "restaurantA", active: true }],
       ["establishments/restaurantB", { establishmentId: "restaurantB", active: true }],
+      ["users/ownerA", { displayName: "Propietario A", establishmentIds: ["restaurantA"] }],
+      ["users/staffA", { displayName: "Personal A", establishmentIds: ["restaurantA", "restaurantB"] }],
       ["establishments/restaurantA/members/ownerA", { establishmentId: "restaurantA", uid: "ownerA", role: "owner", active: true }],
       ["establishments/restaurantA/members/managerA", { establishmentId: "restaurantA", uid: "managerA", role: "manager", active: true }],
       ["establishments/restaurantA/members/staffA", { establishmentId: "restaurantA", uid: "staffA", role: "staff", active: true }],
@@ -79,6 +81,7 @@ async function seed() {
       ["establishments/restaurantA/categories/inactive", category("restaurantA", { active: false, sortOrder: 2 })],
       ["establishments/restaurantA/products/public", product()],
       ["establishments/restaurantA/products/hidden", product("restaurantA", { available: false, sortOrder: 2 })],
+      ["establishments/restaurantB/products/hidden", product("restaurantB", { available: false, sortOrder: 2 })],
       ["establishments/restaurantA/tables/tableA", { establishmentId: "restaurantA", active: true }],
       ["establishments/restaurantA/tableSessions/sessionA", { establishmentId: "restaurantA", tableId: "tableA", status: "open" }],
       ["establishments/restaurantA/tableSessions/sessionOther", { establishmentId: "restaurantA", tableId: "tableA", status: "open" }],
@@ -194,6 +197,15 @@ test("manager lista membresías pero miembro común solo lee la propia", async (
   await assertSucceeds(getDoc(doc(staff, "establishments/restaurantA/members/staffA")));
   await assertFails(getDoc(doc(staff, "establishments/restaurantA/members/ownerA")));
   await assertFails(getDocs(collection(staff, "establishments/restaurantA/members")));
+});
+
+test("el perfil propio orienta la selección pero no concede acceso a otro tenant", async () => {
+  const staff = environment.authenticatedContext("staffA").firestore();
+  await assertSucceeds(getDoc(doc(staff, "users/staffA")));
+  await assertFails(getDoc(doc(staff, "users/ownerA")));
+  await assertFails(getDocs(collection(staff, "users")));
+  await assertFails(getDoc(doc(staff, "establishments/restaurantB/members/staffA")));
+  await assertFails(getDoc(doc(staff, "establishments/restaurantB/products/hidden")));
 });
 
 test("participante activo solo lee su sesión y recursos vinculados", async () => {

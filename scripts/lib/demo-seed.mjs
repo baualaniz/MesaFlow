@@ -234,7 +234,12 @@ export function buildDemoDocuments(seed, options = {}) {
   const add = (path, data) => documents.push({ path, data });
   const fixed = timestampMarker(seed.fixedTimestamp);
 
-  for (const { id, ...user } of seed.users) add(`users/${id}`, withCreatedAndUpdated(seed, user));
+  for (const { id, ...user } of seed.users) {
+    const establishmentIds = seed.members.some(({ uid }) => uid === id)
+      ? [seed.establishment.id]
+      : [];
+    add(`users/${id}`, withCreatedAndUpdated(seed, { ...user, establishmentIds }));
+  }
   add(`establishmentSlugs/${seed.establishment.slug}`, {
     establishmentId: seed.establishment.id,
     active: true
