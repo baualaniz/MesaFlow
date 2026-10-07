@@ -22,6 +22,12 @@ import {
   type UpdateOrderStatusRepository
 } from "../update-order-status.js";
 import { orderConverter } from "./firestore-converters.js";
+import {
+  localMetricDate,
+  parseDailyMetric,
+  recordOrderTransition,
+  serializeDailyMetric
+} from "./firestore-daily-metrics.js";
 
 function denied(message: string): never {
   throw new UpdateOrderStatusError(
@@ -76,7 +82,8 @@ export class FirestoreOrderStatusRepository implements UpdateOrderStatusReposito
     const auditRef = tenantRef.collection("auditLogs").doc(`order-status-${command.requestId}`);
 
     return this.firestore.runTransaction(async (transaction) => {
-      const [memberSnapshot, orderSnapshot, auditSnapshot] = await Promise.all([
+      const [establishmentSnapshot, memberSnapshot, orderSnapshot, auditSnapshot] = await Promise.all([
+        transaction.get(tenantRef),
         transaction.get(memberRef),
         transaction.get(orderRef),
         transaction.get(auditRef)
@@ -92,6 +99,11 @@ export class FirestoreOrderStatusRepository implements UpdateOrderStatusReposito
         );
       }
       const actor = actorFromMembership(memberSnapshot.data(), command);
+      const establishment = establishmentSnapshot.data();
+      if (establishment === undefined || establishment.active !== true ||
+          typeof establishment.timezone !== "string") {
+        throw new TypeError("El establecimiento no contiene una zona horaria válida.");
+      }
       const order = orderSnapshot.data();
       if (order === undefined || order.establishmentId !== command.establishmentId) {
         throw new TypeError("El pedido almacenado no pertenece al establecimiento.");
@@ -145,7 +157,29 @@ export class FirestoreOrderStatusRepository implements UpdateOrderStatusReposito
         },
         updatedAt: timestamp
       });
+      let metricUpdate: {
+        readonly reference: FirebaseFirestore.DocumentReference;
+        readonly data: DocumentData;
+      } | null = null;
+      if (command.nextStatus === "completed" || command.nextStatus === "cancelled") {
+        const metricDate = localMetricDate(new Date(order.createdAt), establishment.timezone);
+        const metricRef = tenantRef.collection("dailyMetrics").doc(metricDate);
+        const metricSnapshot = await transaction.get(metricRef);
+        const metric = recordOrderTransition(
+          parseDailyMetric(
+            metricSnapshot.data(),
+            command.establishmentId,
+            metricDate,
+            command.updatedAt
+          ),
+          order,
+          command.nextStatus,
+          command.updatedAt
+        );
+        metricUpdate = { reference: metricRef, data: serializeDailyMetric(metric) };
+      }
       transaction.set(orderRef, nextOrder);
+      if (metricUpdate !== null) transaction.set(metricUpdate.reference, metricUpdate.data);
       if (cancelledSessionUpdate !== null) {
         transaction.update(cancelledSessionUpdate.reference, {
           subtotalMinor: cancelledSessionUpdate.subtotalMinor,

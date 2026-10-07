@@ -59,27 +59,33 @@ const base = {
 const orderAPath = "establishments/mesa-flow-demo/orders/pedido-mesa-01-a";
 const orderBPath = "establishments/mesa-flow-demo/orders/pedido-mesa-01-b";
 const sessionPath = "establishments/mesa-flow-demo/tableSessions/sesion-mesa-01";
+const metricPath = "establishments/mesa-flow-demo/dailyMetrics/2026-09-17";
 const auditRequestIds = [
   "11111111111111111111111111111111",
   "22222222222222222222222222222222",
-  "33333333333333333333333333333333"
+  "33333333333333333333333333333333",
+  "34444444444444444444444444444444"
 ];
 let originalOrderA;
 let originalOrderB;
 let originalSession;
+let originalMetric;
 
 try {
-  const [orderA, orderB, sessionBefore] = await Promise.all([
+  const [orderA, orderB, sessionBefore, metricBefore] = await Promise.all([
     adminFirestore.doc(orderAPath).get(),
     adminFirestore.doc(orderBPath).get(),
-    adminFirestore.doc(sessionPath).get()
+    adminFirestore.doc(sessionPath).get(),
+    adminFirestore.doc(metricPath).get()
   ]);
   assert.equal(orderA.exists, true);
   assert.equal(orderB.exists, true);
   assert.equal(sessionBefore.exists, true);
+  assert.equal(metricBefore.exists, true);
   originalOrderA = orderA.data();
   originalOrderB = orderB.data();
   originalSession = sessionBefore.data();
+  originalMetric = metricBefore.data();
 
   await signInWithEmailAndPassword(
     auth,
@@ -146,10 +152,25 @@ try {
     "owner@mesaflow.example.invalid",
     "MesaFlowDemo31!"
   );
+  const completedRequestId = "34444444444444444444444444444444";
+  const completed = await updateStatus({
+    ...base,
+    expectedStatus: "delivered",
+    nextStatus: "completed",
+    requestId: completedRequestId
+  });
+  assert.equal(completed.data.status, "completed");
+  const metric = await getDoc(doc(
+    firestore, "establishments", "mesa-flow-demo", "dailyMetrics", "2026-09-17"
+  ));
+  assert.equal(metric.data().activeOrders, 1);
+  assert.equal(metric.data().completedOrders, 2);
+  assert.equal(metric.data().productQuantities["cafe-especial"], 0);
   for (const requestId of [
     kitchenTransition.requestId,
     "22222222222222222222222222222222",
-    cancelledRequestId
+    cancelledRequestId,
+    completedRequestId
   ]) {
     const audit = await getDoc(doc(
       firestore,
@@ -165,11 +186,12 @@ try {
 } finally {
   if (auth.currentUser !== null) await signOut(auth);
   await deleteApp(app);
-  if (originalOrderA && originalOrderB && originalSession) {
+  if (originalOrderA && originalOrderB && originalSession && originalMetric) {
     const batch = adminFirestore.batch();
     batch.set(adminFirestore.doc(orderAPath), originalOrderA);
     batch.set(adminFirestore.doc(orderBPath), originalOrderB);
     batch.set(adminFirestore.doc(sessionPath), originalSession);
+    batch.set(adminFirestore.doc(metricPath), originalMetric);
     for (const requestId of auditRequestIds) {
       batch.delete(adminFirestore.doc(
         `establishments/mesa-flow-demo/auditLogs/order-status-${requestId}`

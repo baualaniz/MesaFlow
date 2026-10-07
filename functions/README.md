@@ -50,6 +50,11 @@ y `acknowledged → resolved`, obtiene el actor desde Authentication, verifica l
 membresía en el tenant y registra auditoría idempotente. Cocina queda rechazada;
 owner, manager y staff con `assistance.manage` pueden operar la cola.
 
+La Etapa 38 integra `dailyMetrics` en las transacciones existentes. Crear,
+cancelar o completar pedidos ajusta actividad y cantidades; aprobar o revertir
+un pago ajusta ventas. La fecha se calcula con la zona horaria del establecimiento
+y los reintentos idempotentes no duplican acumulados.
+
 La función emulada queda en:
 
 ```text

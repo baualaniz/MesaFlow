@@ -37,6 +37,14 @@ let paymentIntentId;
 let paymentDocumentId;
 let webhookEventId;
 const createdOrderIds = [];
+const originalMetrics = new Map();
+const orderMetricDate = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/Argentina/Buenos_Aires",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+}).format(new Date());
+const metricDates = [...new Set(["2026-10-06", orderMetricDate])];
 
 async function jsonRequest(url, { method = "POST", body, token, headers = {} } = {}) {
   const response = await fetch(url, {
@@ -100,6 +108,12 @@ try {
   const assistanceSnapshot = await assistanceRef.get();
   assert.equal(assistanceSnapshot.exists, true);
   originalAssistance = assistanceSnapshot.data();
+  for (const date of metricDates) {
+    const snapshot = await firestore.doc(
+      `establishments/mesa-flow-demo/dailyMetrics/${date}`
+    ).get();
+    originalMetrics.set(date, snapshot.exists ? snapshot.data() : null);
+  }
 
   const first = await anonymousUser();
   const exchanged = await callable("exchangeQrSession", { ...context, token: tokenV1 }, first.idToken);
@@ -135,12 +149,22 @@ try {
   assert.equal(order.items[0].unitPriceMinor, 1290000);
   assert.equal(order.items[0].lineTotalMinor, 2580000);
   assert.equal(order.totalMinor, 2580000);
+  const orderMetric = (await firestore.doc(
+    `establishments/mesa-flow-demo/dailyMetrics/${orderMetricDate}`
+  ).get()).data();
+  assert.equal(orderMetric.activeOrders, 1);
+  assert.equal(orderMetric.productQuantities["burger-casa"], 2);
   const updatedSession = (await sessionRef.get()).data();
   assert.equal(
     updatedSession.subtotalMinor,
     originalSession.subtotalMinor + 2580000,
     "El reintento no debe sumar el pedido dos veces"
   );
+  const orderMetricAfterRetry = (await firestore.doc(
+    `establishments/mesa-flow-demo/dailyMetrics/${orderMetricDate}`
+  ).get()).data();
+  assert.equal(orderMetricAfterRetry.activeOrders, 1);
+  assert.equal(orderMetricAfterRetry.productQuantities["burger-casa"], 2);
   const consumption = await callable("getSessionConsumption", {
     establishmentId: "mesa-flow-demo",
     sessionId: "sesion-mesa-01",
@@ -316,6 +340,11 @@ try {
   assert.equal(repeatedWebhook.data.outcome, "duplicate");
   const afterReplay = (await sessionRef.get()).data();
   assert.equal(afterReplay.paidMinor, paidSession.paidMinor);
+  const paymentMetric = (await firestore.doc(
+    "establishments/mesa-flow-demo/dailyMetrics/2026-10-06"
+  ).get()).data();
+  assert.equal(paymentMetric.salesMinor, paidSession.paidMinor);
+  assert.equal(paymentMetric.approvedPayments, 1);
   const invalidWebhook = await jsonRequest(webhookUrl, {
     body: webhookBody,
     headers: {
@@ -367,6 +396,14 @@ try {
       }
       if (webhookEventId) {
         await firestore.doc(`webhookEvents/${webhookEventId}`).delete();
+      }
+      for (const date of metricDates) {
+        const reference = firestore.doc(
+          `establishments/mesa-flow-demo/dailyMetrics/${date}`
+        );
+        const original = originalMetrics.get(date);
+        if (original) await reference.set(original);
+        else await reference.delete();
       }
       for (const user of users) {
         const participant = firestore.doc(

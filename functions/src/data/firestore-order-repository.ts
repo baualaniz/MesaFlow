@@ -22,6 +22,12 @@ import {
   type CreateOrderRepository
 } from "../create-order.js";
 import { orderConverter, productConverter } from "./firestore-converters.js";
+import {
+  localMetricDate,
+  parseDailyMetric,
+  recordCreatedOrder,
+  serializeDailyMetric
+} from "./firestore-daily-metrics.js";
 
 function rawData(snapshot: DocumentSnapshot, message: string): DocumentData {
   if (!snapshot.exists) {
@@ -150,9 +156,10 @@ export class FirestoreOrderRepository implements CreateOrderRepository {
         transaction.get(participantRef),
         ...productRefs.map((reference) => transaction.get(reference))
       ]);
+      const establishment = rawData(establishmentSnapshot, "El establecimiento no existe.");
       const access = requireSessionAccess(
         command,
-        rawData(establishmentSnapshot, "El establecimiento no existe."),
+        establishment,
         rawData(tableSnapshot, "La mesa no existe."),
         rawData(sessionSnapshot, "La sesión no existe."),
         rawData(participantSnapshot, "La participación no existe.")
@@ -225,7 +232,16 @@ export class FirestoreOrderRepository implements CreateOrderRepository {
         createdAt: timestamp,
         updatedAt: timestamp
       });
+      const metricDate = localMetricDate(command.createdAt, String(establishment.timezone));
+      const metricRef = establishmentRef.collection("dailyMetrics").doc(metricDate);
+      const metricSnapshot = await transaction.get(metricRef);
+      const metric = recordCreatedOrder(
+        parseDailyMetric(metricSnapshot.data(), command.establishmentId, metricDate, command.createdAt),
+        order,
+        command.createdAt
+      );
       transaction.create(orderRef, order);
+      transaction.set(metricRef, serializeDailyMetric(metric));
       transaction.update(sessionRef, {
         subtotalMinor: nextSubtotalMinor,
         balanceMinor: nextBalanceMinor,

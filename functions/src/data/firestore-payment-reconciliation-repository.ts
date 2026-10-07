@@ -20,6 +20,12 @@ import type {
   PaymentReconciliationResult
 } from "../reconcile-payment.js";
 import { paymentConverter } from "./firestore-converters.js";
+import {
+  localMetricDate,
+  parseDailyMetric,
+  recordPaymentTransition,
+  serializeDailyMetric
+} from "./firestore-daily-metrics.js";
 
 function requiredData(snapshot: DocumentSnapshot, message: string): DocumentData {
   if (!snapshot.exists) throw new TypeError(message);
@@ -88,13 +94,15 @@ implements PaymentReconciliationRepository {
       const sessionRef = this.firestore.doc(
         `establishments/${establishmentId}/tableSessions/${sessionId}`
       );
+      const establishmentRef = this.firestore.doc(`establishments/${establishmentId}`);
       const paymentRef = this.firestore
         .doc(`establishments/${establishmentId}/payments/${paymentId}`)
         .withConverter(paymentConverter);
       const preferenceRef = this.firestore.doc(
         `establishments/${establishmentId}/paymentPreferences/${command.payment.externalReference}`
       );
-      const [sessionSnapshot, paymentSnapshot] = await Promise.all([
+      const [establishmentSnapshot, sessionSnapshot, paymentSnapshot] = await Promise.all([
+        transaction.get(establishmentRef),
         transaction.get(sessionRef),
         transaction.get(paymentRef)
       ]);
@@ -114,8 +122,13 @@ implements PaymentReconciliationRepository {
         throw new TypeError("El pago existente no corresponde al intento conciliado.");
       }
       const session = requiredData(sessionSnapshot, "La sesión del pago no existe.");
+      const establishment = requiredData(
+        establishmentSnapshot,
+        "El establecimiento del pago no existe."
+      );
       if (session.establishmentId !== establishmentId ||
-          sessionId !== intent.sessionId) {
+          sessionId !== intent.sessionId || establishment.active !== true ||
+          typeof establishment.timezone !== "string") {
         throw new TypeError("La sesión del pago no corresponde al intento.");
       }
       const subtotalMinor = parseMinorAmount(session.subtotalMinor, "subtotalMinor");
@@ -144,7 +157,30 @@ implements PaymentReconciliationRepository {
         createdAt,
         updatedAt: command.payment.updatedAt.toISOString()
       });
+      let metricUpdate: {
+        readonly reference: FirebaseFirestore.DocumentReference;
+        readonly data: DocumentData;
+      } | null = null;
+      if ((existing?.status === "approved") !== (finalStatus === "approved")) {
+        const metricDate = localMetricDate(new Date(createdAt), establishment.timezone);
+        const metricRef = establishmentRef.collection("dailyMetrics").doc(metricDate);
+        const metricSnapshot = await transaction.get(metricRef);
+        const metric = recordPaymentTransition(
+          parseDailyMetric(
+            metricSnapshot.data(),
+            establishmentId,
+            metricDate,
+            command.receivedAt
+          ),
+          existing?.status,
+          finalStatus,
+          amountMinor,
+          command.receivedAt
+        );
+        metricUpdate = { reference: metricRef, data: serializeDailyMetric(metric) };
+      }
       transaction.set(paymentRef, payment);
+      if (metricUpdate !== null) transaction.set(metricUpdate.reference, metricUpdate.data);
       transaction.update(sessionRef, {
         paidMinor,
         balanceMinor,

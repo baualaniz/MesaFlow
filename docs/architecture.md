@@ -127,6 +127,19 @@ idempotente. Firestore Rules mantiene las escrituras directas cerradas; el
 listener ya existente del cliente observa el mismo documento y refleja el cambio
 sin un canal paralelo.
 
+## Ventas y métricas — Etapa 38
+
+Los límites transaccionales existentes mantienen un documento diario por tenant
+y fecha local. Crear pedidos agrega actividad y cantidades; cancelar o completar
+ajusta esos contadores. La conciliación de pagos agrega o revierte ventas cuando
+el estado entra o sale de `approved`. Cada operación actualiza detalle, sesión y
+métrica en una única transacción idempotente.
+
+El dashboard administrativo escucha únicamente los últimos siete documentos
+`dailyMetrics`, nunca colecciones globales de pedidos o pagos. La UI resume ventas,
+pagos, pedidos y productos; Firestore Rules reserva la lectura a owner/manager y
+mantiene todas las escrituras en el backend.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por
