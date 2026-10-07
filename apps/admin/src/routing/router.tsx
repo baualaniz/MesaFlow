@@ -9,6 +9,7 @@ import {
 import type { AuthContextValue } from "../auth/auth-context";
 import { AdminShell } from "../layouts/admin-shell";
 import { DashboardPage } from "../pages/dashboard-page";
+import { AssistancePage } from "../pages/assistance-page";
 import { LoginPage } from "../pages/login-page";
 import { OrdersPage } from "../pages/orders-page";
 import { CatalogPage } from "../pages/catalog-page";
@@ -77,6 +78,18 @@ const ordersRoute = createRoute({
   component: OrdersPage
 });
 
+const assistanceRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/operacion/asistencia",
+  beforeLoad: ({ context }) => {
+    const membership = context.tenant.activeAccess?.membership;
+    if (membership === undefined || !canAccess(membership, "assistance.view")) {
+      throw redirect({ to: "/" });
+    }
+  },
+  component: AssistancePage
+});
+
 const tablesRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/operacion/mesas",
@@ -116,7 +129,9 @@ const teamRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   loginRoute,
   resetRoute,
-  authenticatedRoute.addChildren([dashboardRoute, ordersRoute, tablesRoute, catalogRoute, teamRoute])
+  authenticatedRoute.addChildren([
+    dashboardRoute, ordersRoute, assistanceRoute, tablesRoute, catalogRoute, teamRoute
+  ])
 ]);
 
 export const router = createRouter({

@@ -19,7 +19,7 @@ describe("RBAC administrativo", () => {
       "establishment.manage", "menu.manage", "orders.manage", "metrics.read"
     ]);
     for (const capability of [
-      "settings.manage", "team.view", "menu.view", "orders.view", "metrics.read"
+      "settings.manage", "team.view", "menu.view", "orders.view", "assistance.view", "metrics.read"
     ] as const) {
       expect(canAccess(owner, capability)).toBe(true);
     }
@@ -37,6 +37,7 @@ describe("RBAC administrativo", () => {
     expect(canAccess(staff, "orders.view")).toBe(true);
     expect(canAccess(staff, "tables.view")).toBe(true);
     expect(canAccess(staff, "menu.view")).toBe(true);
+    expect(canAccess(staff, "assistance.view")).toBe(true);
     expect(canAccess(staff, "team.view")).toBe(false);
     expect(canAccess(staff, "metrics.read")).toBe(false);
   });
@@ -46,6 +47,7 @@ describe("RBAC administrativo", () => {
     expect(canAccess(kitchen, "orders.view")).toBe(true);
     expect(canAccess(kitchen, "tables.view")).toBe(false);
     expect(canAccess(kitchen, "menu.view")).toBe(false);
+    expect(canAccess(kitchen, "assistance.view")).toBe(false);
   });
 
   it("una membresía inactiva no habilita ninguna capacidad", () => {

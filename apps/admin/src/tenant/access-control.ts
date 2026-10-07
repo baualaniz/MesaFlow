@@ -3,6 +3,7 @@ import type { AdminRole, TenantMembership } from "./tenant-model";
 export type AdminCapability =
   "dashboard.view" |
   "orders.view" |
+  "assistance.view" |
   "tables.view" |
   "menu.view" |
   "team.view" |
@@ -18,18 +19,19 @@ export const ROLE_LABELS: Readonly<Record<AdminRole, string>> = Object.freeze({
 
 const ROLE_CAPABILITIES = {
   owner: [
-    "dashboard.view", "orders.view", "tables.view", "menu.view", "team.view",
+    "dashboard.view", "orders.view", "assistance.view", "tables.view", "menu.view", "team.view",
     "metrics.read", "settings.manage"
   ],
   manager: [
-    "dashboard.view", "orders.view", "tables.view", "menu.view", "team.view", "metrics.read"
+    "dashboard.view", "orders.view", "assistance.view", "tables.view", "menu.view", "team.view", "metrics.read"
   ],
-  staff: ["dashboard.view", "orders.view", "tables.view", "menu.view"],
+  staff: ["dashboard.view", "orders.view", "assistance.view", "tables.view", "menu.view"],
   kitchen: ["dashboard.view", "orders.view"]
 } as const satisfies Readonly<Record<AdminRole, readonly AdminCapability[]>>;
 
 const REQUIRED_PERMISSIONS: Partial<Readonly<Record<AdminCapability, readonly string[]>>> =
   Object.freeze({
+    "assistance.view": Object.freeze(["assistance.manage", "orders.manage"]),
     "metrics.read": Object.freeze(["metrics.read"]),
     "menu.view": Object.freeze(["menu.manage", "orders.manage"]),
     "orders.view": Object.freeze(["orders.manage", "orders.prepare"]),

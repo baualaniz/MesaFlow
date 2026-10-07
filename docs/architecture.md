@@ -114,6 +114,19 @@ manager. Este último solo administra staff/kitchen; no puede tocar owner/manage
 elevarse ni usar otro tenant. Una consulta transaccional exige conservar al menos
 un owner activo para evitar dejar el establecimiento sin administración.
 
+## Asistencia operativa — Etapa 37
+
+El panel escucha `assistanceRequests` del tenant activo con estados `pending` y
+`acknowledged`, usando el índice `status, createdAt`. Las tarjetas priorizan la
+antigüedad y distinguen visualmente llamados, cuenta y otras consultas.
+
+`updateAssistanceStatus` vuelve a leer la membresía y limita el recorrido a
+`pending → acknowledged → resolved`. La transacción compara el estado esperado,
+atribuye `acknowledgedBy`/`resolvedBy` al UID autenticado y crea una auditoría
+idempotente. Firestore Rules mantiene las escrituras directas cerradas; el
+listener ya existente del cliente observa el mismo documento y refleja el cambio
+sin un canal paralelo.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por

@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–36 completadas en alcance local. La siguiente etapa
-incorporará la cola operativa de asistencia y su resolución en tiempo real.
+Estado actual: Etapas 1–37 completadas en alcance local. La siguiente etapa
+incorporará ventas, agregados diarios y métricas verificables en el dashboard.
 
 ## Fases 1–10: base y Firebase
 
@@ -123,6 +123,7 @@ incorporará la cola operativa de asistencia y su resolución en tiempo real.
 | 34 | Completa localmente: CRUD de mesas, sesiones transaccionales, rotación individual/masiva, impresión y QR anterior invalidado | `docs/stage-34-tables-qr.md` |
 | 35 | Completa localmente: CRUD y orden de categorías/productos, imágenes empaquetadas, disponibilidad operativa y reflejo inmediato en cliente | `docs/stage-35-catalog-management.md` |
 | 36 | Completa localmente: invitación por correo, activación, roles derivados, auditoría, límite de manager y último owner protegido | `docs/stage-36-team-roles.md` |
+| 37 | Completa localmente: cola realtime, alertas visuales, acknowledge/resolve transaccional, RBAC, idempotencia y reflejo en cliente | `docs/stage-37-operational-assistance.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

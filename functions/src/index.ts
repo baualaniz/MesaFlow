@@ -7,6 +7,7 @@ import { handleHealthRequest } from "./health.js";
 export { exchangeQrSession, restoreQrSession } from "./qr-session-callable.js";
 export { createOrder } from "./create-order-callable.js";
 export { updateOrderStatus } from "./update-order-status-callable.js";
+export { updateAssistanceStatus } from "./update-assistance-status-callable.js";
 export { manageTable } from "./manage-table-callable.js";
 export { manageTeam } from "./team-management-callable.js";
 export { getSessionConsumption } from "./session-consumption-callable.js";

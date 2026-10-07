@@ -704,6 +704,33 @@ form > input, .password-field { margin-bottom: 1.25rem; }
 .team-editor-person strong { font-family: "Poppins"; font-size: .78rem; }
 .team-editor-person span { color: #647168; font-size: .62rem; }
 
+.assistance-page { width: min(100%, 86rem); margin: 0 auto; }
+.assistance-heading { align-items: center; margin-bottom: 1.25rem; }
+.assistance-toolbar { display: flex; gap: .4rem; margin: 1rem 0; padding: .3rem; border: 1px solid var(--line); border-radius: .7rem; background: white; width: max-content; }
+.assistance-toolbar button { min-height: 2.3rem; padding: 0 .75rem; border: 0; border-radius: .5rem; color: #67736b; background: transparent; font-size: .64rem; font-weight: 700; cursor: pointer; }
+.assistance-toolbar button.active { color: white; background: var(--forest-800); }
+.assistance-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); gap: .9rem; }
+.assistance-card { display: flex; flex-direction: column; overflow: hidden; border: 1px solid #dfe5df; border-radius: .9rem; background: white; box-shadow: 0 .3rem 1rem rgb(25 48 34 / 3%); }
+.assistance-card.status-pending { border-top: 3px solid #c78935; }
+.assistance-card.status-acknowledged { border-top: 3px solid #4f7987; }
+.assistance-card > header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .8rem; padding: 1rem; }
+.assistance-card > header > div { display: grid; gap: .15rem; }
+.assistance-card h2 { margin: 0; font-family: "Poppins"; font-size: 1rem; font-weight: 600; }
+.assistance-card header div > span { color: #67746c; font-size: .65rem; }
+.assistance-card time { align-self: start; color: #8a938c; font-size: .58rem; font-weight: 650; }
+.assistance-kind { width: 2.65rem; height: 2.65rem; display: grid; place-items: center; border-radius: .75rem; font-family: "Poppins"; font-size: 1rem; font-weight: 700; }
+.assistance-kind.waiter { color: #7b5727; background: #f6e8cf; }
+.assistance-kind.bill { color: #376149; background: #dfeee1; }
+.assistance-kind.other { color: #3f6471; background: #e3edf0; }
+.assistance-card-body { display: flex; align-items: center; justify-content: space-between; gap: .7rem; padding: .85rem 1rem; border-top: 1px solid #edf0ec; }
+.assistance-card-body small { color: #939b95; font-size: .54rem; }
+.assistance-status { display: inline-flex; padding: .3rem .55rem; border-radius: 999px; font-size: .56rem; font-weight: 700; }
+.assistance-status.pending { color: #805c2f; background: #f6e8cf; }
+.assistance-status.acknowledged { color: #3f6471; background: #e3edf0; }
+.assistance-card > footer { min-height: 4.25rem; display: flex; align-items: center; justify-content: flex-end; padding: .7rem 1rem; border-top: 1px solid #edf0ec; background: #fafbf8; }
+.assistance-card > footer button { min-height: 2.6rem; padding: 0 1rem; }
+.assistance-card > footer small { color: #8a938c; font-size: .6rem; }
+
 .qr-export { position: fixed; inset: 0; z-index: 80; overflow-y: auto; padding: 1rem; background: #eef1eb; }
 .qr-export-toolbar { position: sticky; top: 0; z-index: 2; width: min(100%, 75rem); display: flex; align-items: center; gap: .7rem; margin: 0 auto 1rem; padding: .8rem 1rem; border: 1px solid #dce2db; border-radius: .8rem; background: rgb(255 255 255 / 94%); box-shadow: 0 .4rem 1rem rgb(20 45 30 / 7%); backdrop-filter: blur(8px); }
 .qr-export-toolbar > div { display: grid; gap: .15rem; margin-right: auto; }
@@ -776,6 +803,8 @@ form > input, .password-field { margin-bottom: 1.25rem; }
   .team-permissions, .team-status, .team-card > footer { grid-column: 1 / -1; }
   .team-status { justify-self: start; }
   .team-card > footer { justify-content: flex-start; }
+  .assistance-toolbar { width: 100%; overflow-x: auto; }
+  .assistance-grid { grid-template-columns: 1fr; }
   .qr-export-toolbar { align-items: stretch; flex-wrap: wrap; }
   .qr-export-toolbar > div { width: 100%; }
   .qr-print-sheet { grid-template-columns: 1fr; }

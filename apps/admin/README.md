@@ -1,9 +1,9 @@
 # Panel administrativo MesaFlow
 
 Aplicación web React + TypeScript para propietarios, encargados, salón y cocina.
-Las Etapas 31 a 36 incorporan Vite, TanStack Router/Query, Firebase
+Las Etapas 31 a 37 incorporan Vite, TanStack Router/Query, Firebase
 Authentication, resolución segura de membresías, establecimiento activo, matriz
-de permisos, pedidos en tiempo real, mesas/QR, catálogo y equipo.
+de permisos, pedidos y asistencia en tiempo real, mesas/QR, catálogo y equipo.
 
 ## Uso local
 
@@ -20,7 +20,7 @@ Contraseña: `MesaFlowDemo31!`.
 Estas credenciales funcionan exclusivamente en `demo-mesaflow`; nunca se crean
 en desarrollo ni producción.
 
-`npm.cmd run check --workspace @mesaflow/admin` ejecuta lint, 47 pruebas y el
+`npm.cmd run check --workspace @mesaflow/admin` ejecuta lint, 52 pruebas y el
 build de emulador. `hosting/` es salida generada e ignorada por Git.
 
 La ruta `/operacion/mesas` ofrece listado realtime, alta y edición, sesiones,
@@ -34,3 +34,7 @@ la carta; staff puede marcar un producto disponible o agotado durante el servici
 La ruta `/equipo` lista cuentas, roles y permisos. Owner administra todos los
 roles; manager solo salón/cocina. Las invitaciones generan una membresía segura y
 Firebase envía el enlace para que el destinatario defina su contraseña.
+
+La ruta `/operacion/asistencia` muestra llamados y pedidos de cuenta en tiempo
+real. Owner, manager y staff autorizado pueden marcar cada solicitud como atendida
+y resuelta; cocina no recibe esta sección.

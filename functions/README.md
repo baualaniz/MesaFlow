@@ -45,6 +45,11 @@ La Etapa 34 agrega `manageTable`: centraliza CRUD de mesas, apertura/cierre de
 sesiones y rotación atómica de uno o varios QR. La Function almacena solo hashes,
 protege concurrencia e historial y audita cada operación idempotente.
 
+La Etapa 37 agrega `updateAssistanceStatus`: solo acepta `pending → acknowledged`
+y `acknowledged → resolved`, obtiene el actor desde Authentication, verifica la
+membresía en el tenant y registra auditoría idempotente. Cocina queda rechazada;
+owner, manager y staff con `assistance.manage` pueden operar la cola.
+
 La función emulada queda en:
 
 ```text
