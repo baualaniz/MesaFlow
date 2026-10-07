@@ -11,6 +11,7 @@ import { AdminShell } from "../layouts/admin-shell";
 import { DashboardPage } from "../pages/dashboard-page";
 import { LoginPage } from "../pages/login-page";
 import { OrdersPage } from "../pages/orders-page";
+import { TablesPage } from "../pages/tables-page";
 import { ResetPasswordPage } from "../pages/reset-password-page";
 import { canAccess } from "../tenant/access-control";
 import type { TenantContextValue } from "../tenant/tenant-context";
@@ -74,10 +75,22 @@ const ordersRoute = createRoute({
   component: OrdersPage
 });
 
+const tablesRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/operacion/mesas",
+  beforeLoad: ({ context }) => {
+    const membership = context.tenant.activeAccess?.membership;
+    if (membership === undefined || !canAccess(membership, "tables.view")) {
+      throw redirect({ to: "/" });
+    }
+  },
+  component: TablesPage
+});
+
 const routeTree = rootRoute.addChildren([
   loginRoute,
   resetRoute,
-  authenticatedRoute.addChildren([dashboardRoute, ordersRoute])
+  authenticatedRoute.addChildren([dashboardRoute, ordersRoute, tablesRoute])
 ]);
 
 export const router = createRouter({

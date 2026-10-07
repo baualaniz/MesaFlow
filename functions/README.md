@@ -41,6 +41,10 @@ valida rol y permisos desde la membresía, detecta concurrencia mediante el esta
 esperado y registra cada cambio de forma idempotente. Al cancelar, también ajusta
 el consumo de la sesión dentro de la misma transacción.
 
+La Etapa 34 agrega `manageTable`: centraliza CRUD de mesas, apertura/cierre de
+sesiones y rotación atómica de uno o varios QR. La Function almacena solo hashes,
+protege concurrencia e historial y audita cada operación idempotente.
+
 La función emulada queda en:
 
 ```text

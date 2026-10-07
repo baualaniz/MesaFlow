@@ -10,7 +10,7 @@ import { useActiveTenant, useTenant } from "../tenant/tenant-context";
 const navigation = Object.freeze([
   { to: "/" as const, label: "Resumen", icon: "dashboard" as const, capability: "dashboard.view" as AdminCapability },
   { to: "/operacion/pedidos" as const, label: "Pedidos", icon: "orders" as const, capability: "orders.view" as AdminCapability },
-  { to: "/" as const, label: "Mesas", icon: "tables" as const, capability: "tables.view" as AdminCapability, disabled: true },
+  { to: "/operacion/mesas" as const, label: "Mesas", icon: "tables" as const, capability: "tables.view" as AdminCapability },
   { to: "/" as const, label: "Productos", icon: "products" as const, capability: "menu.view" as AdminCapability, disabled: true },
   { to: "/" as const, label: "Equipo", icon: "users" as const, capability: "team.view" as AdminCapability, disabled: true }
 ]);

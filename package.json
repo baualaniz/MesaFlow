@@ -61,7 +61,7 @@
     "check:env": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-environment.ps1",
     "emulators": "node ./scripts/run-emulators.mjs start",
     "test:emulators": "node ./scripts/run-emulators.mjs test",
-    "test:emulator:clients": "node ./scripts/functions-emulator-smoke.mjs && node ./scripts/hosting-emulator-smoke.mjs && node ./scripts/emulator-smoke.mjs && node ./scripts/firestore-repository-emulator.mjs && node ./scripts/firestore-query-emulator.mjs && node ./scripts/seed-demo-emulator.mjs && node ./scripts/admin-auth-emulator-smoke.mjs && node ./scripts/admin-tenant-emulator-smoke.mjs && node ./scripts/admin-orders-emulator-smoke.mjs && node ./scripts/qr-session-emulator.mjs && node --test ./firebase/tests/firestore.rules.test.mjs && node --test ./firebase/tests/storage.rules.test.mjs",
+    "test:emulator:clients": "node ./scripts/functions-emulator-smoke.mjs && node ./scripts/hosting-emulator-smoke.mjs && node ./scripts/emulator-smoke.mjs && node ./scripts/firestore-repository-emulator.mjs && node ./scripts/firestore-query-emulator.mjs && node ./scripts/seed-demo-emulator.mjs && node ./scripts/admin-auth-emulator-smoke.mjs && node ./scripts/admin-tenant-emulator-smoke.mjs && node ./scripts/admin-orders-emulator-smoke.mjs && node ./scripts/admin-tables-emulator-smoke.mjs && node ./scripts/qr-session-emulator.mjs && node --test ./firebase/tests/firestore.rules.test.mjs && node --test ./firebase/tests/storage.rules.test.mjs",
     "firebase:login": "firebase login",
     "firebase:projects": "firebase projects:list",
     "firebase:use:dev": "firebase use dev"

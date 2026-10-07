@@ -25,9 +25,11 @@ try {
   assert.match(await customerDeepLink.text(), /flutter_bootstrap\.js/u);
   console.log(`[OK] Hosting customer: raíz y deep link en ${EMULATOR_HOST}:${ports[0]}`);
 
-  const admin = await get(`http://${EMULATOR_HOST}:${ports[1]}/operacion/pedidos`);
-  assert.equal(admin.status, 200);
-  assert.match(await admin.text(), /data-hosting-target="admin"/u);
+  for (const path of ["/operacion/pedidos", "/operacion/mesas"]) {
+    const admin = await get(`http://${EMULATOR_HOST}:${ports[1]}${path}`);
+    assert.equal(admin.status, 200);
+    assert.match(await admin.text(), /data-hosting-target="admin"/u);
+  }
   console.log(`[OK] Hosting admin React: fallback SPA en ${EMULATOR_HOST}:${ports[1]}`);
 
   const landing = await get(`http://${EMULATOR_HOST}:${ports[2]}/`);

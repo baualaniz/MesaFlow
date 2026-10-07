@@ -62,6 +62,22 @@ la membresía leída desde Firestore. Una transacción comprueba estado esperado
 actualiza el pedido y crea un registro de auditoría. El `requestId` hace el
 reintento idempotente y un estado obsoleto nunca sobrescribe un cambio concurrente.
 
+## Mesas, sesiones y rotación QR — Etapa 34
+
+El panel consulta `tables` y las sesiones operativas bajo el tenant activo. Toda
+mutación cruza la callable `manageTable`; las reglas continúan negando escrituras
+directas sobre mesas, sesiones y auditoría. Propietario y encargado administran,
+mientras salón mantiene una vista realtime de solo lectura.
+
+El ciclo de sesión impide abrir dos sesiones para una mesa y solo permite cerrar
+con saldo cero y sin pedidos activos. La eliminación física queda limitada a
+mesas sin historial; el resto se desactiva para preservar referencias.
+
+Los tokens QR nacen de 32 bytes aleatorios en el dispositivo administrador. La
+Function valida la entropía, guarda SHA-256 y aumenta `qrVersion` dentro de la
+misma transacción. El texto plano se usa una sola vez para renderizar la hoja
+imprimible; Firestore y auditoría reciben únicamente versiones y hashes.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por

@@ -101,6 +101,7 @@ encuentran en:
 - `docs/stage-31-admin-foundation.md`
 - `docs/stage-32-tenant-rbac.md`
 - `docs/stage-33-operational-orders.md`
+- `docs/stage-34-tables-qr.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -130,11 +131,11 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 159
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 170
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
 cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-15 de contratos, 26 del panel y 37 de Functions), más los lint y builds
+15 de contratos, 33 del panel y 41 de Functions), más los lint y builds
 TypeScript. Este comando no consulta servicios remotos.
 
 Los contratos compartidos tienen además siete pruebas Dart contra los mismos
