@@ -36,6 +36,8 @@ export interface PrivateEstablishmentSettings {
   readonly establishmentId: string;
   readonly mercadoPagoEnabled: boolean;
   readonly whatsappEnabled: boolean;
+  readonly whatsappOptInConfirmed: boolean;
+  readonly whatsappRecipient: string;
   readonly updatedAt: Date;
 }
 
@@ -54,6 +56,8 @@ export interface EstablishmentSettingsDraft {
   readonly assistanceEnabled: boolean;
   readonly mercadoPagoEnabled: boolean;
   readonly whatsappEnabled: boolean;
+  readonly whatsappOptInConfirmed: boolean;
+  readonly whatsappRecipient: string;
 }
 
 const TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
@@ -66,6 +70,10 @@ const LEGACY_PUBLIC_FIELDS = Object.freeze([
   "assistanceEnabled", "brandName", "contactEmail", "establishmentId", "orderingEnabled", "updatedAt"
 ]);
 const PRIVATE_FIELDS = Object.freeze([
+  "establishmentId", "mercadoPagoEnabled", "updatedAt", "whatsappEnabled",
+  "whatsappOptInConfirmed", "whatsappRecipient"
+]);
+const LEGACY_PRIVATE_FIELDS = Object.freeze([
   "establishmentId", "mercadoPagoEnabled", "updatedAt", "whatsappEnabled"
 ]);
 
@@ -159,7 +167,8 @@ export function parsePrivateSettings(
   establishmentId: string
 ): PrivateEstablishmentSettings {
   const data = record(value, "Configuración privada");
-  exactKeys(data, PRIVATE_FIELDS, "Configuración privada");
+  const legacy = hasExactKeys(data, LEGACY_PRIVATE_FIELDS);
+  if (!legacy) exactKeys(data, PRIVATE_FIELDS, "Configuración privada");
   if (data.establishmentId !== establishmentId) {
     throw new TypeError("La configuración privada no pertenece al establecimiento.");
   }
@@ -167,7 +176,11 @@ export function parsePrivateSettings(
     establishmentId,
     mercadoPagoEnabled: boolean(data.mercadoPagoEnabled, "mercadoPagoEnabled"),
     updatedAt: timestamp(data.updatedAt, "Configuración privada"),
-    whatsappEnabled: boolean(data.whatsappEnabled, "whatsappEnabled")
+    whatsappEnabled: boolean(data.whatsappEnabled, "whatsappEnabled"),
+    whatsappOptInConfirmed: legacy
+      ? false
+      : boolean(data.whatsappOptInConfirmed, "whatsappOptInConfirmed"),
+    whatsappRecipient: legacy ? "" : text(data.whatsappRecipient, "Destinatario", 0, 15)
   });
 }
 
@@ -181,7 +194,9 @@ export function settingsDraft(settings: EstablishmentSettings): EstablishmentSet
     contactPhone: settings.public.contactPhone,
     mercadoPagoEnabled: settings.private.mercadoPagoEnabled,
     orderingEnabled: settings.public.orderingEnabled,
-    whatsappEnabled: settings.private.whatsappEnabled
+    whatsappEnabled: settings.private.whatsappEnabled,
+    whatsappOptInConfirmed: settings.private.whatsappOptInConfirmed,
+    whatsappRecipient: settings.private.whatsappRecipient
   });
 }
 
@@ -190,6 +205,13 @@ export function validateSettingsDraft(
 ): EstablishmentSettingsDraft {
   const contactEmail = text(value.contactEmail, "Correo", 3, 254).toLowerCase();
   if (!EMAIL_PATTERN.test(contactEmail)) throw new TypeError("Ingresá un correo de contacto válido.");
+  const whatsappRecipient = text(value.whatsappRecipient, "Destinatario", 0, 15);
+  if (whatsappRecipient !== "" && !/^\d{8,15}$/u.test(whatsappRecipient)) {
+    throw new TypeError("El número de WhatsApp debe incluir país y área, solo con dígitos.");
+  }
+  if (value.whatsappEnabled && (!value.whatsappOptInConfirmed || whatsappRecipient === "")) {
+    throw new TypeError("Para activar WhatsApp, cargá el número y confirmá su consentimiento.");
+  }
   return Object.freeze({
     addressLine: text(value.addressLine, "Dirección", 0, 200),
     assistanceEnabled: boolean(value.assistanceEnabled, "assistanceEnabled"),
@@ -199,6 +221,8 @@ export function validateSettingsDraft(
     contactPhone: text(value.contactPhone, "Teléfono", 0, 30),
     mercadoPagoEnabled: boolean(value.mercadoPagoEnabled, "mercadoPagoEnabled"),
     orderingEnabled: boolean(value.orderingEnabled, "orderingEnabled"),
-    whatsappEnabled: boolean(value.whatsappEnabled, "whatsappEnabled")
+    whatsappEnabled: boolean(value.whatsappEnabled, "whatsappEnabled"),
+    whatsappOptInConfirmed: boolean(value.whatsappOptInConfirmed, "whatsappOptInConfirmed"),
+    whatsappRecipient
   });
 }

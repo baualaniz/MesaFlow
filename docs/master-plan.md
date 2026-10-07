@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–39 completadas en alcance local. La siguiente etapa
-incorporará alertas opt-in de asistencia mediante WhatsApp Cloud API.
+Estado actual: Etapas 1–40 completadas en alcance local. La siguiente etapa
+construirá la landing comercial responsive en Astro.
 
 ## Fases 1–10: base y Firebase
 
@@ -126,6 +126,7 @@ incorporará alertas opt-in de asistencia mediante WhatsApp Cloud API.
 | 37 | Completa localmente: cola realtime, alertas visuales, acknowledge/resolve transaccional, RBAC, idempotencia y reflejo en cliente | `docs/stage-37-operational-assistance.md` |
 | 38 | Completa localmente: agregados diarios transaccionales, ventas idempotentes, dashboard de siete días, ranking y RBAC | `docs/stage-38-sales-metrics.md` |
 | 39 | Completa localmente: marca, contacto, horarios y flags públicos/privados con guardado atómico, reglas estrictas y efecto en QR/pedidos | `docs/stage-39-establishment-settings.md` |
+| 40 | Completa localmente: alerta opt-in de asistencia, proveedor Cloud API configurable, mock sin red, idempotencia, límite de 60 segundos y logs privados | `docs/stage-40-whatsapp-assistance.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

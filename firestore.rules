@@ -127,13 +127,21 @@ service cloud.firestore {
 
     function validPrivateSettings(establishmentId, data) {
       return data.keys().hasOnly([
-          'establishmentId', 'mercadoPagoEnabled', 'whatsappEnabled', 'updatedAt'
+          'establishmentId', 'mercadoPagoEnabled', 'whatsappEnabled',
+          'whatsappOptInConfirmed', 'whatsappRecipient', 'updatedAt'
         ])
         && data.keys().hasAll([
-          'establishmentId', 'mercadoPagoEnabled', 'whatsappEnabled', 'updatedAt'
+          'establishmentId', 'mercadoPagoEnabled', 'whatsappEnabled',
+          'whatsappOptInConfirmed', 'whatsappRecipient', 'updatedAt'
         ])
         && data.establishmentId == establishmentId
         && data.mercadoPagoEnabled is bool && data.whatsappEnabled is bool
+        && data.whatsappOptInConfirmed is bool
+        && data.whatsappRecipient is string && data.whatsappRecipient.size() <= 15
+        && (data.whatsappRecipient == ''
+          || data.whatsappRecipient.matches('^[0-9]{8,15}$'))
+        && (data.whatsappEnabled == false
+          || (data.whatsappOptInConfirmed == true && data.whatsappRecipient != ''))
         && data.updatedAt == request.time;
     }
 
@@ -279,6 +287,10 @@ service cloud.firestore {
           && hasRole(establishmentId, ['owner', 'manager']);
         allow list: if hasRole(establishmentId, ['owner', 'manager']);
         allow write: if false;
+      }
+
+      match /notificationStates/{stateId} {
+        allow read, write: if false;
       }
 
       match /qrExchanges/{exchangeId} {

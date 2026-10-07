@@ -59,6 +59,13 @@ La Etapa 39 conecta la configuración pública con los límites de confianza. El
 canje/restauración QR usa el nombre de marca configurado y `createOrder` exige
 que los pedidos desde la mesa estén habilitados. Los flags no contienen secretos.
 
+La Etapa 40 agrega `sendWhatsAppAssistance`, un trigger idempotente para
+solicitudes `pending`. Exige opt-in por tenant, limita intentos a uno cada 60
+segundos y registra resultados sin almacenar el teléfono en claro. El Emulator
+Suite usa un proveedor mock; cloud queda preparado para una plantilla de
+WhatsApp Cloud API con token en Secret Manager. Una falla externa se audita y no
+bloquea la solicitud operativa.
+
 La función emulada queda en:
 
 ```text

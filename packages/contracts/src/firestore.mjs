@@ -23,7 +23,8 @@ export const TENANT_COLLECTIONS = Object.freeze({
   dailyMetrics: "dailyMetrics",
   settings: "settings",
   qrExchanges: "qrExchanges",
-  auditLogs: "auditLogs"
+  auditLogs: "auditLogs",
+  notificationStates: "notificationStates"
 });
 
 const encoder = new TextEncoder();

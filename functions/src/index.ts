@@ -13,6 +13,7 @@ export { manageTeam } from "./team-management-callable.js";
 export { getSessionConsumption } from "./session-consumption-callable.js";
 export { createPaymentPreference } from "./create-payment-preference-callable.js";
 export { mercadoPagoWebhook } from "./mercado-pago-webhook.js";
+export { sendWhatsAppAssistance } from "./whatsapp-assistance-trigger.js";
 export {
   cancelAssistanceRequest,
   createAssistanceRequest

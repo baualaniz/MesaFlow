@@ -803,6 +803,12 @@ form > input, .password-field { margin-bottom: 1.25rem; }
 .settings-switch input:focus-visible + i { outline: .18rem solid rgb(49 95 71 / 24%); outline-offset: .12rem; }
 .private-card { border-color: #dedbe7; }
 .private-card .settings-step { background: #625a77; }
+.settings-integration-fields { display: grid; gap: .75rem; padding: 1rem 1.15rem; border-top: 1px solid #edf0ec; background: #faf9fc; }
+.settings-integration-fields > label:not(.settings-consent) { display: grid; gap: .4rem; color: #5e5968; font-size: .62rem; font-weight: 700; }
+.settings-integration-fields input[type="text"], .settings-integration-fields input:not([type]) { min-height: 2.75rem; padding: 0 .8rem; border: 1px solid #d8d3e0; border-radius: .65rem; outline: none; background: white; font: inherit; font-size: .68rem; }
+.settings-integration-fields small { color: #8b8495; font-size: .54rem; font-weight: 400; }
+.settings-consent { display: flex; align-items: flex-start; gap: .55rem; color: #655e6f; font-size: .58rem; line-height: 1.45; cursor: pointer; }
+.settings-consent input { margin-top: .08rem; accent-color: #625a77; }
 .settings-save-panel { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem; border-radius: .9rem; color: white; background: var(--forest-900); box-shadow: var(--shadow); }
 .settings-save-panel > div { display: grid; gap: .22rem; }
 .settings-save-panel strong { font-family: "Poppins"; font-size: .75rem; }

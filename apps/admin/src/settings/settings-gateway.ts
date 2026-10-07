@@ -38,7 +38,9 @@ export async function saveEstablishmentSettings(
       establishmentId,
       mercadoPagoEnabled: draft.mercadoPagoEnabled,
       updatedAt: serverTimestamp(),
-      whatsappEnabled: draft.whatsappEnabled
+      whatsappEnabled: draft.whatsappEnabled,
+      whatsappOptInConfirmed: draft.whatsappOptInConfirmed,
+      whatsappRecipient: draft.whatsappRecipient
     });
     await batch.commit();
   } catch (error) {

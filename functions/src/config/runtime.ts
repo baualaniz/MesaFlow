@@ -17,6 +17,30 @@ export const whatsappPhoneNumberId = defineString(
   }
 );
 
+export const whatsappGraphApiVersion = defineString(
+  "WHATSAPP_GRAPH_API_VERSION",
+  {
+    default: "UNCONFIGURED",
+    description: "Versión vigente de Graph API elegida al configurar WhatsApp"
+  }
+);
+
+export const whatsappTemplateName = defineString(
+  "WHATSAPP_TEMPLATE_NAME",
+  {
+    default: "UNCONFIGURED",
+    description: "Nombre aprobado de la plantilla de alerta de asistencia"
+  }
+);
+
+export const whatsappTemplateLanguage = defineString(
+  "WHATSAPP_TEMPLATE_LANGUAGE",
+  {
+    default: "UNCONFIGURED",
+    description: "Código de idioma aprobado para la plantilla de WhatsApp"
+  }
+);
+
 export const customerPublicBaseUrl = defineString(
   "CUSTOMER_PUBLIC_BASE_URL",
   {

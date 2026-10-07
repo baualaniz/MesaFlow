@@ -161,6 +161,10 @@ export function SettingsPage() {
             <div className="settings-switches">
               <SettingSwitch checked={draft.mercadoPagoEnabled} description="Usá esta opción solo con las credenciales del proveedor configuradas." label="Mercado Pago" onChange={(value) => change("mercadoPagoEnabled", value)} />
               <SettingSwitch checked={draft.whatsappEnabled} description="Quedará disponible al completar la integración de WhatsApp." label="Alertas por WhatsApp" onChange={(value) => change("whatsappEnabled", value)} />
+              <div className="settings-integration-fields">
+                <label>Número destinatario<input inputMode="numeric" maxLength={15} onChange={(event) => change("whatsappRecipient", event.target.value.replace(/\D/gu, ""))} placeholder="5491155550101" value={draft.whatsappRecipient} /><small>Incluí país y área, sin +, espacios ni guiones.</small></label>
+                <label className="settings-consent"><input checked={draft.whatsappOptInConfirmed} onChange={(event) => change("whatsappOptInConfirmed", event.target.checked)} type="checkbox" /><span>Confirmo que este número aceptó recibir alertas operativas.</span></label>
+              </div>
             </div>
           </article>
 

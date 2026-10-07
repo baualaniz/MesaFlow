@@ -24,6 +24,7 @@ export const TENANT_COLLECTIONS: Readonly<{
   settings: "settings";
   qrExchanges: "qrExchanges";
   auditLogs: "auditLogs";
+  notificationStates: "notificationStates";
 }>;
 
 export type TenantCollection = Exclude<

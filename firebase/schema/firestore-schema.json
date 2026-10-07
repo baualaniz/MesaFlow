@@ -102,6 +102,11 @@
       "key": "auditLogs",
       "path": "establishments/{establishmentId}/auditLogs/{logId}",
       "idStrategy": "firestore-auto-id"
+    },
+    {
+      "key": "notificationStates",
+      "path": "establishments/{establishmentId}/notificationStates/{stateId}",
+      "idStrategy": "fixed-channel-purpose"
     }
   ]
 }

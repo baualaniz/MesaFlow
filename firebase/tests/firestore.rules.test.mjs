@@ -97,6 +97,8 @@ function privateSettings(establishmentId = "restaurantA", overrides = {}) {
     establishmentId,
     mercadoPagoEnabled: false,
     whatsappEnabled: false,
+    whatsappOptInConfirmed: false,
+    whatsappRecipient: "",
     updatedAt: now,
     ...overrides
   };
@@ -321,6 +323,21 @@ test("owner y manager actualizan únicamente la configuración permitida", async
   }));
 
   const owner = environment.authenticatedContext("ownerA").firestore();
+  await assertSucceeds(updateDoc(doc(owner, privateRef), {
+    whatsappEnabled: true,
+    whatsappOptInConfirmed: true,
+    whatsappRecipient: "5491155550101",
+    updatedAt: serverTimestamp()
+  }));
+  await assertFails(updateDoc(doc(owner, privateRef), {
+    whatsappEnabled: true,
+    whatsappOptInConfirmed: false,
+    updatedAt: serverTimestamp()
+  }));
+  await assertFails(updateDoc(doc(owner, privateRef), {
+    whatsappRecipient: "+54 11 5555 0101",
+    updatedAt: serverTimestamp()
+  }));
   await assertFails(updateDoc(doc(owner, publicRef), {
     unexpected: true,
     updatedAt: serverTimestamp()
@@ -347,6 +364,10 @@ test("miembro inactivo, extraño y membresía de otro tenant no ganan acceso", a
 test("colecciones exclusivas de backend permanecen cerradas", async () => {
   const db = environment.authenticatedContext("ownerA").firestore();
   await assertFails(getDoc(doc(db, "establishments/restaurantA/qrExchanges/exchangeA")));
+  await assertFails(getDoc(doc(
+    db,
+    "establishments/restaurantA/notificationStates/whatsapp-assistance"
+  )));
   await assertFails(getDoc(doc(db, "paymentIntents/intentA")));
   await assertFails(getDoc(doc(db, "webhookEvents/eventA")));
   await assertFails(setDoc(doc(db, "establishments/restaurantA/members/newMember"), {

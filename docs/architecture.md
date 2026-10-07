@@ -159,6 +159,22 @@ sesión visible y el repositorio transaccional de pedidos exige
 `orderingEnabled == true`. Asistencia ya aplica `assistanceEnabled`. Los flags
 de proveedores no contienen credenciales y nunca sustituyen Secret Manager.
 
+## Alertas WhatsApp de asistencia — Etapa 40
+
+Un trigger de Firestore observa las versiones nuevas de solicitudes `pending`.
+La capa de dominio genera una identidad SHA-256 determinista, reclama el evento
+en una transacción y delega el envío a un proveedor intercambiable. En el
+emulador se usa un mock sin red; en cloud queda preparada WhatsApp Cloud API con
+plantilla, versión e identificador de número configurables y token secreto.
+
+`settings/private` contiene el flag, la confirmación explícita de opt-in y el
+destinatario por tenant. El estado de frecuencia vive en
+`notificationStates/whatsapp-assistance`, una ruta solo backend. El límite de 60
+segundos se actualiza junto con el log inicial, evitando carreras entre eventos.
+Cada evento produce un `auditLogs` determinista y guarda solo el hash del
+destinatario. Un fallo externo se registra, pero nunca revierte ni bloquea la
+solicitud original que sigue disponible en la cola administrativa.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por

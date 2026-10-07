@@ -35,7 +35,9 @@ describe("configuración del establecimiento", () => {
       establishmentId,
       mercadoPagoEnabled: false,
       updatedAt: timestamp,
-      whatsappEnabled: false
+      whatsappEnabled: false,
+      whatsappOptInConfirmed: false,
+      whatsappRecipient: ""
     }, establishmentId);
     expect(publicValue.brandName).toBe("Bistró MesaFlow");
     expect(publicValue.businessHours.sunday.closed).toBe(true);
@@ -75,7 +77,9 @@ describe("configuración del establecimiento", () => {
         establishmentId,
         mercadoPagoEnabled: true,
         updatedAt: timestamp,
-        whatsappEnabled: false
+        whatsappEnabled: false,
+        whatsappOptInConfirmed: false,
+        whatsappRecipient: ""
       }, establishmentId)
     };
     const validated = validateSettingsDraft({
@@ -86,5 +90,27 @@ describe("configuración del establecimiento", () => {
     expect(validated.brandName).toBe("MesaFlow Centro");
     expect(validated.contactEmail).toBe("contacto@mesaflow.test");
     expect(Object.keys(validated.businessHours)).toHaveLength(BUSINESS_DAYS.length);
+  });
+
+  it("exige número privado y consentimiento para activar WhatsApp", () => {
+    const settings = {
+      public: parsePublicSettings(publicSettings(), establishmentId),
+      private: parsePrivateSettings({
+        establishmentId,
+        mercadoPagoEnabled: false,
+        updatedAt: timestamp,
+        whatsappEnabled: false,
+        whatsappOptInConfirmed: false,
+        whatsappRecipient: ""
+      }, establishmentId)
+    };
+    const draft = settingsDraft(settings);
+    expect(() => validateSettingsDraft({ ...draft, whatsappEnabled: true })).toThrow(/consentimiento/u);
+    expect(validateSettingsDraft({
+      ...draft,
+      whatsappEnabled: true,
+      whatsappOptInConfirmed: true,
+      whatsappRecipient: "5491155550101"
+    }).whatsappEnabled).toBe(true);
   });
 });

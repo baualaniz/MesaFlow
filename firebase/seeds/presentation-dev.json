@@ -320,6 +320,8 @@
         "establishmentId": "mesa-flow-demo",
         "mercadoPagoEnabled": false,
         "whatsappEnabled": false,
+        "whatsappOptInConfirmed": false,
+        "whatsappRecipient": "",
         "updatedAt": { "$timestamp": "now" }
       }
     },

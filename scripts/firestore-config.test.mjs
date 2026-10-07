@@ -31,7 +31,7 @@ test("la política fija base default Standard nativa en São Paulo", () => {
 test("el manifiesto contiene todas las rutas canónicas", () => {
   assert.equal(validateFirestoreSchema(schema), schema);
   assert.equal(schema.rootCollections.length, 5);
-  assert.equal(schema.tenantCollections.length, 14);
+  assert.equal(schema.tenantCollections.length, 15);
 });
 
 test("las rutas siempre quedan bajo el tenant indicado", () => {
@@ -44,6 +44,7 @@ test("las rutas siempre quedan bajo el tenant indicado", () => {
     "establishments/restaurantA/tableSessions/sessionA/participants/userA"
   );
   assert.equal(TENANT_COLLECTIONS.paymentPreferences, "paymentPreferences");
+  assert.equal(TENANT_COLLECTIONS.notificationStates, "notificationStates");
 });
 
 test("rechaza IDs vacíos, rutas inyectadas y colecciones desconocidas", () => {

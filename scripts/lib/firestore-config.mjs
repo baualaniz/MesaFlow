@@ -60,7 +60,7 @@ export function validateFirestoreSchema(schema) {
   const requiredRoots = [
     "users", "establishmentSlugs", "establishments", "paymentIntents", "webhookEvents"
   ];
-  const requiredTenants = ["members", "tables", "tableSessions", "tableSessionParticipants", "categories", "products", "orders", "assistanceRequests", "payments", "paymentPreferences", "dailyMetrics", "settings", "qrExchanges", "auditLogs"];
+  const requiredTenants = ["members", "tables", "tableSessions", "tableSessionParticipants", "categories", "products", "orders", "assistanceRequests", "payments", "paymentPreferences", "dailyMetrics", "settings", "qrExchanges", "auditLogs", "notificationStates"];
   if (roots.size !== schema.rootCollections.length || tenants.size !== schema.tenantCollections.length ||
       requiredRoots.some((key) => !roots.has(key)) || requiredTenants.some((key) => !tenants.has(key))) {
     throw new Error("El manifiesto no contiene exactamente las colecciones canónicas requeridas.");
