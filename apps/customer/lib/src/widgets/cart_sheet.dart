@@ -145,6 +145,8 @@ class _CartSheetState extends State<CartSheet> {
       widget.onMessage(switch (error.failure) {
         OrderFailure.invalidCart =>
           'Revisá el pedido: contiene datos que no son válidos.',
+        OrderFailure.orderingDisabled =>
+          'El establecimiento pausó temporalmente los pedidos desde la mesa.',
         OrderFailure.productUnavailable =>
           'Un producto cambió o dejó de estar disponible. Actualizá el menú.',
         OrderFailure.sessionUnavailable =>

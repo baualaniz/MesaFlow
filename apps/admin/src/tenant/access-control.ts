@@ -23,7 +23,8 @@ const ROLE_CAPABILITIES = {
     "metrics.read", "settings.manage"
   ],
   manager: [
-    "dashboard.view", "orders.view", "assistance.view", "tables.view", "menu.view", "team.view", "metrics.read"
+    "dashboard.view", "orders.view", "assistance.view", "tables.view", "menu.view", "team.view",
+    "metrics.read", "settings.manage"
   ],
   staff: ["dashboard.view", "orders.view", "assistance.view", "tables.view", "menu.view"],
   kitchen: ["dashboard.view", "orders.view"]
@@ -35,7 +36,6 @@ const REQUIRED_PERMISSIONS: Partial<Readonly<Record<AdminCapability, readonly st
     "metrics.read": Object.freeze(["metrics.read"]),
     "menu.view": Object.freeze(["menu.manage", "orders.manage"]),
     "orders.view": Object.freeze(["orders.manage", "orders.prepare"]),
-    "settings.manage": Object.freeze(["establishment.manage"]),
     "tables.view": Object.freeze(["orders.manage"])
   });
 

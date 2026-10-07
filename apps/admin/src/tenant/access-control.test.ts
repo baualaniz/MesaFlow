@@ -25,11 +25,11 @@ describe("RBAC administrativo", () => {
     }
   });
 
-  it("manager administra la operación pero no configuración reservada", () => {
+  it("manager administra la operación y la configuración del establecimiento", () => {
     const manager = membership("manager", ["menu.manage", "orders.manage", "metrics.read"]);
     expect(canAccess(manager, "team.view")).toBe(true);
     expect(canAccess(manager, "menu.view")).toBe(true);
-    expect(canAccess(manager, "settings.manage")).toBe(false);
+    expect(canAccess(manager, "settings.manage")).toBe(true);
   });
 
   it("salón ve menú operativo pero no equipo ni métricas", () => {

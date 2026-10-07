@@ -15,6 +15,7 @@ import {
   getDocs,
   orderBy,
   query,
+  serverTimestamp,
   setDoc,
   updateDoc,
   where
@@ -62,6 +63,45 @@ function category(establishmentId = "restaurantA", overrides = {}) {
   };
 }
 
+function businessHours(overrides = {}) {
+  const day = { closed: false, open: "09:00", close: "23:00" };
+  return {
+    monday: day,
+    tuesday: day,
+    wednesday: day,
+    thursday: day,
+    friday: day,
+    saturday: day,
+    sunday: { closed: true, open: "10:00", close: "18:00" },
+    ...overrides
+  };
+}
+
+function publicSettings(establishmentId = "restaurantA", overrides = {}) {
+  return {
+    establishmentId,
+    brandName: "Restaurante A",
+    contactEmail: "contacto@restaurant-a.test",
+    contactPhone: "+54 11 5555-0101",
+    addressLine: "Calle 123",
+    businessHours: businessHours(),
+    orderingEnabled: true,
+    assistanceEnabled: true,
+    updatedAt: now,
+    ...overrides
+  };
+}
+
+function privateSettings(establishmentId = "restaurantA", overrides = {}) {
+  return {
+    establishmentId,
+    mercadoPagoEnabled: false,
+    whatsappEnabled: false,
+    updatedAt: now,
+    ...overrides
+  };
+}
+
 async function seed() {
   await environment.withSecurityRulesDisabled(async (context) => {
     const db = context.firestore();
@@ -92,8 +132,8 @@ async function seed() {
       ["establishments/restaurantA/payments/paymentA", { establishmentId: "restaurantA", sessionId: "sessionA", status: "pending" }],
       ["establishments/restaurantA/paymentPreferences/intentA", { establishmentId: "restaurantA", sessionId: "sessionA", status: "ready" }],
       ["establishments/restaurantA/dailyMetrics/2026-09-17", { establishmentId: "restaurantA", salesMinor: 0 }],
-      ["establishments/restaurantA/settings/public", { establishmentId: "restaurantA", brandName: "Demo" }],
-      ["establishments/restaurantA/settings/private", { establishmentId: "restaurantA", secretFlag: false }],
+      ["establishments/restaurantA/settings/public", publicSettings()],
+      ["establishments/restaurantA/settings/private", privateSettings()],
       ["establishments/restaurantA/auditLogs/logA", { establishmentId: "restaurantA", action: "seed" }],
       ["establishments/restaurantA/qrExchanges/exchangeA", { establishmentId: "restaurantA" }],
       ["paymentIntents/intentA", { establishmentId: "restaurantA", status: "ready" }],
@@ -125,6 +165,8 @@ test("visitante lee slug, establecimiento y catálogo publicado", async () => {
   await assertSucceeds(getDoc(doc(db, "establishments/restaurantA")));
   await assertSucceeds(getDoc(doc(db, "establishments/restaurantA/categories/active")));
   await assertSucceeds(getDoc(doc(db, "establishments/restaurantA/products/public")));
+  await assertSucceeds(getDoc(doc(db, "establishments/restaurantA/settings/public")));
+  await assertFails(getDoc(doc(db, "establishments/restaurantA/settings/private")));
   await assertFails(getDoc(doc(db, "establishments/restaurantA/categories/inactive")));
   await assertFails(getDoc(doc(db, "establishments/restaurantA/products/hidden")));
 });
@@ -255,6 +297,43 @@ test("solo owner y manager leen métricas, privado y auditoría", async () => {
   await assertFails(getDoc(doc(staff, "establishments/restaurantA/dailyMetrics/2026-09-17")));
   await assertSucceeds(getDoc(doc(staff, "establishments/restaurantA/settings/public")));
   await assertFails(getDoc(doc(staff, "establishments/restaurantA/settings/private")));
+});
+
+test("owner y manager actualizan únicamente la configuración permitida", async () => {
+  const publicRef = "establishments/restaurantA/settings/public";
+  const privateRef = "establishments/restaurantA/settings/private";
+  for (const uid of ["ownerA", "managerA"]) {
+    const db = environment.authenticatedContext(uid).firestore();
+    await assertSucceeds(updateDoc(doc(db, publicRef), {
+      brandName: `Marca ${uid}`,
+      updatedAt: serverTimestamp()
+    }));
+    await assertSucceeds(updateDoc(doc(db, privateRef), {
+      mercadoPagoEnabled: true,
+      updatedAt: serverTimestamp()
+    }));
+  }
+
+  const staff = environment.authenticatedContext("staffA").firestore();
+  await assertFails(updateDoc(doc(staff, publicRef), {
+    orderingEnabled: false,
+    updatedAt: serverTimestamp()
+  }));
+
+  const owner = environment.authenticatedContext("ownerA").firestore();
+  await assertFails(updateDoc(doc(owner, publicRef), {
+    unexpected: true,
+    updatedAt: serverTimestamp()
+  }));
+  await assertFails(updateDoc(doc(owner, publicRef), {
+    establishmentId: "restaurantB",
+    updatedAt: serverTimestamp()
+  }));
+  await assertFails(updateDoc(doc(owner, publicRef), {
+    businessHours: businessHours({ monday: { closed: false, open: "25:00", close: "23:00" } }),
+    updatedAt: serverTimestamp()
+  }));
+  await assertFails(deleteDoc(doc(owner, publicRef)));
 });
 
 test("miembro inactivo, extraño y membresía de otro tenant no ganan acceso", async () => {

@@ -298,6 +298,17 @@
         "establishmentId": "mesa-flow-demo",
         "brandName": "Bistró MesaFlow",
         "contactEmail": "contacto.demo@example.invalid",
+        "contactPhone": "+54 11 5555-0101",
+        "addressLine": "Av. Corrientes 1234, CABA",
+        "businessHours": {
+          "monday": { "closed": false, "open": "09:00", "close": "23:00" },
+          "tuesday": { "closed": false, "open": "09:00", "close": "23:00" },
+          "wednesday": { "closed": false, "open": "09:00", "close": "23:00" },
+          "thursday": { "closed": false, "open": "09:00", "close": "23:00" },
+          "friday": { "closed": false, "open": "09:00", "close": "23:59" },
+          "saturday": { "closed": false, "open": "10:00", "close": "23:59" },
+          "sunday": { "closed": true, "open": "10:00", "close": "18:00" }
+        },
         "orderingEnabled": true,
         "assistanceEnabled": true,
         "updatedAt": { "$timestamp": "now" }

@@ -15,6 +15,7 @@ import { OrdersPage } from "../pages/orders-page";
 import { CatalogPage } from "../pages/catalog-page";
 import { TablesPage } from "../pages/tables-page";
 import { TeamPage } from "../pages/team-page";
+import { SettingsPage } from "../pages/settings-page";
 import { ResetPasswordPage } from "../pages/reset-password-page";
 import { canAccess } from "../tenant/access-control";
 import type { TenantContextValue } from "../tenant/tenant-context";
@@ -126,11 +127,24 @@ const teamRoute = createRoute({
   component: TeamPage
 });
 
+const settingsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/configuracion",
+  beforeLoad: ({ context }) => {
+    const membership = context.tenant.activeAccess?.membership;
+    if (membership === undefined || !canAccess(membership, "settings.manage")) {
+      throw redirect({ to: "/" });
+    }
+  },
+  component: SettingsPage
+});
+
 const routeTree = rootRoute.addChildren([
   loginRoute,
   resetRoute,
   authenticatedRoute.addChildren([
-    dashboardRoute, ordersRoute, assistanceRoute, tablesRoute, catalogRoute, teamRoute
+    dashboardRoute, ordersRoute, assistanceRoute, tablesRoute, catalogRoute, teamRoute,
+    settingsRoute
   ])
 ]);
 

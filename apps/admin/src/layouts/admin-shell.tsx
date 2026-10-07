@@ -13,7 +13,8 @@ const navigation = Object.freeze([
   { to: "/operacion/asistencia" as const, label: "Asistencia", icon: "bell" as const, capability: "assistance.view" as AdminCapability },
   { to: "/operacion/mesas" as const, label: "Mesas", icon: "tables" as const, capability: "tables.view" as AdminCapability },
   { to: "/catalogo" as const, label: "Productos", icon: "products" as const, capability: "menu.view" as AdminCapability },
-  { to: "/equipo" as const, label: "Equipo", icon: "users" as const, capability: "team.view" as AdminCapability }
+  { to: "/equipo" as const, label: "Equipo", icon: "users" as const, capability: "team.view" as AdminCapability },
+  { to: "/configuracion" as const, label: "Configuración", icon: "settings" as const, capability: "settings.manage" as AdminCapability }
 ]);
 
 export function AdminShell() {

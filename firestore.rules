@@ -76,6 +76,67 @@ service cloud.firestore {
         && data.createdAt is timestamp && data.updatedAt is timestamp;
     }
 
+    function validBusinessDay(data) {
+      return data is map
+        && data.keys().hasOnly(['closed', 'open', 'close'])
+        && data.keys().hasAll(['closed', 'open', 'close'])
+        && data.closed is bool
+        && data.open is string
+        && data.open.matches('^([01][0-9]|2[0-3]):[0-5][0-9]$')
+        && data.close is string
+        && data.close.matches('^([01][0-9]|2[0-3]):[0-5][0-9]$')
+        && (data.closed == true || data.open != data.close);
+    }
+
+    function validBusinessHours(data) {
+      return data is map
+        && data.keys().hasOnly([
+          'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+        ])
+        && data.keys().hasAll([
+          'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+        ])
+        && validBusinessDay(data.monday)
+        && validBusinessDay(data.tuesday)
+        && validBusinessDay(data.wednesday)
+        && validBusinessDay(data.thursday)
+        && validBusinessDay(data.friday)
+        && validBusinessDay(data.saturday)
+        && validBusinessDay(data.sunday);
+    }
+
+    function validPublicSettings(establishmentId, data) {
+      return data.keys().hasOnly([
+          'establishmentId', 'brandName', 'contactEmail', 'contactPhone', 'addressLine',
+          'businessHours', 'orderingEnabled', 'assistanceEnabled', 'updatedAt'
+        ])
+        && data.keys().hasAll([
+          'establishmentId', 'brandName', 'contactEmail', 'contactPhone', 'addressLine',
+          'businessHours', 'orderingEnabled', 'assistanceEnabled', 'updatedAt'
+        ])
+        && data.establishmentId == establishmentId
+        && data.brandName is string && data.brandName.size() >= 2 && data.brandName.size() <= 120
+        && data.contactEmail is string && data.contactEmail.size() >= 3
+        && data.contactEmail.size() <= 254 && data.contactEmail.matches('^.+@.+[.].+$')
+        && data.contactPhone is string && data.contactPhone.size() <= 30
+        && data.addressLine is string && data.addressLine.size() <= 200
+        && validBusinessHours(data.businessHours)
+        && data.orderingEnabled is bool && data.assistanceEnabled is bool
+        && data.updatedAt == request.time;
+    }
+
+    function validPrivateSettings(establishmentId, data) {
+      return data.keys().hasOnly([
+          'establishmentId', 'mercadoPagoEnabled', 'whatsappEnabled', 'updatedAt'
+        ])
+        && data.keys().hasAll([
+          'establishmentId', 'mercadoPagoEnabled', 'whatsappEnabled', 'updatedAt'
+        ])
+        && data.establishmentId == establishmentId
+        && data.mercadoPagoEnabled is bool && data.whatsappEnabled is bool
+        && data.updatedAt == request.time;
+    }
+
     match /users/{uid} {
       allow get: if signedIn() && request.auth.uid == uid;
       allow list, write: if false;
@@ -199,7 +260,18 @@ service cloud.firestore {
         allow read: if resource.data.establishmentId == establishmentId
           && (visibility == 'public'
             || hasRole(establishmentId, ['owner', 'manager']));
-        allow write: if false;
+        allow create: if hasRole(establishmentId, ['owner', 'manager'])
+          && ((visibility == 'public'
+              && validPublicSettings(establishmentId, request.resource.data))
+            || (visibility == 'private'
+              && validPrivateSettings(establishmentId, request.resource.data)));
+        allow update: if resource.data.establishmentId == establishmentId
+          && hasRole(establishmentId, ['owner', 'manager'])
+          && ((visibility == 'public'
+              && validPublicSettings(establishmentId, request.resource.data))
+            || (visibility == 'private'
+              && validPrivateSettings(establishmentId, request.resource.data)));
+        allow delete: if false;
       }
 
       match /auditLogs/{logId} {

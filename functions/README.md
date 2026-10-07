@@ -55,6 +55,10 @@ cancelar o completar pedidos ajusta actividad y cantidades; aprobar o revertir
 un pago ajusta ventas. La fecha se calcula con la zona horaria del establecimiento
 y los reintentos idempotentes no duplican acumulados.
 
+La Etapa 39 conecta la configuración pública con los límites de confianza. El
+canje/restauración QR usa el nombre de marca configurado y `createOrder` exige
+que los pedidos desde la mesa estén habilitados. Los flags no contienen secretos.
+
 La función emulada queda en:
 
 ```text

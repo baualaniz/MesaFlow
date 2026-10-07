@@ -26,7 +26,8 @@ try {
   console.log(`[OK] Hosting customer: raíz y deep link en ${EMULATOR_HOST}:${ports[0]}`);
 
   for (const path of [
-    "/operacion/pedidos", "/operacion/asistencia", "/operacion/mesas", "/catalogo", "/equipo"
+    "/operacion/pedidos", "/operacion/asistencia", "/operacion/mesas", "/catalogo", "/equipo",
+    "/configuracion"
   ]) {
     const admin = await get(`http://${EMULATOR_HOST}:${ports[1]}${path}`);
     assert.equal(admin.status, 200);

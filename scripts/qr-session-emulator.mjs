@@ -33,6 +33,7 @@ let firestore;
 let originalTable;
 let originalSession;
 let originalAssistance;
+let originalPublicSettings;
 let paymentIntentId;
 let paymentDocumentId;
 let webhookEventId;
@@ -108,6 +109,12 @@ try {
   const assistanceSnapshot = await assistanceRef.get();
   assert.equal(assistanceSnapshot.exists, true);
   originalAssistance = assistanceSnapshot.data();
+  const publicSettingsRef = firestore.doc(
+    "establishments/mesa-flow-demo/settings/public"
+  );
+  const publicSettingsSnapshot = await publicSettingsRef.get();
+  assert.equal(publicSettingsSnapshot.exists, true);
+  originalPublicSettings = publicSettingsSnapshot.data();
   for (const date of metricDates) {
     const snapshot = await firestore.doc(
       `establishments/mesa-flow-demo/dailyMetrics/${date}`
@@ -120,6 +127,7 @@ try {
   assert.equal(exchanged.status, 200);
   assert.equal(exchanged.data.result.sessionId, "sesion-mesa-01");
   assert.equal(exchanged.data.result.tableId, "mesa-01");
+  assert.equal(exchanged.data.result.establishmentName, originalPublicSettings.brandName);
 
   const restored = await callable("restoreQrSession", context, first.idToken);
   assert.equal(restored.status, 200);
@@ -200,7 +208,17 @@ try {
     items: [{ productId: "salmon-limon", quantity: 1, notes: null }]
   }, first.idToken);
   assertCallableError(unavailable, "FAILED_PRECONDITION");
+  await publicSettingsRef.update({ orderingEnabled: false });
+  const paused = await callable("createOrder", {
+    ...orderDraft,
+    requestId: "3123456789abcdef0123456789abcdef",
+    items: [{ productId: "burger-casa", quantity: 1, notes: null }]
+  }, first.idToken);
+  assertCallableError(paused, "FAILED_PRECONDITION");
+  assert.equal(paused.data.error.details?.reason, "ordering-disabled");
+  await publicSettingsRef.update({ orderingEnabled: true });
   console.log("[OK] Pedido transaccional recalcula precio y el reintento no duplica consumo");
+  console.log("[OK] Marca pública aplicada y pausa de pedidos respetada por backend");
   console.log("[OK] Consumo recompone pedidos y pagos con saldo verificado en servidor");
 
   const assistanceContext = {
@@ -377,6 +395,11 @@ try {
         await firestore.doc(
           "establishments/mesa-flow-demo/assistanceRequests/sesion-mesa-01"
         ).set(originalAssistance);
+      }
+      if (originalPublicSettings) {
+        await firestore.doc(
+          "establishments/mesa-flow-demo/settings/public"
+        ).set(originalPublicSettings);
       }
       for (const orderId of createdOrderIds) {
         await firestore.doc(

@@ -12,6 +12,7 @@ export type CreateOrderErrorCode =
 
 export type CreateOrderFailureReason =
   | "invalid-cart"
+  | "ordering-disabled"
   | "product-unavailable"
   | "session-unavailable";
 

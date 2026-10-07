@@ -40,6 +40,7 @@ final class FirebaseOrderGateway implements OrderGateway {
       final reason = details is Map ? details['reason'] : null;
       throw OrderException(switch (reason) {
         'invalid-cart' => OrderFailure.invalidCart,
+        'ordering-disabled' => OrderFailure.orderingDisabled,
         'product-unavailable' => OrderFailure.productUnavailable,
         'session-unavailable' => OrderFailure.sessionUnavailable,
         _ => switch (error.code) {

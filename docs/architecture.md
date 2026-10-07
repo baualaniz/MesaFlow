@@ -140,6 +140,25 @@ El dashboard administrativo escucha únicamente los últimos siete documentos
 pagos, pedidos y productos; Firestore Rules reserva la lectura a owner/manager y
 mantiene todas las escrituras en el backend.
 
+## Configuración del establecimiento — Etapa 39
+
+El panel trata `settings/public` y `settings/private` como un único formulario,
+pero conserva límites de lectura distintos. El primero contiene marca, contacto,
+horarios semanales y disponibilidad de pedidos/asistencia; el segundo contiene
+flags internos de integraciones. Un batch atómico evita que una mitad quede
+actualizada y la otra no.
+
+El navegador valida y normaliza el borrador antes de escribir. Firestore Rules
+repite la validación con campos exactos, horarios completos, tenant inmutable y
+timestamp de servidor. Solo owner/manager puede mutar; el documento público sigue
+disponible para el recorrido del cliente y el privado no sale del ámbito
+administrativo.
+
+La configuración no es decorativa: el repositorio QR toma `brandName` para la
+sesión visible y el repositorio transaccional de pedidos exige
+`orderingEnabled == true`. Asistencia ya aplica `assistanceEnabled`. Los flags
+de proveedores no contienen credenciales y nunca sustituyen Secret Manager.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por

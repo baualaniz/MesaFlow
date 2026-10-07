@@ -3,6 +3,7 @@ import '../session/qr_session.dart';
 
 enum OrderFailure {
   invalidCart,
+  orderingDisabled,
   productUnavailable,
   sessionUnavailable,
   unavailable,

@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 38** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 39** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -75,6 +75,9 @@ auditado y se refleja en la aplicación del cliente sin recargar.
 El dashboard administrativo ya presenta ventas, pagos, pedidos y productos más
 pedidos a partir de agregados diarios transaccionales. Lee como máximo siete días,
 no recorre historiales completos y reserva los importes a propietario/encargado.
+La nueva sección **Configuración** permite a propietario y encargado mantener la
+marca, contacto, horarios y opciones públicas/privadas. La marca se aplica al
+acceso QR y pausar pedidos bloquea órdenes nuevas en el backend.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -119,6 +122,7 @@ encuentran en:
 - `docs/stage-36-team-roles.md`
 - `docs/stage-37-operational-assistance.md`
 - `docs/stage-38-sales-metrics.md`
+- `docs/stage-39-establishment-settings.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -148,11 +152,11 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 206
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 210
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
 cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-15 de contratos, 56 del panel y 54 de Functions), más los lint y builds
+15 de contratos, 60 del panel y 54 de Functions), más los lint y builds
 TypeScript. Este comando no consulta servicios remotos.
 
 Los contratos compartidos tienen además siete pruebas Dart contra los mismos

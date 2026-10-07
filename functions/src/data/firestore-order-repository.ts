@@ -50,6 +50,7 @@ function resultFromOrder(orderId: string, order: OrderContract): CreatedOrderRes
 function requireSessionAccess(
   command: CreateOrderCommand,
   establishment: DocumentData,
+  settings: DocumentData,
   table: DocumentData,
   session: DocumentData,
   participant: DocumentData
@@ -59,6 +60,13 @@ function requireSessionAccess(
       "permission-denied",
       "session-unavailable",
       "El establecimiento no está disponible."
+    );
+  }
+  if (settings.establishmentId !== command.establishmentId || settings.orderingEnabled !== true) {
+    throw new CreateOrderError(
+      "failed-precondition",
+      "ordering-disabled",
+      "Los pedidos desde la mesa están temporalmente deshabilitados."
     );
   }
   let currency: string;
@@ -121,6 +129,7 @@ export class FirestoreOrderRepository implements CreateOrderRepository {
       `establishments/${command.establishmentId}`
     );
     const tableRef = establishmentRef.collection("tables").doc(command.tableId);
+    const settingsRef = establishmentRef.collection("settings").doc("public");
     const sessionRef = establishmentRef.collection("tableSessions").doc(command.sessionId);
     const participantRef = sessionRef.collection("participants").doc(command.uid);
     const orderRef = establishmentRef
@@ -148,9 +157,10 @@ export class FirestoreOrderRepository implements CreateOrderRepository {
         .collection("products")
         .doc(item.productId)
         .withConverter(productConverter));
-      const [establishmentSnapshot, tableSnapshot, sessionSnapshot, participantSnapshot,
+      const [establishmentSnapshot, settingsSnapshot, tableSnapshot, sessionSnapshot, participantSnapshot,
         ...productSnapshots] = await Promise.all([
         transaction.get(establishmentRef),
+        transaction.get(settingsRef),
         transaction.get(tableRef),
         transaction.get(sessionRef),
         transaction.get(participantRef),
@@ -160,6 +170,7 @@ export class FirestoreOrderRepository implements CreateOrderRepository {
       const access = requireSessionAccess(
         command,
         establishment,
+        rawData(settingsSnapshot, "La configuración pública no existe."),
         rawData(tableSnapshot, "La mesa no existe."),
         rawData(sessionSnapshot, "La sesión no existe."),
         rawData(participantSnapshot, "La participación no existe.")

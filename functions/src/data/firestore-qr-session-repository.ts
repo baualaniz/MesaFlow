@@ -45,12 +45,16 @@ function sessionAccess(
   establishmentId: string,
   tableId: string,
   establishment: DocumentData,
+  settings: DocumentData,
   table: DocumentData,
   session: DocumentData
 ): QrSessionAccess {
   if (
     establishment.active !== true ||
     typeof establishment.name !== "string" ||
+    settings.establishmentId !== establishmentId ||
+    typeof settings.brandName !== "string" ||
+    settings.brandName.trim().length < 2 ||
     table.establishmentId !== establishmentId ||
     table.active !== true ||
     typeof table.name !== "string" ||
@@ -63,7 +67,7 @@ function sessionAccess(
   }
   return Object.freeze({
     establishmentId,
-    establishmentName: establishment.name,
+    establishmentName: settings.brandName.trim(),
     tableId,
     tableName: table.name,
     sessionId: table.currentSessionId
@@ -79,12 +83,15 @@ export class FirestoreQrSessionRepository implements QrSessionRepository {
       const slug = await transaction.get(slugRef);
       const establishmentId = activeSlug(slug);
       const establishmentRef = this.firestore.doc(`establishments/${establishmentId}`);
+      const settingsRef = establishmentRef.collection("settings").doc("public");
       const tableRef = establishmentRef.collection("tables").doc(command.tableId);
-      const [establishmentSnapshot, tableSnapshot] = await Promise.all([
+      const [establishmentSnapshot, settingsSnapshot, tableSnapshot] = await Promise.all([
         transaction.get(establishmentRef),
+        transaction.get(settingsRef),
         transaction.get(tableRef)
       ]);
       const establishment = dataOf(establishmentSnapshot);
+      const settings = dataOf(settingsSnapshot);
       const table = dataOf(tableSnapshot);
       if (!secureHashMatches(table.qrTokenHash, command.tokenHash)) {
         throw new QrSessionError("permission-denied", "El token QR no está vigente.");
@@ -109,6 +116,7 @@ export class FirestoreQrSessionRepository implements QrSessionRepository {
         establishmentId,
         command.tableId,
         establishment,
+        settings,
         table,
         session
       );
@@ -146,12 +154,15 @@ export class FirestoreQrSessionRepository implements QrSessionRepository {
     const slug = await this.firestore.doc(`establishmentSlugs/${query.establishmentSlug}`).get();
     const establishmentId = activeSlug(slug);
     const establishmentRef = this.firestore.doc(`establishments/${establishmentId}`);
+    const settingsRef = establishmentRef.collection("settings").doc("public");
     const tableRef = establishmentRef.collection("tables").doc(query.tableId);
-    const [establishmentSnapshot, tableSnapshot] = await Promise.all([
+    const [establishmentSnapshot, settingsSnapshot, tableSnapshot] = await Promise.all([
       establishmentRef.get(),
+      settingsRef.get(),
       tableRef.get()
     ]);
     const establishment = dataOf(establishmentSnapshot);
+    const settings = dataOf(settingsSnapshot);
     const table = dataOf(tableSnapshot);
     if (typeof table.currentSessionId !== "string") {
       throw new QrSessionError("permission-denied", "La mesa no tiene una sesión disponible.");
@@ -171,6 +182,6 @@ export class FirestoreQrSessionRepository implements QrSessionRepository {
     ) {
       throw new QrSessionError("permission-denied", "La sesión local no tiene acceso a esta mesa.");
     }
-    return sessionAccess(establishmentId, query.tableId, establishment, table, session);
+    return sessionAccess(establishmentId, query.tableId, establishment, settings, table, session);
   }
 }
