@@ -10,7 +10,7 @@ import type { AuthContextValue } from "../auth/auth-context";
 import { AdminShell } from "../layouts/admin-shell";
 import { DashboardPage } from "../pages/dashboard-page";
 import { LoginPage } from "../pages/login-page";
-import { OrdersPlaceholderPage } from "../pages/orders-placeholder-page";
+import { OrdersPage } from "../pages/orders-page";
 import { ResetPasswordPage } from "../pages/reset-password-page";
 import { canAccess } from "../tenant/access-control";
 import type { TenantContextValue } from "../tenant/tenant-context";
@@ -71,7 +71,7 @@ const ordersRoute = createRoute({
       throw redirect({ to: "/" });
     }
   },
-  component: OrdersPlaceholderPage
+  component: OrdersPage
 });
 
 const routeTree = rootRoute.addChildren([

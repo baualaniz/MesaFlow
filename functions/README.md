@@ -36,6 +36,11 @@ Las Etapas 26 y 27 agregan las callables de asistencia y
 cancelados, descuenta únicamente pagos aprobados y rechaza cualquier divergencia
 con el resumen guardado de la sesión.
 
+La Etapa 33 agrega `updateOrderStatus`: aplica la máquina de estados compartida,
+valida rol y permisos desde la membresía, detecta concurrencia mediante el estado
+esperado y registra cada cambio de forma idempotente. Al cancelar, también ajusta
+el consumo de la sesión dentro de la misma transacción.
+
 La función emulada queda en:
 
 ```text

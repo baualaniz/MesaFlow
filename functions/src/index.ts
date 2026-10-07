@@ -6,6 +6,7 @@ import { handleHealthRequest } from "./health.js";
 
 export { exchangeQrSession, restoreQrSession } from "./qr-session-callable.js";
 export { createOrder } from "./create-order-callable.js";
+export { updateOrderStatus } from "./update-order-status-callable.js";
 export { getSessionConsumption } from "./session-consumption-callable.js";
 export { createPaymentPreference } from "./create-payment-preference-callable.js";
 export { mercadoPagoWebhook } from "./mercado-pago-webhook.js";

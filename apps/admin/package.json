@@ -11,6 +11,7 @@
     "check": "npm run lint && npm test && npm run build -- --mode emulator"
   },
   "dependencies": {
+    "@mesaflow/contracts": "0.1.0",
     "@tanstack/react-query": "5.104.1",
     "@tanstack/react-router": "1.170.41",
     "firebase": "12.19.0",

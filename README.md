@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 32** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 33** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -59,6 +59,9 @@ rutas privadas. Después de autenticar, valida el perfil, cada membresía y el
 establecimiento activo contra Firestore. La navegación se adapta a owner,
 manager, staff o kitchen y a sus permisos granulares; las reglas siguen
 bloqueando cualquier intento de saltarse la interfaz.
+La sección de pedidos ya funciona en tiempo real: muestra la cola adecuada para
+cada rol, abre el detalle de la comanda y ejecuta una máquina de estados
+transaccional, idempotente y auditada mediante Cloud Functions.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -97,6 +100,7 @@ encuentran en:
 - `docs/stage-30-payment-webhook.md`
 - `docs/stage-31-admin-foundation.md`
 - `docs/stage-32-tenant-rbac.md`
+- `docs/stage-33-operational-orders.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -126,11 +130,11 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 145
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 159
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
 cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-diez de contratos, 20 del panel y 34 de Functions), más los lint y builds
+15 de contratos, 26 del panel y 37 de Functions), más los lint y builds
 TypeScript. Este comando no consulta servicios remotos.
 
 Los contratos compartidos tienen además siete pruebas Dart contra los mismos
@@ -208,6 +212,8 @@ panel contra Auth Emulator. Luego resuelve el establecimiento del owner desde su
 perfil y su membresía usando las reglas reales de Firestore. También reconstruye
 la cuenta desde los pedidos y pagos de Firestore y comprueba
 que consumo, importe pagado y saldo coincidan con la sesión.
+El recorrido administrativo comprueba además que cocina y salón solo ejecuten
+las transiciones de pedido permitidas, con reintento idempotente y auditoría.
 Finalmente crea dos veces una preferencia de pago para la misma sesión y confirma
 que ambos intentos reutilizan el mismo checkout y un único documento interno.
 

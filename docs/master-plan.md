@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–32 completadas en alcance local. La siguiente etapa
-implementará el tablero operativo de pedidos en tiempo real.
+Estado actual: Etapas 1–33 completadas en alcance local. La siguiente etapa
+administrará mesas, sesiones y rotación de códigos QR.
 
 ## Fases 1–10: base y Firebase
 
@@ -119,6 +119,7 @@ implementará el tablero operativo de pedidos en tiempo real.
 | 30 | Completa localmente: firma oficial, consulta autoritativa, conciliación idempotente, reintentos, saldo y reglas backend aprobados; URL pública diferida a Etapa 47 | `docs/stage-30-payment-webhook.md` |
 | 31 | Completa localmente: React/TypeScript, sistema visual, Firebase Auth, login/logout/reset, rutas privadas, 10 pruebas y flujo emulado aprobados | `docs/stage-31-admin-foundation.md` |
 | 32 | Completa localmente: perfiles, membresías, tenant activo, selector, matriz RBAC, 20 pruebas del panel y bypass entre tenants rechazado | `docs/stage-32-tenant-rbac.md` |
+| 33 | Completa localmente: tablero realtime, detalle, máquina de estados compartida, Function transaccional, idempotencia y auditoría | `docs/stage-33-operational-orders.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

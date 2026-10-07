@@ -49,6 +49,19 @@ granular filtra la navegación y protege rutas operativas. Es una capa de
 experiencia y defensa en profundidad: Firestore Rules y las Functions son la
 autoridad final aunque se manipule el cliente.
 
+## Operación de pedidos — Etapa 33
+
+El panel escucha la colección `orders` dentro del tenant activo usando el índice
+`status, createdAt`. Cocina limita la consulta a estados de preparación; los demás
+roles operativos reciben el recorrido activo completo. Cada documento pasa por
+el mismo contrato estricto usado por Functions antes de representarse.
+
+Las transiciones se definen una sola vez en `@mesaflow/contracts`. La interfaz
+usa esa matriz para ofrecer acciones y `updateOrderStatus` vuelve a aplicarla con
+la membresía leída desde Firestore. Una transacción comprueba estado esperado,
+actualiza el pedido y crea un registro de auditoría. El `requestId` hace el
+reintento idempotente y un estado obsoleto nunca sobrescribe un cambio concurrente.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por
