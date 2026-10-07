@@ -12,7 +12,7 @@ const navigation = Object.freeze([
   { to: "/operacion/pedidos" as const, label: "Pedidos", icon: "orders" as const, capability: "orders.view" as AdminCapability },
   { to: "/operacion/mesas" as const, label: "Mesas", icon: "tables" as const, capability: "tables.view" as AdminCapability },
   { to: "/catalogo" as const, label: "Productos", icon: "products" as const, capability: "menu.view" as AdminCapability },
-  { to: "/" as const, label: "Equipo", icon: "users" as const, capability: "team.view" as AdminCapability, disabled: true }
+  { to: "/equipo" as const, label: "Equipo", icon: "users" as const, capability: "team.view" as AdminCapability }
 ]);
 
 export function AdminShell() {
@@ -45,11 +45,7 @@ export function AdminShell() {
         <div className="sidebar-brand"><Brand /></div>
         <nav aria-label="Navegación principal">
           <p className="nav-label">GESTIÓN</p>
-          {visibleNavigation.map((item) => item.disabled ? (
-            <span className="nav-item disabled" key={item.label} aria-disabled="true">
-              <Icon name={item.icon} /><span>{item.label}</span><small>Próximamente</small>
-            </span>
-          ) : (
+          {visibleNavigation.map((item) => (
             <Link
               activeProps={{ className: "nav-item active" }}
               activeOptions={{ exact: item.to === "/" }}

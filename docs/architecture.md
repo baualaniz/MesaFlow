@@ -96,6 +96,24 @@ es una clave lógica estable y tanto React como Flutter resuelven el recorte loc
 Así el MVP no requiere Storage, URLs externas ni facturación para administrar
 imágenes; una carga dinámica puede agregarse después sin migrar los productos.
 
+## Equipo e invitaciones — Etapa 36
+
+`manageTeam` es la única frontera de escritura para membresías. El navegador no
+envía permisos: solo correo, nombre y rol; el backend deriva la matriz canónica,
+relee al actor y aplica la operación con control de concurrencia y auditoría. La
+regla Firestore para `members` permanece de solo lectura para clientes.
+
+Firebase Authentication conserva una identidad global por correo. Al invitar,
+la Function reutiliza o crea esa identidad y vincula el UID al tenant. El perfil
+global enumera establecimientos para orientar la carga, mientras cada membresía
+continúa siendo la autoridad. Firebase entrega el correo de restablecimiento y
+la contraseña temporal aleatoria nunca sale del backend.
+
+La autorización distingue administración total de owner y alcance operativo de
+manager. Este último solo administra staff/kitchen; no puede tocar owner/manager,
+elevarse ni usar otro tenant. Una consulta transaccional exige conservar al menos
+un owner activo para evitar dejar el establecimiento sin administración.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por

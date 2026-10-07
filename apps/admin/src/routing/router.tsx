@@ -13,6 +13,7 @@ import { LoginPage } from "../pages/login-page";
 import { OrdersPage } from "../pages/orders-page";
 import { CatalogPage } from "../pages/catalog-page";
 import { TablesPage } from "../pages/tables-page";
+import { TeamPage } from "../pages/team-page";
 import { ResetPasswordPage } from "../pages/reset-password-page";
 import { canAccess } from "../tenant/access-control";
 import type { TenantContextValue } from "../tenant/tenant-context";
@@ -100,10 +101,22 @@ const catalogRoute = createRoute({
   component: CatalogPage
 });
 
+const teamRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/equipo",
+  beforeLoad: ({ context }) => {
+    const membership = context.tenant.activeAccess?.membership;
+    if (membership === undefined || !canAccess(membership, "team.view")) {
+      throw redirect({ to: "/" });
+    }
+  },
+  component: TeamPage
+});
+
 const routeTree = rootRoute.addChildren([
   loginRoute,
   resetRoute,
-  authenticatedRoute.addChildren([dashboardRoute, ordersRoute, tablesRoute, catalogRoute])
+  authenticatedRoute.addChildren([dashboardRoute, ordersRoute, tablesRoute, catalogRoute, teamRoute])
 ]);
 
 export const router = createRouter({
