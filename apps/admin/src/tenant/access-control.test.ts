@@ -32,11 +32,11 @@ describe("RBAC administrativo", () => {
     expect(canAccess(manager, "settings.manage")).toBe(false);
   });
 
-  it("salón no ve menú, equipo ni métricas", () => {
+  it("salón ve menú operativo pero no equipo ni métricas", () => {
     const staff = membership("staff", ["orders.manage", "assistance.manage"]);
     expect(canAccess(staff, "orders.view")).toBe(true);
     expect(canAccess(staff, "tables.view")).toBe(true);
-    expect(canAccess(staff, "menu.view")).toBe(false);
+    expect(canAccess(staff, "menu.view")).toBe(true);
     expect(canAccess(staff, "team.view")).toBe(false);
     expect(canAccess(staff, "metrics.read")).toBe(false);
   });

@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 33** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 35** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -62,6 +62,10 @@ bloqueando cualquier intento de saltarse la interfaz.
 La sección de pedidos ya funciona en tiempo real: muestra la cola adecuada para
 cada rol, abre el detalle de la comanda y ejecuta una máquina de estados
 transaccional, idempotente y auditada mediante Cloud Functions.
+La sección de mesas administra inventario, sesiones y QR imprimibles con rotación
+segura. La sección de productos permite ordenar y mantener categorías y platos,
+usar las imágenes ya incluidas y marcar disponibilidad; el cambio se refleja en
+el menú del cliente. Staff solo puede alternar disponible/agotado.
 La especificación consolidada, las decisiones y el plan completo se
 encuentran en:
 
@@ -102,6 +106,7 @@ encuentran en:
 - `docs/stage-32-tenant-rbac.md`
 - `docs/stage-33-operational-orders.md`
 - `docs/stage-34-tables-qr.md`
+- `docs/stage-35-catalog-management.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -215,6 +220,8 @@ la cuenta desde los pedidos y pagos de Firestore y comprueba
 que consumo, importe pagado y saldo coincidan con la sesión.
 El recorrido administrativo comprueba además que cocina y salón solo ejecuten
 las transiciones de pedido permitidas, con reintento idempotente y auditoría.
+También valida el CRUD del catálogo, rechaza que staff cambie el contenido y
+confirma que disponible/agotado modifica la consulta pública del cliente.
 Finalmente crea dos veces una preferencia de pago para la misma sesión y confirma
 que ambos intentos reutilizan el mismo checkout y un único documento interno.
 

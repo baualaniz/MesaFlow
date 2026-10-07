@@ -26,6 +26,7 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    fileParallelism: false
+    fileParallelism: false,
+    isolate: false
   }
 });

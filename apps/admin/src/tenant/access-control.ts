@@ -24,14 +24,14 @@ const ROLE_CAPABILITIES = {
   manager: [
     "dashboard.view", "orders.view", "tables.view", "menu.view", "team.view", "metrics.read"
   ],
-  staff: ["dashboard.view", "orders.view", "tables.view"],
+  staff: ["dashboard.view", "orders.view", "tables.view", "menu.view"],
   kitchen: ["dashboard.view", "orders.view"]
 } as const satisfies Readonly<Record<AdminRole, readonly AdminCapability[]>>;
 
 const REQUIRED_PERMISSIONS: Partial<Readonly<Record<AdminCapability, readonly string[]>>> =
   Object.freeze({
     "metrics.read": Object.freeze(["metrics.read"]),
-    "menu.view": Object.freeze(["menu.manage"]),
+    "menu.view": Object.freeze(["menu.manage", "orders.manage"]),
     "orders.view": Object.freeze(["orders.manage", "orders.prepare"]),
     "settings.manage": Object.freeze(["establishment.manage"]),
     "tables.view": Object.freeze(["orders.manage"])

@@ -11,6 +11,7 @@ import { AdminShell } from "../layouts/admin-shell";
 import { DashboardPage } from "../pages/dashboard-page";
 import { LoginPage } from "../pages/login-page";
 import { OrdersPage } from "../pages/orders-page";
+import { CatalogPage } from "../pages/catalog-page";
 import { TablesPage } from "../pages/tables-page";
 import { ResetPasswordPage } from "../pages/reset-password-page";
 import { canAccess } from "../tenant/access-control";
@@ -87,10 +88,22 @@ const tablesRoute = createRoute({
   component: TablesPage
 });
 
+const catalogRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/catalogo",
+  beforeLoad: ({ context }) => {
+    const membership = context.tenant.activeAccess?.membership;
+    if (membership === undefined || !canAccess(membership, "menu.view")) {
+      throw redirect({ to: "/" });
+    }
+  },
+  component: CatalogPage
+});
+
 const routeTree = rootRoute.addChildren([
   loginRoute,
   resetRoute,
-  authenticatedRoute.addChildren([dashboardRoute, ordersRoute, tablesRoute])
+  authenticatedRoute.addChildren([dashboardRoute, ordersRoute, tablesRoute, catalogRoute])
 ]);
 
 export const router = createRouter({

@@ -78,6 +78,24 @@ Function valida la entropía, guarda SHA-256 y aumenta `qrVersion` dentro de la
 misma transacción. El texto plano se usa una sola vez para renderizar la hoja
 imprimible; Firestore y auditoría reciben únicamente versiones y hashes.
 
+## Administración del catálogo — Etapa 35
+
+El panel combina listeners ordenados de `categories` y `products` dentro del
+tenant activo. Los documentos se validan con contratos estrictos y las mutaciones
+directas usan transacciones que comparan `updatedAt`, preservan `createdAt` y
+rechazan una edición basada en datos obsoletos.
+
+Owner y manager administran estructura, contenido, orden y publicación. Staff
+recibe `menu.view` para la operación diaria, pero Firestore limita su escritura a
+`available` y `updatedAt`. Las consultas públicas existentes solo entregan
+categorías activas y productos activos/disponibles, por lo que el cliente refleja
+el cambio sin una ruta privilegiada ni un segundo modelo de datos.
+
+El catálogo visual reutiliza un atlas PNG versionado en la app Flutter. `imagePath`
+es una clave lógica estable y tanto React como Flutter resuelven el recorte local.
+Así el MVP no requiere Storage, URLs externas ni facturación para administrar
+imágenes; una carga dinámica puede agregarse después sin migrar los productos.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por
