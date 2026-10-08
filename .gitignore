@@ -33,6 +33,8 @@ firebase-debug.*.log*
 node_modules/
 dist/
 apps/admin/hosting/
+apps/landing/hosting/
+apps/landing/.astro/
 packages/contracts/lib/
 coverage/
 *.tsbuildinfo

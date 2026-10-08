@@ -175,6 +175,21 @@ Cada evento produce un `auditLogs` determinista y guarda solo el hash del
 destinatario. Un fallo externo se registra, pero nunca revierte ni bloquea la
 solicitud original que sigue disponible en la cola administrativa.
 
+## Landing comercial — Etapa 41
+
+`apps/landing` es una aplicación Astro que produce HTML estático en su propio
+destino Firebase Hosting. No comparte runtime con la aplicación Flutter ni con el
+panel React: solo enlaza sus URLs públicas configurables. La página organiza una
+narrativa comercial completa —propuesta, funcionamiento, producto, beneficios,
+planes, preguntas y CTA— y usa exclusivamente tipografías e imagen gastronómica
+versionadas en el repositorio.
+
+La landing no usa fallback SPA: mantiene URLs limpias y un `404.html` real. El
+build forma parte de `hosting:build`, y sus cuatro pruebas estructurales forman
+parte de `npm run check`. El JavaScript del cliente se limita al menú responsive;
+la navegación por secciones y el contenido principal son HTML semántico. SEO,
+datos estructurados y auditoría Lighthouse profunda continúan en la Etapa 42.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por

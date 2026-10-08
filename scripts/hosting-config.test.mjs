@@ -69,8 +69,11 @@ test("targets demo y estado cloud diferido son obligatorios", () => {
   assert.throws(() => validateHostingConfig(config, rc, activeCloud));
 });
 
-test("el panel declara un build React TypeScript real", () => {
+test("el panel y la landing declaran builds reales", () => {
   const admin = policy.targets.find(({ name }) => name === "admin");
+  const landing = policy.targets.find(({ name }) => name === "landing");
   assert.equal(admin.kind, "spa");
   assert.equal(admin.build, "react-typescript-vite");
+  assert.equal(landing.kind, "static");
+  assert.equal(landing.build, "astro-static");
 });

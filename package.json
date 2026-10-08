@@ -23,7 +23,7 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config && npm run test:firestore-indexes && npm run test:storage-config && npm run test:secrets-config && npm run test:mercado-pago-config && npm run test:hosting-config && npm run test:presentation-seed && npm run test:demo-seed && npm run test:customer-config && npm run test:contracts && npm run admin:check && npm run functions:check",
+    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config && npm run test:firestore-indexes && npm run test:storage-config && npm run test:secrets-config && npm run test:mercado-pago-config && npm run test:hosting-config && npm run test:presentation-seed && npm run test:demo-seed && npm run test:customer-config && npm run test:contracts && npm run landing:check && npm run admin:check && npm run functions:check",
     "check:repo": "node ./scripts/check-repository.mjs",
     "test:config": "node --test ./scripts/firebase-projects.test.mjs ./scripts/emulator-config.test.mjs",
     "test:tooling": "node --test ./scripts/tooling-dependencies.test.mjs ./scripts/java-runtime.test.mjs",
@@ -56,6 +56,7 @@
     "functions:lint": "npm run lint --workspace @mesaflow/functions",
     "functions:test": "npm test --workspace @mesaflow/functions",
     "functions:check": "npm run check --workspace @mesaflow/functions",
+    "landing:check": "npm run check --workspace @mesaflow/landing",
     "admin:check": "npm run check --workspace @mesaflow/admin",
     "preview:customer": "node ./scripts/serve-customer-preview.mjs",
     "check:env": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-environment.ps1",
@@ -68,15 +69,17 @@
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "5.0.2",
+    "cookie": "2.0.1",
     "firebase": "12.19.0",
     "firebase-tools": "15.32.1"
   },
   "overrides": {
+    "@modelcontextprotocol/sdk": "1.32.1",
     "@grpc/grpc-js": "1.14.5",
     "basic-ftp": "6.2.2",
     "braces": "3.0.3",
+    "qs": "6.16.0",
     "firebase-tools": {
-      "qs": "6.16.0",
       "gaxios@6.7.1": {
         "uuid": "11.1.1"
       },

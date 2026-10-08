@@ -9,6 +9,16 @@ export const HOSTING_DEMO_SITES = Object.freeze({
   admin: "demo-mesaflow-admin",
   landing: "demo-mesaflow-landing"
 });
+export const HOSTING_KINDS = Object.freeze({
+  customer: "spa",
+  admin: "spa",
+  landing: "static"
+});
+export const HOSTING_BUILDS = Object.freeze({
+  customer: "flutter-web",
+  admin: "react-typescript-vite",
+  landing: "astro-static"
+});
 
 const REQUIRED_SECURITY_HEADERS = Object.freeze({
   "x-content-type-options": "nosniff",
@@ -92,7 +102,8 @@ export function validateHostingConfig(config, rc, policy) {
   }
   for (const target of HOSTING_TARGETS) {
     const entry = policy.targets.find((item) => item.name === target);
-    if (entry?.public !== HOSTING_PUBLIC_DIRS[target]) {
+    if (entry?.public !== HOSTING_PUBLIC_DIRS[target] ||
+        entry?.kind !== HOSTING_KINDS[target] || entry?.build !== HOSTING_BUILDS[target]) {
       throw new Error(`La política Hosting no coincide para ${target}.`);
     }
   }

@@ -1,0 +1,253 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const customerUrl = import.meta.env.PUBLIC_CUSTOMER_URL || "http://127.0.0.1:5100";
+const adminUrl = import.meta.env.PUBLIC_ADMIN_URL || "http://127.0.0.1:5105";
+const repositoryUrl = "https://github.com/baualaniz/MesaFlow";
+const contactUrl = `${repositoryUrl}/issues/new?title=${encodeURIComponent("Consulta sobre MesaFlow")}`;
+
+const steps = [
+  {
+    number: "01",
+    title: "La mesa escanea",
+    text: "Un QR seguro abre el menú del establecimiento, sin instalaciones ni registros para empezar."
+  },
+  {
+    number: "02",
+    title: "El cliente elige",
+    text: "Explora la carta, arma su pedido, sigue el estado y solicita asistencia desde el mismo lugar."
+  },
+  {
+    number: "03",
+    title: "El equipo resuelve",
+    text: "Salón, cocina y administración reciben la información que corresponde a cada rol, en tiempo real."
+  }
+];
+
+const plans = [
+  {
+    name: "Básico",
+    eyebrow: "Para empezar",
+    description: "La experiencia esencial para digitalizar el servicio de un establecimiento.",
+    features: ["Menú web por QR", "Pedidos y seguimiento", "Mesas y asistencia", "Panel operativo"]
+  },
+  {
+    name: "Profesional",
+    eyebrow: "Operación completa",
+    description: "Más control para equipos que necesitan ordenar servicio, pagos y decisiones.",
+    features: ["Todo lo incluido en Básico", "Roles y permisos", "Pagos con Checkout Pro", "Ventas y métricas"]
+  },
+  {
+    name: "Empresarial",
+    eyebrow: "A medida",
+    description: "Una base preparada para organizaciones con más establecimientos y necesidades específicas.",
+    features: ["Todo lo incluido en Profesional", "Gestión multiestablecimiento", "Configuración avanzada", "Acompañamiento de implementación"]
+  }
+];
+---
+
+<BaseLayout
+  title="MesaFlow — Cada mesa, mejor atendida"
+  description="MesaFlow conecta menú QR, pedidos, asistencia, pagos y operación gastronómica en tiempo real."
+>
+  <header class="site-header" data-header data-hosting-target="landing">
+    <div class="nav-shell">
+      <a class="brand" href="#inicio" aria-label="MesaFlow, volver al inicio">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <span>MesaFlow</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-navigation">
+        <span></span><span></span><span></span><span class="sr-only">Abrir menú</span>
+      </button>
+      <nav id="main-navigation" class="main-navigation" aria-label="Navegación principal">
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#producto">Producto</a>
+        <a href="#planes">Planes</a>
+        <a href="#preguntas">Preguntas</a>
+        <a class="nav-cta" href={customerUrl}>Ver experiencia</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="hero section-shell" id="inicio">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span>Tecnología para hospitalidad</p>
+        <h1>Tu servicio,<br /><em>en movimiento.</em></h1>
+        <p class="hero-lead">
+          MesaFlow conecta cada mesa con tu equipo: una experiencia simple para
+          pedir y una operación clara para responder mejor.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href={customerUrl}>Probar experiencia <span aria-hidden="true">↗</span></a>
+          <a class="button button-ghost" href="#como-funciona">Descubrir cómo funciona <span aria-hidden="true">↓</span></a>
+        </div>
+        <ul class="hero-notes" aria-label="Características destacadas">
+          <li>Sin descargar una app</li>
+          <li>Actualización en tiempo real</li>
+          <li>Accesos según cada rol</li>
+        </ul>
+      </div>
+
+      <div class="hero-visual" aria-label="Vista ilustrativa del menú y la operación MesaFlow">
+        <div class="food-frame">
+          <img src="/images/mesa-demo.png" alt="Selección de platos de un menú gastronómico" width="1536" height="1024" fetchpriority="high" />
+          <span class="image-caption">Una carta que entra por los ojos</span>
+        </div>
+        <article class="customer-preview">
+          <header><span class="mini-brand">M</span><small>Mesa 04</small><i></i></header>
+          <p>Principales</p>
+          <h2>Elegí a tu ritmo</h2>
+          <div class="preview-product">
+            <span class="product-thumb burger"></span>
+            <div><strong>Burger de la casa</strong><small>Con papas rústicas</small></div>
+            <b>$12.900</b>
+          </div>
+          <div class="preview-product">
+            <span class="product-thumb pasta"></span>
+            <div><strong>Ravioles de espinaca</strong><small>Ricota y parmesano</small></div>
+            <b>$11.800</b>
+          </div>
+          <button type="button" tabindex="-1">Ver pedido · 2</button>
+        </article>
+        <article class="operation-preview">
+          <header><span><i></i> Servicio en vivo</span><strong>8 pedidos</strong></header>
+          <div class="operation-columns">
+            <div><small>NUEVO</small><b>Mesa 7</b><span>2 productos</span></div>
+            <div class="preparing"><small>EN PREPARACIÓN</small><b>Mesa 4</b><span>3 productos</span></div>
+            <div class="ready"><small>LISTO</small><b>Mesa 2</b><span>1 producto</span></div>
+          </div>
+        </article>
+        <div class="floating-status"><span>✓</span><div><strong>Pedido confirmado</strong><small>La cocina ya lo recibió</small></div></div>
+      </div>
+    </section>
+
+    <section class="signal-strip" aria-label="Alcance de MesaFlow">
+      <div class="section-shell signal-inner">
+        <p>Una misma fuente de verdad para</p>
+        <ul><li>Menú QR</li><li>Salón</li><li>Cocina</li><li>Pagos</li><li>Métricas</li></ul>
+      </div>
+    </section>
+
+    <section class="steps section-shell" id="como-funciona">
+      <div class="section-heading split-heading">
+        <div><p class="eyebrow"><span></span>Un recorrido natural</p><h2>De la mesa al equipo,<br /><em>sin fricción.</em></h2></div>
+        <p>La tecnología acompaña el servicio sin reemplazar lo importante: la atención humana.</p>
+      </div>
+      <div class="steps-grid">
+        {steps.map((step) => (
+          <article class="step-card">
+            <span>{step.number}</span>
+            <div class="step-icon" aria-hidden="true"><i></i></div>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="product-section" id="producto">
+      <div class="section-shell">
+        <div class="section-heading centered-heading">
+          <p class="eyebrow"><span></span>Todo conectado</p>
+          <h2>Una experiencia para el cliente.<br /><em>Una operación para tu equipo.</em></h2>
+        </div>
+        <div class="product-grid">
+          <article class="feature-card feature-large feature-menu">
+            <div class="feature-copy"><span class="feature-index">01</span><h3>Menú que invita a elegir</h3><p>Categorías, imágenes incluidas, búsqueda, disponibilidad y detalle de cada producto.</p></div>
+            <div class="menu-stack" aria-hidden="true"><i></i><i></i><i></i><span>Disponible ahora</span></div>
+          </article>
+          <article class="feature-card feature-orders">
+            <span class="feature-index">02</span><div class="line-icon" aria-hidden="true">↗</div><h3>Pedidos visibles</h3><p>El cliente sigue cada cambio y el equipo trabaja sobre una cola compartida.</p>
+          </article>
+          <article class="feature-card feature-assistance">
+            <span class="feature-index">03</span><div class="bell-rings" aria-hidden="true"><i>!</i><span></span></div><h3>Asistencia a tiempo</h3><p>Llamados y pedidos de cuenta llegan al salón; WhatsApp queda como aviso opt-in.</p>
+          </article>
+          <article class="feature-card feature-dashboard">
+            <div class="feature-copy"><span class="feature-index">04</span><h3>Decisiones con contexto</h3><p>Ventas, pedidos, pagos y productos destacados en un resumen diario acotado.</p></div>
+            <div class="mini-chart" aria-label="Gráfico ilustrativo de ventas"><i style="--h: 38%"></i><i style="--h: 62%"></i><i style="--h: 48%"></i><i style="--h: 86%"></i><i style="--h: 72%"></i><i style="--h: 94%"></i></div>
+          </article>
+          <article class="feature-card feature-roles">
+            <span class="feature-index">05</span><h3>Cada rol ve lo necesario</h3><div class="role-list"><span>Propietario</span><span>Encargado</span><span>Salón</span><span>Cocina</span></div>
+          </article>
+        </div>
+        <div class="product-action"><a class="button button-dark" href={adminUrl}>Explorar el panel <span aria-hidden="true">↗</span></a></div>
+      </div>
+    </section>
+
+    <section class="benefits section-shell">
+      <div class="benefit-intro"><p class="eyebrow"><span></span>Hecho para el servicio real</p><h2>Menos interrupciones.<br /><em>Más claridad.</em></h2></div>
+      <div class="benefit-list">
+        <article><span>01</span><div><h3>El cliente mantiene el control</h3><p>Puede explorar, pedir, consultar el estado y solicitar ayuda desde su mesa.</p></div></article>
+        <article><span>02</span><div><h3>El equipo comparte el contexto</h3><p>Los cambios se reflejan en tiempo real y las acciones respetan permisos operativos.</p></div></article>
+        <article><span>03</span><div><h3>La administración ve el negocio</h3><p>Configuración, personas y métricas conviven sin mezclar información entre establecimientos.</p></div></article>
+      </div>
+    </section>
+
+    <section class="plans-section" id="planes">
+      <div class="section-shell">
+        <div class="section-heading split-heading plans-heading">
+          <div><p class="eyebrow light"><span></span>Planes</p><h2>Un punto de partida<br /><em>para cada operación.</em></h2></div>
+          <p>El alcance comercial definitivo se confirmará antes del lanzamiento. Estos niveles muestran cómo puede crecer la solución.</p>
+        </div>
+        <div class="plans-grid">
+          {plans.map((plan, index) => (
+            <article class:list={["plan-card", { featured: index === 1 }]}>
+              {index === 1 && <span class="recommended">Recomendado</span>}
+              <p>{plan.eyebrow}</p><h3>{plan.name}</h3><div class="plan-price">Alcance <strong>{index === 2 ? "personalizado" : "definido"}</strong></div>
+              <p class="plan-description">{plan.description}</p>
+              <ul>{plan.features.map((feature) => <li><span>✓</span>{feature}</li>)}</ul>
+              <a href={`${contactUrl}&body=${encodeURIComponent(`Quiero conocer más sobre el plan ${plan.name}.`)}`}>Consultar plan <span aria-hidden="true">↗</span></a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="faq section-shell" id="preguntas">
+      <div class="faq-heading"><p class="eyebrow"><span></span>Preguntas frecuentes</p><h2>Lo importante,<br /><em>sin vueltas.</em></h2></div>
+      <div class="faq-list">
+        <details open><summary>¿El cliente tiene que instalar una aplicación?<span>+</span></summary><p>No. La experiencia principal funciona en el navegador a partir del QR de la mesa.</p></details>
+        <details><summary>¿Cada persona del equipo ve lo mismo?<span>+</span></summary><p>No. Propietario, encargado, salón y cocina tienen rutas y acciones acordes con su función.</p></details>
+        <details><summary>¿Los pagos se confirman desde el navegador?<span>+</span></summary><p>No. El retorno es informativo; la aprobación se concilia en el backend con la respuesta verificada del proveedor.</p></details>
+        <details><summary>¿Se puede probar sin tarjeta de crédito?<span>+</span></summary><p>Sí. El entorno local usa emuladores, imágenes empaquetadas y proveedores simulados. El despliegue de Functions se evalúa por separado.</p></details>
+      </div>
+    </section>
+
+    <section class="final-cta section-shell" id="contacto">
+      <div>
+        <p class="eyebrow light"><span></span>El próximo servicio empieza acá</p>
+        <h2>Cada mesa puede<br /><em>fluir mejor.</em></h2>
+        <p>Conocé el MVP operativo y conversemos sobre el alcance que necesita tu establecimiento.</p>
+        <div class="hero-actions"><a class="button button-light" href={customerUrl}>Abrir la experiencia <span aria-hidden="true">↗</span></a><a class="button button-outline-light" href={contactUrl}>Contactar al equipo</a></div>
+      </div>
+      <div class="cta-mark" aria-hidden="true"><span>M</span><i></i><i></i></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="section-shell footer-grid">
+      <div><a class="brand footer-brand" href="#inicio"><span class="brand-mark">M</span><span>MesaFlow</span></a><p>Hospitalidad conectada, desde la primera mirada al menú hasta la última decisión del día.</p></div>
+      <nav aria-label="Navegación de pie"><strong>Producto</strong><a href="#como-funciona">Cómo funciona</a><a href="#producto">Funcionalidades</a><a href="#planes">Planes</a></nav>
+      <nav aria-label="Enlaces del proyecto"><strong>Proyecto</strong><a href={repositoryUrl}>Código público</a><a href={customerUrl}>Experiencia cliente</a><a href={adminUrl}>Panel administrativo</a></nav>
+    </div>
+    <div class="section-shell footer-bottom"><span>© {new Date().getFullYear()} MesaFlow</span><span>MVP académico · Argentina</span></div>
+  </footer>
+
+  <script>
+    const toggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
+    const navigation = document.querySelector<HTMLElement>(".main-navigation");
+    const header = document.querySelector<HTMLElement>("[data-header]");
+    const closeNavigation = () => {
+      toggle?.setAttribute("aria-expanded", "false");
+      navigation?.classList.remove("open");
+    };
+    toggle?.addEventListener("click", () => {
+      const open = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!open));
+      navigation?.classList.toggle("open", !open);
+    });
+    navigation?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeNavigation));
+    window.addEventListener("scroll", () => header?.classList.toggle("scrolled", window.scrollY > 16), { passive: true });
+  </script>
+</BaseLayout>

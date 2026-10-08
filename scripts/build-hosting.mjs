@@ -86,6 +86,25 @@ function runAdminBuild() {
   });
 }
 
+function runLandingBuild() {
+  const npmCli = process.env.npm_execpath;
+  if (!npmCli) throw new Error("No se pudo localizar npm para construir la landing.");
+  return new Promise((resolve, reject) => {
+    const child = spawn(
+      process.execPath,
+      [npmCli, "run", "build", "--workspace", "@mesaflow/landing"],
+      { cwd: root, stdio: "inherit", env: process.env }
+    );
+    child.on("error", (error) => reject(new Error(
+      `No se pudo iniciar el build de la landing: ${error.message}`
+    )));
+    child.on("exit", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`El build de la landing terminó con código ${code}.`));
+    });
+  });
+}
+
 try {
   if (await customerBuildIsCurrent()) {
     console.log("[OK] Build Flutter vigente; no fue necesario recompilar.");
@@ -98,6 +117,7 @@ try {
     );
   }
   await runAdminBuild();
+  await runLandingBuild();
   for (const relativePath of [
     "apps/customer/build/web/index.html",
     "apps/admin/hosting/index.html",
@@ -106,7 +126,7 @@ try {
   ]) {
     await access(path.join(root, relativePath), constants.R_OK);
   }
-  console.log("[OK] Builds de customer/admin y contenido landing listos para Hosting local.");
+  console.log("[OK] Builds de customer, admin y landing listos para Hosting local.");
 } catch (error) {
   console.error(error instanceof Error ? error.message : error);
   process.exitCode = 1;

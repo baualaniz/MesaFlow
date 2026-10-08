@@ -65,6 +65,13 @@ CLI y por eso no se aplica. La dependencia queda limitada al observador de
 archivos de la herramienta local: no se empaqueta en React ni en Functions. Se
 revisará nuevamente en la Etapa 45 o cuando el proveedor publique una corrección.
 
+En la Etapa 41, al incorporar Astro, la auditoría no detectó avisos en ese nuevo
+árbol. Sí informó un aviso alto corregible en `@modelcontextprotocol/sdk`,
+dependencia transitiva de Firebase CLI; se fijó la versión corregida 1.32.1 y se
+volvieron a ejecutar las pruebas de herramientas y emuladores. La auditoría
+completa conserva únicamente las tres entradas asociadas a `braces` ya acotadas
+en el párrafo anterior.
+
 ## Revisión futura
 
 Al actualizar Firebase CLI, comprobar si el proveedor ya incorpora estas

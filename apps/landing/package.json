@@ -1,0 +1,16 @@
+{
+  "name": "@mesaflow/landing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ./scripts/astro.mjs dev --host 127.0.0.1 --port 4321",
+    "build": "node ./scripts/astro.mjs build",
+    "preview": "node ./scripts/astro.mjs preview --host 127.0.0.1 --port 4322",
+    "test": "node --test ./test/**/*.test.mjs",
+    "check": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "astro": "7.3.6"
+  }
+}

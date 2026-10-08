@@ -16,9 +16,9 @@
     },
     {
       "name": "landing",
-      "kind": "static-placeholder",
+      "kind": "static",
       "public": "apps/landing/hosting",
-      "build": "static-placeholder"
+      "build": "astro-static"
     }
   ],
   "emulator": {

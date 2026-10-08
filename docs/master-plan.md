@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–40 completadas en alcance local. La siguiente etapa
-construirá la landing comercial responsive en Astro.
+Estado actual: Etapas 1–41 completadas en alcance local. La siguiente etapa
+profundizará SEO, metadatos sociales, accesibilidad y auditoría Lighthouse.
 
 ## Fases 1–10: base y Firebase
 
@@ -127,6 +127,7 @@ construirá la landing comercial responsive en Astro.
 | 38 | Completa localmente: agregados diarios transaccionales, ventas idempotentes, dashboard de siete días, ranking y RBAC | `docs/stage-38-sales-metrics.md` |
 | 39 | Completa localmente: marca, contacto, horarios y flags públicos/privados con guardado atómico, reglas estrictas y efecto en QR/pedidos | `docs/stage-39-establishment-settings.md` |
 | 40 | Completa localmente: alerta opt-in de asistencia, proveedor Cloud API configurable, mock sin red, idempotencia, límite de 60 segundos y logs privados | `docs/stage-40-whatsapp-assistance.md` |
+| 41 | Completa localmente: landing Astro responsive, narrativa comercial, planes, CTAs, recursos locales, 404 real y build integrado con Hosting | `docs/stage-41-commercial-landing.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

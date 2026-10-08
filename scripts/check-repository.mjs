@@ -76,6 +76,15 @@ const requiredPaths = [
   "apps/admin/src/team/team-permissions.ts",
   "apps/admin/src/pages/team-page.tsx",
   "apps/landing",
+  "apps/landing/package.json",
+  "apps/landing/astro.config.mjs",
+  "apps/landing/tsconfig.json",
+  "apps/landing/src/layouts/BaseLayout.astro",
+  "apps/landing/src/pages/index.astro",
+  "apps/landing/src/pages/404.astro",
+  "apps/landing/src/styles/global.css",
+  "apps/landing/scripts/astro.mjs",
+  "apps/landing/test/landing.test.mjs",
   "docs/architecture.md",
   "docs/guia-entrega-avance.md",
   "docs/informe-avance-presentacion.md",
@@ -166,6 +175,7 @@ const requiredPaths = [
   "docs/stage-38-sales-metrics.md",
   "docs/stage-39-establishment-settings.md",
   "docs/stage-40-whatsapp-assistance.md",
+  "docs/stage-41-commercial-landing.md",
   "functions/src/data/firestore-converters.ts",
   "functions/src/data/tenant-repository.ts",
   "functions/src/data/firestore-qr-session-repository.ts",
@@ -321,7 +331,16 @@ async function listRepositoryFiles() {
     ["ls-files", "--cached", "--others", "--exclude-standard", "-z"],
     { cwd: root, encoding: "utf8", maxBuffer: 10 * 1024 * 1024 }
   );
-  return stdout.split("\0").filter(Boolean);
+  const candidates = stdout.split("\0").filter(Boolean);
+  const existing = await Promise.all(candidates.map(async (relativePath) => {
+    try {
+      await access(path.join(root, relativePath), constants.F_OK);
+      return relativePath;
+    } catch {
+      return null;
+    }
+  }));
+  return existing.filter(Boolean);
 }
 
 function findForbiddenFiles(files) {
