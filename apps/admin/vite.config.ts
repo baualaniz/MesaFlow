@@ -27,6 +27,34 @@ export default defineConfig({
   test: {
     environment: "node",
     fileParallelism: false,
-    isolate: false
+    isolate: false,
+    setupFiles: [resolve(root, "src/test/setup.ts")],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json-summary", "lcov"],
+      reportsDirectory: resolve(root, "coverage"),
+      include: [
+        "src/assistance/{assistance-model,assistance-permissions}.ts",
+        "src/auth/auth-errors.ts",
+        "src/components/*.tsx",
+        "src/config/environment.ts",
+        "src/layouts/{admin-shell,auth-layout}.tsx",
+        "src/menu/{catalog-utils,image-options,menu-model,menu-permissions}.ts",
+        "src/metrics/metrics-model.ts",
+        "src/orders/{order-model,order-visibility}.ts",
+        "src/pages/{login-page,reset-password-page}.tsx",
+        "src/routing/guards.ts",
+        "src/settings/settings-model.ts",
+        "src/tables/{qr-links,table-model,table-permissions}.ts",
+        "src/team/{team-model,team-permissions}.ts",
+        "src/tenant/{access-control,tenant-model}.ts"
+      ],
+      thresholds: {
+        branches: 80,
+        functions: 85,
+        lines: 85,
+        statements: 85
+      }
+    }
   }
 });

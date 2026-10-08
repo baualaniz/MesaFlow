@@ -50,6 +50,15 @@ flutter.bat test
 flutter.bat build web --dart-define=MESAFLOW_ENV=emulator
 ```
 
+Desde la raíz, la comprobación con cobertura y límites automáticos es:
+
+```powershell
+npm.cmd run customer:coverage
+```
+
+Exige al menos 75% de líneas en la aplicación propia y 80% en lógica/widgets
+críticos. Las opciones Firebase generadas no alteran estas métricas.
+
 Para ejecutar directamente en Chrome:
 
 ```powershell

@@ -23,7 +23,7 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config && npm run test:firestore-indexes && npm run test:storage-config && npm run test:secrets-config && npm run test:mercado-pago-config && npm run test:hosting-config && npm run test:presentation-seed && npm run test:demo-seed && npm run test:customer-config && npm run test:contracts && npm run landing:check && npm run admin:check && npm run functions:check",
+    "check": "npm run check:repo && npm run test:config && npm run test:tooling && npm run test:auth-config && npm run test:firestore-config && npm run test:firestore-indexes && npm run test:storage-config && npm run test:secrets-config && npm run test:mercado-pago-config && npm run test:hosting-config && npm run test:presentation-seed && npm run test:demo-seed && npm run test:customer-config && npm run test:contracts && npm run landing:check && npm run admin:check && npm run customer:coverage && npm run functions:check",
     "check:repo": "node ./scripts/check-repository.mjs",
     "test:config": "node --test ./scripts/firebase-projects.test.mjs ./scripts/emulator-config.test.mjs",
     "test:tooling": "node --test ./scripts/tooling-dependencies.test.mjs ./scripts/java-runtime.test.mjs",
@@ -59,6 +59,9 @@
     "landing:check": "npm run check --workspace @mesaflow/landing",
     "landing:audit": "npm run audit --workspace @mesaflow/landing",
     "admin:check": "npm run check --workspace @mesaflow/admin",
+    "admin:coverage": "npm run test:coverage --workspace @mesaflow/admin",
+    "customer:coverage": "node ./scripts/check-customer-coverage.mjs",
+    "test:critical": "npm run admin:coverage && npm run customer:coverage",
     "preview:customer": "node ./scripts/serve-customer-preview.mjs",
     "check:env": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-environment.ps1",
     "emulators": "node ./scripts/run-emulators.mjs start",

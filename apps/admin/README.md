@@ -20,8 +20,10 @@ Contraseña: `MesaFlowDemo31!`.
 Estas credenciales funcionan exclusivamente en `demo-mesaflow`; nunca se crean
 en desarrollo ni producción.
 
-`npm.cmd run check --workspace @mesaflow/admin` ejecuta lint, 61 pruebas y el
-build de emulador. `hosting/` es salida generada e ignorada por Git.
+`npm.cmd run check --workspace @mesaflow/admin` ejecuta lint, 76 pruebas con
+cobertura y el build de emulador. La capa crítica exige al menos 85% de
+sentencias, funciones y líneas, y 80% de ramas. `hosting/` y `coverage/` son
+salidas generadas e ignoradas por Git.
 
 La ruta `/operacion/mesas` ofrece listado realtime, alta y edición, sesiones,
 rotación segura individual/masiva y hojas QR listas para imprimir o guardar como

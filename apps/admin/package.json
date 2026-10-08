@@ -8,7 +8,8 @@
     "build": "tsc --build && vite build",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings=0",
     "test": "vitest run",
-    "check": "npm run lint && npm test && npm run build -- --mode emulator"
+    "test:coverage": "vitest run --coverage",
+    "check": "npm run lint && npm run test:coverage && npm run build -- --mode emulator"
   },
   "dependencies": {
     "@mesaflow/contracts": "0.1.0",
@@ -28,6 +29,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.2",
+    "@vitest/coverage-v8": "5.0.3",
     "eslint": "10.10.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-react-refresh": "0.5.7",

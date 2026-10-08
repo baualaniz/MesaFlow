@@ -202,6 +202,26 @@ el foco y se cierra al abandonar el breakpoint. Los estilos incorporan foco visi
 movimiento reducido y contraste validado. Un script local controla Lighthouse con
 umbrales versionados y sin guardar informes temporales ni iniciar servicios cloud.
 
+## Calidad unitaria y de componentes — Etapa 43
+
+El panel usa Vitest, Testing Library, JSDOM y cobertura V8. Los modelos, permisos,
+guards y componentes críticos se ejecutan sin Firebase real. Las páginas de
+autenticación reciben un contexto falso y la navegación simulada; `AdminShell`
+recibe identidades y membresías controladas para verificar RBAC, selección de
+establecimiento, sesión y menú móvil sobre el DOM real. Los mínimos globales del
+alcance crítico son 85% en sentencias, funciones y líneas, y 80% en ramas.
+
+Flutter ejecuta sus 78 pruebas con `--coverage`. Un script común localiza el SDK
+de forma portable, genera LCOV y aplica dos límites de líneas: 75% para la
+aplicación propia sin opciones Firebase generadas y 80% para lógica/widgets sin
+adaptadores `firebase_*`. Los repositorios Firestore permanecen dentro de la
+medición crítica; los límites de red/plataforma se completan con emuladores en la
+etapa siguiente.
+
+`npm run test:critical` reúne ambos controles. `npm run check` también los
+incluye, de modo que una regresión funcional o de cobertura bloquea el cierre
+local antes de llegar a integración, CI o despliegue.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por

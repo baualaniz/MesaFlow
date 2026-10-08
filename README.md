@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 42** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 43** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -26,6 +26,8 @@ y conserva una página 404 independiente.
 La misma landing publica canonical, Open Graph, Twitter Card, JSON-LD, favicon,
 manifiesto, robots y sitemap; su navegación por teclado, contraste y rendimiento
 se controlan con pruebas y Lighthouse local.
+La suite rápida de calidad cubre componentes React, widgets Flutter y lógica
+crítica con umbrales automáticos de cobertura antes de integrar o desplegar.
 La aplicación reconoce enlaces QR `/e/:slug/table/:tableId`, conserva la ruta al
 recargar y rechaza contextos de mesa mal formados sin tratarlos como autorización.
 El token QR se canjea mediante Auth anónima y Functions, se elimina de la URL y
@@ -137,6 +139,7 @@ encuentran en:
 - `docs/stage-40-whatsapp-assistance.md`
 - `docs/stage-41-commercial-landing.md`
 - `docs/stage-42-seo-accessibility.md`
+- `docs/stage-43-unit-widget-component-tests.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -166,12 +169,18 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 225
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 318
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
 cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-15 de contratos, nueve de landing, 61 del panel y 59 de Functions), más los lint y builds
+15 de contratos, nueve de landing, 76 del panel, 78 de Flutter y 59 de Functions), más los lint y builds
 TypeScript. Este comando no consulta servicios remotos.
+
+Para ejecutar únicamente la suite crítica y sus umbrales de cobertura:
+
+```powershell
+npm.cmd run test:critical
+```
 
 La auditoría visual/técnica de la landing usa Chrome local y se ejecuta aparte:
 
@@ -179,8 +188,8 @@ La auditoría visual/técnica de la landing usa Chrome local y se ejecuta aparte
 npm.cmd run landing:audit
 ```
 
-Los contratos compartidos tienen además siete pruebas Dart contra los mismos
-fixtures. Se ejecutan por separado porque requieren el SDK Flutter:
+Los contratos compartidos tienen además un control enfocado que compara siete
+pruebas Dart con los mismos fixtures, útil cuando solo cambia el contrato:
 
 ```powershell
 npm.cmd run contracts:check
