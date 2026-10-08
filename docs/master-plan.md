@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–41 completadas en alcance local. La siguiente etapa
-profundizará SEO, metadatos sociales, accesibilidad y auditoría Lighthouse.
+Estado actual: Etapas 1–42 completadas en alcance local. La siguiente etapa
+ampliará las pruebas unitarias, widget y de componentes críticos.
 
 ## Fases 1–10: base y Firebase
 
@@ -128,6 +128,7 @@ profundizará SEO, metadatos sociales, accesibilidad y auditoría Lighthouse.
 | 39 | Completa localmente: marca, contacto, horarios y flags públicos/privados con guardado atómico, reglas estrictas y efecto en QR/pedidos | `docs/stage-39-establishment-settings.md` |
 | 40 | Completa localmente: alerta opt-in de asistencia, proveedor Cloud API configurable, mock sin red, idempotencia, límite de 60 segundos y logs privados | `docs/stage-40-whatsapp-assistance.md` |
 | 41 | Completa localmente: landing Astro responsive, narrativa comercial, planes, CTAs, recursos locales, 404 real y build integrado con Hosting | `docs/stage-41-commercial-landing.md` |
+| 42 | Completa localmente: metadata social/canónica, JSON-LD, robots/sitemap/manifiesto, teclado, contraste, WebP y Lighthouse 98/100/100/100 | `docs/stage-42-seo-accessibility.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

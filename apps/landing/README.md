@@ -11,9 +11,13 @@ Desde la raíz del repositorio:
 ```powershell
 npm.cmd run dev --workspace @mesaflow/landing
 npm.cmd run check --workspace @mesaflow/landing
+npm.cmd run landing:audit
 ```
 
 El servidor de desarrollo queda en `http://127.0.0.1:4321`. El build estático se
 genera en `hosting/`, que Firebase Hosting sirve como un destino independiente.
 Las fuentes y la fotografía gastronómica se reutilizan desde los recursos locales
 de la aplicación cliente; el build no depende de recursos visuales remotos.
+La URL canónica usa `PUBLIC_LANDING_URL` y debe recibir el dominio HTTPS definitivo
+al desplegar. Lighthouse exige mínimos versionados y cierra su servidor y Chrome
+automáticamente al terminar.

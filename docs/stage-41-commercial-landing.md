@@ -69,5 +69,5 @@ Luego se abre `http://127.0.0.1:4321`.
 
 No se publicó ningún sitio ni se activó facturación. Los metadatos sociales,
 datos estructurados, auditoría Lighthouse formal y endurecimiento adicional de
-accesibilidad corresponden a la Etapa 42. Los dominios y el despliegue cloud se
-mantienen reservados para la Etapa 47.
+accesibilidad se completaron posteriormente en la Etapa 42. Los dominios y el
+despliegue cloud se mantienen reservados para la Etapa 47.

@@ -5,6 +5,37 @@ const customerUrl = import.meta.env.PUBLIC_CUSTOMER_URL || "http://127.0.0.1:510
 const adminUrl = import.meta.env.PUBLIC_ADMIN_URL || "http://127.0.0.1:5105";
 const repositoryUrl = "https://github.com/baualaniz/MesaFlow";
 const contactUrl = `${repositoryUrl}/issues/new?title=${encodeURIComponent("Consulta sobre MesaFlow")}`;
+const landingUrl = (Astro.site ?? new URL("http://127.0.0.1:5106")).toString();
+const description = "MesaFlow conecta menú QR, pedidos, asistencia, pagos y operación gastronómica en tiempo real.";
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${landingUrl}#website`,
+      name: "MesaFlow",
+      url: landingUrl,
+      description,
+      inLanguage: "es-AR"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${landingUrl}#application`,
+      name: "MesaFlow",
+      url: landingUrl,
+      description,
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      featureList: [
+        "Menú web por QR",
+        "Pedidos y seguimiento en tiempo real",
+        "Solicitudes de asistencia",
+        "Panel operativo por roles",
+        "Pagos y métricas"
+      ]
+    }
+  ]
+};
 
 const steps = [
   {
@@ -48,7 +79,8 @@ const plans = [
 
 <BaseLayout
   title="MesaFlow — Cada mesa, mejor atendida"
-  description="MesaFlow conecta menú QR, pedidos, asistencia, pagos y operación gastronómica en tiempo real."
+  {description}
+  {structuredData}
 >
   <header class="site-header" data-header data-hosting-target="landing">
     <div class="nav-shell">
@@ -56,8 +88,8 @@ const plans = [
         <span class="brand-mark" aria-hidden="true">M</span>
         <span>MesaFlow</span>
       </a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-navigation">
-        <span></span><span></span><span></span><span class="sr-only">Abrir menú</span>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-navigation" aria-label="Abrir menú">
+        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
       </button>
       <nav id="main-navigation" class="main-navigation" aria-label="Navegación principal">
         <a href="#como-funciona">Cómo funciona</a>
@@ -89,9 +121,9 @@ const plans = [
         </ul>
       </div>
 
-      <div class="hero-visual" aria-label="Vista ilustrativa del menú y la operación MesaFlow">
+      <div class="hero-visual" aria-hidden="true">
         <div class="food-frame">
-          <img src="/images/mesa-demo.png" alt="Selección de platos de un menú gastronómico" width="1536" height="1024" fetchpriority="high" />
+          <img src="/images/mesa-demo.webp" alt="" width="1024" height="683" fetchpriority="high" />
           <span class="image-caption">Una carta que entra por los ojos</span>
         </div>
         <article class="customer-preview">
@@ -108,7 +140,7 @@ const plans = [
             <div><strong>Ravioles de espinaca</strong><small>Ricota y parmesano</small></div>
             <b>$11.800</b>
           </div>
-          <button type="button" tabindex="-1">Ver pedido · 2</button>
+          <span class="preview-button">Ver pedido · 2</span>
         </article>
         <article class="operation-preview">
           <header><span><i></i> Servicio en vivo</span><strong>8 pedidos</strong></header>
@@ -165,7 +197,7 @@ const plans = [
           </article>
           <article class="feature-card feature-dashboard">
             <div class="feature-copy"><span class="feature-index">04</span><h3>Decisiones con contexto</h3><p>Ventas, pedidos, pagos y productos destacados en un resumen diario acotado.</p></div>
-            <div class="mini-chart" aria-label="Gráfico ilustrativo de ventas"><i style="--h: 38%"></i><i style="--h: 62%"></i><i style="--h: 48%"></i><i style="--h: 86%"></i><i style="--h: 72%"></i><i style="--h: 94%"></i></div>
+            <div class="mini-chart" aria-hidden="true"><i style="--h: 38%"></i><i style="--h: 62%"></i><i style="--h: 48%"></i><i style="--h: 86%"></i><i style="--h: 72%"></i><i style="--h: 94%"></i></div>
           </article>
           <article class="feature-card feature-roles">
             <span class="feature-index">05</span><h3>Cada rol ve lo necesario</h3><div class="role-list"><span>Propietario</span><span>Encargado</span><span>Salón</span><span>Cocina</span></div>
@@ -207,10 +239,10 @@ const plans = [
     <section class="faq section-shell" id="preguntas">
       <div class="faq-heading"><p class="eyebrow"><span></span>Preguntas frecuentes</p><h2>Lo importante,<br /><em>sin vueltas.</em></h2></div>
       <div class="faq-list">
-        <details open><summary>¿El cliente tiene que instalar una aplicación?<span>+</span></summary><p>No. La experiencia principal funciona en el navegador a partir del QR de la mesa.</p></details>
-        <details><summary>¿Cada persona del equipo ve lo mismo?<span>+</span></summary><p>No. Propietario, encargado, salón y cocina tienen rutas y acciones acordes con su función.</p></details>
-        <details><summary>¿Los pagos se confirman desde el navegador?<span>+</span></summary><p>No. El retorno es informativo; la aprobación se concilia en el backend con la respuesta verificada del proveedor.</p></details>
-        <details><summary>¿Se puede probar sin tarjeta de crédito?<span>+</span></summary><p>Sí. El entorno local usa emuladores, imágenes empaquetadas y proveedores simulados. El despliegue de Functions se evalúa por separado.</p></details>
+        <details open><summary>¿El cliente tiene que instalar una aplicación?<span aria-hidden="true">+</span></summary><p>No. La experiencia principal funciona en el navegador a partir del QR de la mesa.</p></details>
+        <details><summary>¿Cada persona del equipo ve lo mismo?<span aria-hidden="true">+</span></summary><p>No. Propietario, encargado, salón y cocina tienen rutas y acciones acordes con su función.</p></details>
+        <details><summary>¿Los pagos se confirman desde el navegador?<span aria-hidden="true">+</span></summary><p>No. El retorno es informativo; la aprobación se concilia en el backend con la respuesta verificada del proveedor.</p></details>
+        <details><summary>¿Se puede probar sin tarjeta de crédito?<span aria-hidden="true">+</span></summary><p>Sí. El entorno local usa emuladores, imágenes empaquetadas y proveedores simulados. El despliegue de Functions se evalúa por separado.</p></details>
       </div>
     </section>
 
@@ -227,7 +259,7 @@ const plans = [
 
   <footer class="site-footer">
     <div class="section-shell footer-grid">
-      <div><a class="brand footer-brand" href="#inicio"><span class="brand-mark">M</span><span>MesaFlow</span></a><p>Hospitalidad conectada, desde la primera mirada al menú hasta la última decisión del día.</p></div>
+      <div><a class="brand footer-brand" href="#inicio"><span class="brand-mark" aria-hidden="true">M</span><span>MesaFlow</span></a><p>Hospitalidad conectada, desde la primera mirada al menú hasta la última decisión del día.</p></div>
       <nav aria-label="Navegación de pie"><strong>Producto</strong><a href="#como-funciona">Cómo funciona</a><a href="#producto">Funcionalidades</a><a href="#planes">Planes</a></nav>
       <nav aria-label="Enlaces del proyecto"><strong>Proyecto</strong><a href={repositoryUrl}>Código público</a><a href={customerUrl}>Experiencia cliente</a><a href={adminUrl}>Panel administrativo</a></nav>
     </div>
@@ -240,14 +272,26 @@ const plans = [
     const header = document.querySelector<HTMLElement>("[data-header]");
     const closeNavigation = () => {
       toggle?.setAttribute("aria-expanded", "false");
+      toggle?.setAttribute("aria-label", "Abrir menú");
       navigation?.classList.remove("open");
     };
     toggle?.addEventListener("click", () => {
       const open = toggle.getAttribute("aria-expanded") === "true";
       toggle.setAttribute("aria-expanded", String(!open));
+      toggle.setAttribute("aria-label", open ? "Abrir menú" : "Cerrar menú");
       navigation?.classList.toggle("open", !open);
     });
     navigation?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeNavigation));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && toggle?.getAttribute("aria-expanded") === "true") {
+        closeNavigation();
+        toggle.focus();
+      }
+    });
+    document.addEventListener("click", (event) => {
+      if (event.target instanceof Node && !header?.contains(event.target)) closeNavigation();
+    });
+    window.matchMedia("(min-width: 48.01rem)").addEventListener("change", closeNavigation);
     window.addEventListener("scroll", () => header?.classList.toggle("scrolled", window.scrollY > 16), { passive: true });
   </script>
 </BaseLayout>

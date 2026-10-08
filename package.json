@@ -57,6 +57,7 @@
     "functions:test": "npm test --workspace @mesaflow/functions",
     "functions:check": "npm run check --workspace @mesaflow/functions",
     "landing:check": "npm run check --workspace @mesaflow/landing",
+    "landing:audit": "npm run audit --workspace @mesaflow/landing",
     "admin:check": "npm run check --workspace @mesaflow/admin",
     "preview:customer": "node ./scripts/serve-customer-preview.mjs",
     "check:env": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-environment.ps1",

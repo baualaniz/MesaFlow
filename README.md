@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 41** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 42** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -23,6 +23,9 @@ La landing comercial ya es una aplicación Astro responsive con propuesta de val
 recorrido del producto, funcionalidades, beneficios, planes, preguntas frecuentes
 y CTAs hacia la experiencia y el panel. Usa únicamente fuentes e imágenes locales
 y conserva una página 404 independiente.
+La misma landing publica canonical, Open Graph, Twitter Card, JSON-LD, favicon,
+manifiesto, robots y sitemap; su navegación por teclado, contraste y rendimiento
+se controlan con pruebas y Lighthouse local.
 La aplicación reconoce enlaces QR `/e/:slug/table/:tableId`, conserva la ruta al
 recargar y rechaza contextos de mesa mal formados sin tratarlos como autorización.
 El token QR se canjea mediante Auth anónima y Functions, se elimina de la URL y
@@ -133,6 +136,7 @@ encuentran en:
 - `docs/stage-39-establishment-settings.md`
 - `docs/stage-40-whatsapp-assistance.md`
 - `docs/stage-41-commercial-landing.md`
+- `docs/stage-42-seo-accessibility.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -162,12 +166,18 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 220
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 225
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
 cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-15 de contratos, cuatro de landing, 61 del panel y 59 de Functions), más los lint y builds
+15 de contratos, nueve de landing, 61 del panel y 59 de Functions), más los lint y builds
 TypeScript. Este comando no consulta servicios remotos.
+
+La auditoría visual/técnica de la landing usa Chrome local y se ejecuta aparte:
+
+```powershell
+npm.cmd run landing:audit
+```
 
 Los contratos compartidos tienen además siete pruebas Dart contra los mismos
 fixtures. Se ejecutan por separado porque requieren el SDK Flutter:

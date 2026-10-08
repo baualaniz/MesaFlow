@@ -185,10 +185,22 @@ planes, preguntas y CTA— y usa exclusivamente tipografías e imagen gastronóm
 versionadas en el repositorio.
 
 La landing no usa fallback SPA: mantiene URLs limpias y un `404.html` real. El
-build forma parte de `hosting:build`, y sus cuatro pruebas estructurales forman
+build forma parte de `hosting:build`, y sus nueve pruebas estructurales forman
 parte de `npm run check`. El JavaScript del cliente se limita al menú responsive;
-la navegación por secciones y el contenido principal son HTML semántico. SEO,
-datos estructurados y auditoría Lighthouse profunda continúan en la Etapa 42.
+la navegación por secciones y el contenido principal son HTML semántico.
+
+## SEO y accesibilidad de landing — Etapa 42
+
+El layout deriva URLs absolutas de `PUBLIC_LANDING_URL` y centraliza canonical,
+Open Graph, Twitter Card, robots y datos estructurados. Endpoints estáticos generan
+`robots.txt`, `sitemap.xml` y `site.webmanifest`; el 404 queda marcado para no ser
+indexado. La fotografía WebP de 101 KiB y una sola variante tipográfica mantienen
+la transferencia inicial acotada.
+
+La interacción móvil sincroniza nombre y estado ARIA, responde a `Escape`, devuelve
+el foco y se cierra al abandonar el breakpoint. Los estilos incorporan foco visible,
+movimiento reducido y contraste validado. Un script local controla Lighthouse con
+umbrales versionados y sin guardar informes temporales ni iniciar servicios cloud.
 
 ## Stack elegido
 

@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
+  site: process.env.PUBLIC_LANDING_URL || "http://127.0.0.1:5106",
   build: {
     assets: "_assets"
   },

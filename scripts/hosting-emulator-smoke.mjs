@@ -43,7 +43,16 @@ try {
   assert.equal(landing.headers.get("cache-control"), "no-cache, no-store, must-revalidate");
   const notFound = await get(`http://${EMULATOR_HOST}:${ports[2]}/ruta-inexistente`);
   assert.equal(notFound.status, 404);
-  console.log(`[OK] Hosting landing: raíz, headers y 404 en ${EMULATOR_HOST}:${ports[2]}`);
+  const robots = await get(`http://${EMULATOR_HOST}:${ports[2]}/robots.txt`);
+  assert.equal(robots.status, 200);
+  assert.match(await robots.text(), /Sitemap: http:\/\/127\.0\.0\.1:5106\/sitemap\.xml/u);
+  const sitemap = await get(`http://${EMULATOR_HOST}:${ports[2]}/sitemap.xml`);
+  assert.equal(sitemap.status, 200);
+  assert.match(await sitemap.text(), /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/u);
+  const manifest = await get(`http://${EMULATOR_HOST}:${ports[2]}/site.webmanifest`);
+  assert.equal(manifest.status, 200);
+  assert.equal((await manifest.json()).name, "MesaFlow");
+  console.log(`[OK] Hosting landing: raíz, SEO técnico, headers y 404 en ${EMULATOR_HOST}:${ports[2]}`);
 } catch (error) {
   console.error(`Smoke test de Hosting falló: ${error.message}`);
   process.exitCode = 1;
