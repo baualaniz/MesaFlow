@@ -32,8 +32,8 @@ try {
   const javaRuntime = resolveJava21Environment(process.env);
   const config = JSON.parse(await readFile(new URL("../firebase.json", import.meta.url), "utf8"));
   validateEmulatorConfig(config);
-  await runNpmScript("hosting:build");
   await runNpmScript("functions:build");
+  await runNpmScript("hosting:build");
   const cli = require.resolve("firebase-tools/lib/bin/firebase.js");
   console.log(`MesaFlow local: ${DEMO_PROJECT_ID}. No se utilizarán dev ni prod.`);
   console.log(`[OK] Emulator Suite usará Java ${javaRuntime.major}: ${javaRuntime.executable}`);

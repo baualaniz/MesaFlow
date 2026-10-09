@@ -7,6 +7,7 @@ const packageManifest = JSON.parse(await readFile(new URL("../package.json", imp
 const nodeVersion = (await readFile(new URL("../.nvmrc", import.meta.url), "utf8")).trim();
 const javaVersion = (await readFile(new URL("../.java-version", import.meta.url), "utf8")).trim();
 const customerManifest = await readFile(new URL("../apps/customer/pubspec.yaml", import.meta.url), "utf8");
+const emulatorRunner = await readFile(new URL("./run-emulators.mjs", import.meta.url), "utf8");
 
 test("CI se ejecuta en pull requests, main y disparo manual", () => {
   assert.match(workflow, /^on:\s*$/mu);
@@ -56,6 +57,11 @@ test("E2E espera calidad y recorre emuladores con Java y Chrome", () => {
   assert.match(workflow, /actions\/setup-java@[0-9a-f]{40}/u);
   assert.match(workflow, /google-chrome --version/u);
   assert.match(workflow, /npm run test:e2e/u);
+  assert.ok(
+    emulatorRunner.indexOf('runNpmScript("functions:build")') <
+      emulatorRunner.indexOf('runNpmScript("hosting:build")'),
+    "los contratos compartidos deben compilar antes del panel"
+  );
 });
 
 test("los jobs tienen runner fijo, límites y cancelación de ejecuciones obsoletas", () => {
