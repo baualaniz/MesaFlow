@@ -8,6 +8,7 @@ const robots = await readFile(new URL("../hosting/robots.txt", import.meta.url),
 const sitemap = await readFile(new URL("../hosting/sitemap.xml", import.meta.url), "utf8");
 const manifest = JSON.parse(await readFile(new URL("../hosting/site.webmanifest", import.meta.url), "utf8"));
 const pageSource = await readFile(new URL("../src/pages/index.astro", import.meta.url), "utf8");
+const layoutSource = await readFile(new URL("../src/layouts/BaseLayout.astro", import.meta.url), "utf8");
 const styles = await readFile(new URL("../src/styles/global.css", import.meta.url), "utf8");
 const optimizedImage = await stat(new URL("../../customer/assets/images/mesa-demo.webp", import.meta.url));
 
@@ -46,6 +47,11 @@ test("publica metadata canónica, social y datos estructurados", () => {
   assert.match(index, /name="twitter:card" content="summary_large_image"/u);
   assert.match(index, /"@type":"SoftwareApplication"/u);
   assert.match(index, /"@type":"WebSite"/u);
+});
+
+test("el JSON-LD neutraliza cierres de script antes de insertarse", () => {
+  assert.match(layoutSource, /JSON\.stringify\(structuredData\)\.replaceAll\("<", "\\\\u003c"\)/u);
+  assert.doesNotMatch(layoutSource, /set:html=\{JSON\.stringify\(structuredData\)\}/u);
 });
 
 test("expone robots, sitemap y manifiesto coherentes", () => {

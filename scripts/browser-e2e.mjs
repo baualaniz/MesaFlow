@@ -90,16 +90,22 @@ try {
 
   const customerContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const customer = await customerContext.newPage();
+  const customerErrors = [];
+  customer.on("console", (message) => {
+    if (message.type() === "error") customerErrors.push(message.text());
+  });
+  customer.on("pageerror", (error) => customerErrors.push(error.message));
   const customerUrl =
     `http://${EMULATOR_HOST}:${customerPort}/e/mesa-flow-demo/table/mesa-01?token=${demoToken}`;
   await customer.goto(customerUrl, { waitUntil: "domcontentloaded" });
-  await enableFlutterSemantics(customer);
   try {
+    await enableFlutterSemantics(customer);
     await customer.getByText("Bistró MesaFlow", { exact: false }).first().waitFor({ timeout: 30000 });
   } catch (error) {
     const visibleText = (await customer.locator("body").innerText()).replace(/\s+/gu, " ").trim();
     throw new Error(
       `Flutter no publicó el menú. URL=${customer.url()}; pantalla=${visibleText.slice(0, 500)}; ` +
+      `errores=${customerErrors.join(" | ") || "ninguno"}; ` +
       `causa=${error instanceof Error ? error.message : error}`
     );
   }

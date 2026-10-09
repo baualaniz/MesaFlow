@@ -26,6 +26,11 @@ const REQUIRED_SECURITY_HEADERS = Object.freeze({
   "referrer-policy": "strict-origin-when-cross-origin",
   "permissions-policy": "camera=(), microphone=(), geolocation=()"
 });
+export const CONTENT_SECURITY_POLICIES = Object.freeze({
+  customer: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://www.gstatic.com 'wasm-unsafe-eval' 'sha256-pPjjoSpBd13bHnogATkOaA29BKZz9GGHosqgFMogFpk=' 'sha256-CUvLjkG73E0SHKSIhFgZD0F2EeVOnhhrNXG5sz99PX8=' 'sha256-rxktUz/x5IiyDZdpCpEfBIPBgiLT4AvfutH1eR/LxRo=' 'sha256-rfg7hv0pkrN9jeIyHIK7vibT9cn0Kq7ZRLaivuDuWks='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://*.mercadopago.com https://*.mercadolibre.com; worker-src 'self' blob:",
+  admin: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net",
+  landing: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
+});
 const CACHE_REGEX = Object.freeze({
   customer: ".*",
   admin: ".*",
@@ -57,6 +62,9 @@ export function validateHostingConfig(config, rc, policy) {
       if (security[key] !== value) {
         throw new Error(`Hosting ${target} no aplica el encabezado ${key}.`);
       }
+    }
+    if (security["content-security-policy"] !== CONTENT_SECURITY_POLICIES[target]) {
+      throw new Error(`Hosting ${target} no aplica su Content-Security-Policy canónica.`);
     }
     if (site.headers?.some((rule) => headerMap(rule)["access-control-allow-origin"] === "*")) {
       throw new Error(`Hosting ${target} no debe habilitar CORS global.`);

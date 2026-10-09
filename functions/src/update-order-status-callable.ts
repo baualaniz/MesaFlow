@@ -6,6 +6,7 @@ import {
   updateOrderStatus as updateOrderStatusService,
   type UpdatedOrderStatusResult
 } from "./update-order-status.js";
+import { CALLABLE_SECURITY_OPTIONS, logInternalError } from "./security.js";
 
 const callableOptions = {
   region: "southamerica-east1",
@@ -14,14 +15,14 @@ const callableOptions = {
   minInstances: 0,
   maxInstances: 3,
   concurrency: 20,
-  enforceAppCheck: false
+  ...CALLABLE_SECURITY_OPTIONS
 } as const;
 
 function callableError(error: unknown): HttpsError {
   if (error instanceof UpdateOrderStatusError) {
     return new HttpsError(error.code, error.message, { reason: error.reason });
   }
-  console.error("Fallo interno al actualizar un pedido", error);
+  logInternalError("Fallo interno al actualizar un pedido", error);
   return new HttpsError("internal", "No pudimos actualizar el pedido en este momento.");
 }
 

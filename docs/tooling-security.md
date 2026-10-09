@@ -2,7 +2,7 @@
 
 ## Alcance
 
-Firebase CLI 15.32.1 se incorpora como dependencia **de desarrollo**, fijada en el
+Firebase CLI 15.33.0 se incorpora como dependencia **de desarrollo**, fijada en el
 lockfile. No forma parte del frontend ni del futuro paquete desplegado de
 Functions. La CLI global del usuario no se modifica con estos overrides.
 
@@ -63,7 +63,8 @@ auditoría completa informa avisos altos sobre `braces` a través de
 corrección automática forzada propone una degradación incompatible de Firebase
 CLI y por eso no se aplica. La dependencia queda limitada al observador de
 archivos de la herramienta local: no se empaqueta en React ni en Functions. Se
-revisará nuevamente en la Etapa 45 o cuando el proveedor publique una corrección.
+revisó en la Etapa 45 y se volverá a revisar cuando el proveedor publique una
+corrección.
 
 En la Etapa 41, al incorporar Astro, la auditoría no detectó avisos en ese nuevo
 árbol. Sí informó un aviso alto corregible en `@modelcontextprotocol/sdk`,
@@ -71,6 +72,13 @@ dependencia transitiva de Firebase CLI; se fijó la versión corregida 1.32.1 y 
 volvieron a ejecutar las pruebas de herramientas y emuladores. La auditoría
 completa conserva únicamente las tres entradas asociadas a `braces` ya acotadas
 en el párrafo anterior.
+
+En la Etapa 45 se consultó nuevamente el registro y Firebase CLI se actualizó al
+último parche disponible, 15.33.0. El aviso `GHSA-vfj7-8cjw-p6xm` sigue sin una
+versión corregida de `braces`; las tres entradas npm continúan representando la
+misma cadena local `firebase-tools → chokidar → braces`. Producción conserva cero
+hallazgos. `npm.cmd run security:audit` valida ambos hechos y falla ante cualquier
+aviso adicional.
 
 ## Revisión futura
 

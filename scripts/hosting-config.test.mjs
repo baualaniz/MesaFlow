@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { HOSTING_PUBLIC_DIRS, HOSTING_TARGETS, validateHostingConfig } from "./lib/hosting-config.mjs";
+import {
+  CONTENT_SECURITY_POLICIES,
+  HOSTING_PUBLIC_DIRS,
+  HOSTING_TARGETS,
+  validateHostingConfig
+} from "./lib/hosting-config.mjs";
 
 const [config, rc, policy] = await Promise.all([
   readFile(new URL("../firebase.json", import.meta.url), "utf8").then(JSON.parse),
@@ -52,11 +57,21 @@ test("rechaza exposición en LAN, CORS global o backend cloud", () => {
 });
 
 test("rechaza encabezados de seguridad debilitados", () => {
-  for (const key of ["X-Frame-Options", "Referrer-Policy", "Permissions-Policy"]) {
+  for (const key of [
+    "X-Frame-Options",
+    "Referrer-Policy",
+    "Permissions-Policy",
+    "Content-Security-Policy"
+  ]) {
     const invalid = structuredClone(config);
     const headers = invalid.hosting[0].headers[0].headers;
     headers.splice(headers.findIndex((header) => header.key === key), 1);
     assert.throws(() => validateHostingConfig(invalid, rc, policy));
+  }
+  for (const site of config.hosting) {
+    const csp = site.headers[0].headers.find((header) => header.key === "Content-Security-Policy");
+    assert.equal(csp.value, CONTENT_SECURITY_POLICIES[site.target]);
+    assert.doesNotMatch(csp.value, /default-src \*/u);
   }
 });
 

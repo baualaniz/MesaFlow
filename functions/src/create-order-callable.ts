@@ -6,6 +6,7 @@ import {
   type CreatedOrderResult
 } from "./create-order.js";
 import { FirestoreOrderRepository } from "./data/firestore-order-repository.js";
+import { CALLABLE_SECURITY_OPTIONS, logInternalError } from "./security.js";
 
 const callableOptions = {
   region: "southamerica-east1",
@@ -14,14 +15,14 @@ const callableOptions = {
   minInstances: 0,
   maxInstances: 3,
   concurrency: 20,
-  enforceAppCheck: false
+  ...CALLABLE_SECURITY_OPTIONS
 } as const;
 
 function callableError(error: unknown): HttpsError {
   if (error instanceof CreateOrderError) {
     return new HttpsError(error.code, error.message, { reason: error.reason });
   }
-  console.error("Fallo interno al crear un pedido", error);
+  logInternalError("Fallo interno al crear un pedido", error);
   return new HttpsError("internal", "No pudimos enviar el pedido en este momento.");
 }
 

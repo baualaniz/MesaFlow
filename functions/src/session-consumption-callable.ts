@@ -6,6 +6,7 @@ import {
   type ConsumptionResult
 } from "./session-consumption.js";
 import { FirestoreConsumptionRepository } from "./data/firestore-consumption-repository.js";
+import { CALLABLE_SECURITY_OPTIONS, logInternalError } from "./security.js";
 
 const callableOptions = {
   region: "southamerica-east1",
@@ -14,14 +15,14 @@ const callableOptions = {
   minInstances: 0,
   maxInstances: 3,
   concurrency: 20,
-  enforceAppCheck: false
+  ...CALLABLE_SECURITY_OPTIONS
 } as const;
 
 function callableError(error: unknown): HttpsError {
   if (error instanceof ConsumptionError) {
     return new HttpsError(error.code, error.message, { reason: error.reason });
   }
-  console.error("Fallo interno al calcular el consumo de la sesión", error);
+  logInternalError("Fallo interno al calcular el consumo de la sesión", error);
   return new HttpsError("internal", "No pudimos calcular el consumo en este momento.");
 }
 

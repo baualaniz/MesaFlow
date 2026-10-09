@@ -19,7 +19,7 @@ Las reglas de la Etapa 14 autorizan catálogo público, membresías activas y
 participantes de sesión con mínimo privilegio. Todavía no se desplegaron en los
 proyectos cloud; su validación actual se realiza con Emulator Suite.
 
-Firebase CLI queda fijada como dependencia local en 15.32.1 con correcciones
+Firebase CLI queda fijada como dependencia local en 15.33.0 con correcciones
 transitivas documentadas en `tooling-security.md`. No cambia el stack del MVP.
 
 Nota incremental de Etapa 10: Firebase Hosting expone localmente `customer`,
@@ -242,6 +242,27 @@ cierre, preferencia simulada, webhook firmado, conciliación, saldo cero y
 métricas. Roles y auditoría se validan en cada transición. Las pruebas de reglas
 completan los límites de cliente directo con 16 casos Firestore y nueve de
 Storage; los fixtures dinámicos se eliminan al finalizar.
+
+## Seguridad y límites de confianza — Etapa 45
+
+Las callables comparten una política que exige App Check fuera de Emulator Suite;
+el valor `FUNCTIONS_EMULATOR=true` es el único bypass. Auth continúa identificando
+al actor, mientras repositorios y transacciones resuelven tenant, participant,
+membresía, rol, precio y estado sin aceptar autorización del frontend. App Check
+reduce abuso automatizado, pero no reemplaza esos controles.
+
+Los errores inesperados se reducen a un nombre validado antes de llegar al log.
+No se serializan mensaje, stack, request, payload ni errores crudos de proveedores.
+Los endpoints HTTP públicos mantienen CORS desactivado y allowlist de métodos; el
+webhook además requiere firma e identificadores concordantes antes de consultar
+el pago autoritativo.
+
+Hosting aplica una CSP por superficie. Cliente Flutter admite únicamente el
+requisito WASM de su runtime; el panel no admite scripts inline; la landing
+estática conserva una excepción inline acotada y neutraliza `<` en su único
+JSON-LD insertado como HTML. Firestore y Storage conservan denegación final y sus
+pruebas incluyen enumeración global y documentos cruzados forjados. El detalle de
+activos, actores y riesgos residuales vive en `docs/threat-model.md`.
 
 ## Stack elegido
 

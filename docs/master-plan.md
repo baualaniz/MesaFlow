@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–44 completadas en alcance local. La siguiente etapa
-revisará amenazas, abuso, superficies web, dependencias y registros.
+Estado actual: Etapas 1–45 completadas en alcance local. La siguiente etapa
+automatizará checks reproducibles por pull request con GitHub Actions.
 
 ## Fases 1–10: base y Firebase
 
@@ -131,6 +131,7 @@ revisará amenazas, abuso, superficies web, dependencias y registros.
 | 42 | Completa localmente: metadata social/canónica, JSON-LD, robots/sitemap/manifiesto, teclado, contraste, WebP y Lighthouse 98/100/100/100 | `docs/stage-42-seo-accessibility.md` |
 | 43 | Completa localmente: 76 pruebas React/TS, 78 Flutter, componentes críticos y umbrales automáticos de cobertura | `docs/stage-43-unit-widget-component-tests.md` |
 | 44 | Completa localmente: tres interfaces verificadas en Chrome y flujo QR→pedido→operación→pago simulado sobre Auth, Firestore, Functions, Storage y Hosting | `docs/stage-44-emulators-integration-e2e.md` |
+| 45 | Completa localmente: threat model, App Check cloud, CSP, XSS, logs redactados, reglas cruzadas y dependencias auditadas | `docs/stage-45-security-hardening.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

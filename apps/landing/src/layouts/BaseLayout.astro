@@ -12,6 +12,9 @@ const { title, description, noindex = false, structuredData } = Astro.props;
 const site = Astro.site ?? new URL("http://127.0.0.1:5106");
 const canonicalUrl = new URL(Astro.url.pathname, site);
 const socialImageUrl = new URL("/images/mesa-demo.webp", site);
+const structuredDataJson = structuredData
+  ? JSON.stringify(structuredData).replaceAll("<", "\\u003c")
+  : undefined;
 ---
 
 <!doctype html>
@@ -42,7 +45,7 @@ const socialImageUrl = new URL("/images/mesa-demo.webp", site);
     <meta name="twitter:image" content={socialImageUrl} />
     <link rel="preload" href="/fonts/Poppins-SemiBold.ttf" as="font" type="font/ttf" crossorigin />
     <title>{title}</title>
-    {structuredData && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
+    {structuredDataJson && <script type="application/ld+json" set:html={structuredDataJson} />}
   </head>
   <body>
     <a class="skip-link" href="#contenido">Saltar al contenido</a>

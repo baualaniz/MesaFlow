@@ -70,6 +70,9 @@ flutter:
     - assets/images/mesa-demo.png
 
   fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
     - family: Inter
       fonts:
         - asset: assets/fonts/Inter-Variable.ttf

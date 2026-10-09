@@ -47,7 +47,7 @@ Para comprobar el código y generar el build web:
 ```powershell
 flutter.bat analyze
 flutter.bat test
-flutter.bat build web --dart-define=MESAFLOW_ENV=emulator
+flutter.bat build web --csp --no-web-resources-cdn --dart-define=MESAFLOW_ENV=emulator
 ```
 
 Desde la raíz, la comprobación con cobertura y límites automáticos es:
@@ -75,8 +75,8 @@ seleccionado, pero el catálogo continúa local hasta la Etapa 21.
 Builds cloud explícitos:
 
 ```powershell
-flutter.bat build web --release --dart-define=MESAFLOW_ENV=dev
-flutter.bat build web --release --dart-define=MESAFLOW_ENV=prod
+flutter.bat build web --release --csp --no-web-resources-cdn --dart-define=MESAFLOW_ENV=dev
+flutter.bat build web --release --csp --no-web-resources-cdn --dart-define=MESAFLOW_ENV=prod
 ```
 
 El build usado por los emuladores/Hosting local siempre se regenera con

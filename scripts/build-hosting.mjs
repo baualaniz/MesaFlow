@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const customer = path.join(root, "apps/customer");
+const CUSTOMER_BUILD_PROFILE = "emulator-csp-local-resources-v1";
 
 async function newestMtime(target) {
   const info = await stat(target);
@@ -25,7 +26,7 @@ async function customerBuildIsCurrent() {
       path.join(customer, "build/web/.mesaflow-environment"),
       "utf8"
     );
-    if (environment.trim() !== "emulator") return false;
+    if (environment.trim() !== CUSTOMER_BUILD_PROFILE) return false;
     const sources = ["lib", "web", "assets", "pubspec.yaml", "pubspec.lock", ".metadata"];
     const sourceTime = Math.max(...await Promise.all(
       sources.map((entry) => newestMtime(path.join(customer, entry)))
@@ -39,7 +40,10 @@ async function customerBuildIsCurrent() {
 function runFlutterBuild() {
   const windows = process.platform === "win32";
   let executable = "flutter";
-  let args = ["build", "web", "--release", "--dart-define=MESAFLOW_ENV=emulator"];
+  let args = [
+    "build", "web", "--release", "--csp", "--no-web-resources-cdn",
+    "--dart-define=MESAFLOW_ENV=emulator"
+  ];
   let env = process.env;
   if (windows) {
     const flutterBin = (process.env.Path ?? process.env.PATH ?? "")
@@ -53,7 +57,8 @@ function runFlutterBuild() {
     args = [
       `--packages=${path.join(flutterRoot, "packages/flutter_tools/.dart_tool/package_config.json")}`,
       path.join(flutterRoot, "bin/cache/flutter_tools.snapshot"),
-      "build", "web", "--release", "--dart-define=MESAFLOW_ENV=emulator"
+      "build", "web", "--release", "--csp", "--no-web-resources-cdn",
+      "--dart-define=MESAFLOW_ENV=emulator"
     ];
     env = { ...process.env, FLUTTER_ROOT: flutterRoot };
   }
@@ -112,7 +117,7 @@ try {
     await runFlutterBuild();
     await writeFile(
       path.join(customer, "build/web/.mesaflow-environment"),
-      "emulator\n",
+      `${CUSTOMER_BUILD_PROFILE}\n`,
       "utf8"
     );
   }

@@ -7,6 +7,7 @@ import {
   restoreQrSessionAccess,
   type QrSessionAccess
 } from "./qr-session.js";
+import { CALLABLE_SECURITY_OPTIONS, logInternalError } from "./security.js";
 
 const qrCallableOptions = {
   region: "southamerica-east1",
@@ -15,14 +16,14 @@ const qrCallableOptions = {
   minInstances: 0,
   maxInstances: 3,
   concurrency: 20,
-  enforceAppCheck: false
+  ...CALLABLE_SECURITY_OPTIONS
 } as const;
 
 function callableError(error: unknown): HttpsError {
   if (error instanceof QrSessionError) {
     return new HttpsError(error.code, error.message);
   }
-  console.error("Fallo interno al procesar una sesión QR", error);
+  logInternalError("Fallo interno al procesar una sesión QR", error);
   return new HttpsError("internal", "No pudimos validar la mesa en este momento.");
 }
 

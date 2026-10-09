@@ -6,6 +6,7 @@ import {
   TableManagementError,
   type TableManagementResult
 } from "./manage-table.js";
+import { CALLABLE_SECURITY_OPTIONS, logInternalError } from "./security.js";
 
 const callableOptions = {
   region: "southamerica-east1",
@@ -14,14 +15,14 @@ const callableOptions = {
   minInstances: 0,
   maxInstances: 3,
   concurrency: 20,
-  enforceAppCheck: false
+  ...CALLABLE_SECURITY_OPTIONS
 } as const;
 
 function callableError(error: unknown): HttpsError {
   if (error instanceof TableManagementError) {
     return new HttpsError(error.code, error.message);
   }
-  console.error("Fallo interno al administrar una mesa", error);
+  logInternalError("Fallo interno al administrar una mesa", error);
   return new HttpsError("internal", "No pudimos administrar la mesa en este momento.");
 }
 

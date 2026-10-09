@@ -31,7 +31,7 @@ corresponde.
 
 Los identificadores del SDK web de Firebase (`apiKey`, `projectId`, `appId`) no se
 usan como mecanismo de autorización y pueden formar parte del build frontend. La
-seguridad depende de Authentication, App Check cuando se incorpore, Firestore y
+seguridad depende de Authentication, App Check en el entorno cloud, Firestore y
 Storage Rules, y validaciones de backend. Las credenciales administrativas y los
 tokens de proveedores nunca son configuración frontend.
 
@@ -51,6 +51,26 @@ comunes para credenciales.
 Antes de cada commit ejecutar `npm.cmd run check`. El verificador revisa archivos
 versionados y no ignorados, nombres peligrosos y formatos de tokens conocidos. No
 imprime valores detectados.
+
+## Controles de aplicación
+
+- todas las callables exigen Firebase App Check fuera de Emulator Suite;
+- Firestore y Storage niegan por defecto y validan tenant, identidad y rol;
+- health y webhook no habilitan CORS; el webhook exige firma y consulta al
+  proveedor antes de acreditar;
+- los tres sitios publican CSP y bloquean framing;
+- los errores internos registran solo el tipo validado, nunca mensaje, stack,
+  token ni payload;
+- pedidos, preferencias y webhooks son idempotentes y la asistencia limita spam.
+
+El modelo completo, los límites de confianza y los riesgos aceptados están en
+`docs/threat-model.md`. Antes de desplegar se deben registrar las aplicaciones en
+Firebase App Check y configurar las claves públicas de reCAPTCHA.
+
+La auditoría online se ejecuta con `npm.cmd run security:audit`. Producción debe
+mantener cero avisos. El único riesgo dev aceptado actualmente es
+`GHSA-vfj7-8cjw-p6xm`, limitado a la cadena local de Firebase CLI y vigilado por
+una allowlist exacta; no se admite automáticamente ningún aviso nuevo.
 
 ## Versiones soportadas
 

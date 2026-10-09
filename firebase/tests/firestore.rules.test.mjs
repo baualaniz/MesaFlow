@@ -9,6 +9,7 @@ import {
 import {
   Timestamp,
   collection,
+  collectionGroup,
   deleteDoc,
   doc,
   getDoc,
@@ -128,6 +129,8 @@ async function seed() {
       ["establishments/restaurantA/tableSessions/sessionA", { establishmentId: "restaurantA", tableId: "tableA", status: "open" }],
       ["establishments/restaurantA/tableSessions/sessionOther", { establishmentId: "restaurantA", tableId: "tableA", status: "open" }],
       ["establishments/restaurantA/tableSessions/sessionA/participants/guestA", { establishmentId: "restaurantA", sessionId: "sessionA", uid: "guestA", active: true }],
+      ["establishments/restaurantB/tableSessions/forgedSession", { establishmentId: "restaurantA", tableId: "tableA", status: "open" }],
+      ["establishments/restaurantB/tableSessions/forgedSession/participants/guestA", { establishmentId: "restaurantA", sessionId: "forgedSession", uid: "guestA", active: true }],
       ["establishments/restaurantA/orders/orderA", { establishmentId: "restaurantA", sessionId: "sessionA", status: "created" }],
       ["establishments/restaurantA/orders/orderOther", { establishmentId: "restaurantA", sessionId: "sessionOther", status: "created" }],
       ["establishments/restaurantA/assistanceRequests/helpA", { establishmentId: "restaurantA", sessionId: "sessionA", status: "pending" }],
@@ -184,6 +187,17 @@ test("consulta pública exige filtros de publicación y disponibilidad", async (
     orderBy("sortOrder", "asc")
   )));
   await assertFails(getDocs(products));
+});
+
+test("ninguna identidad puede enumerar tenants o hacer consultas globales", async () => {
+  for (const db of [
+    environment.unauthenticatedContext().firestore(),
+    environment.authenticatedContext("ownerA").firestore(),
+    environment.authenticatedContext("guestA").firestore()
+  ]) {
+    await assertFails(getDocs(collection(db, "establishments")));
+    await assertFails(getDocs(collectionGroup(db, "orders")));
+  }
 });
 
 test("miembros activos leen catálogo completo y datos operativos del tenant", async () => {
@@ -261,6 +275,15 @@ test("participante activo solo lee su sesión y recursos vinculados", async () =
   await assertFails(getDoc(doc(db, "establishments/restaurantA/paymentPreferences/intentA")));
   await assertFails(getDoc(doc(db, "establishments/restaurantA/tableSessions/sessionOther")));
   await assertFails(getDoc(doc(db, "establishments/restaurantA/orders/orderOther")));
+});
+
+test("un participante forjado bajo otra ruta de tenant no concede acceso", async () => {
+  const db = environment.authenticatedContext("guestA").firestore();
+  await assertFails(getDoc(doc(db, "establishments/restaurantB/tableSessions/forgedSession")));
+  await assertFails(getDoc(doc(
+    db,
+    "establishments/restaurantB/tableSessions/forgedSession/participants/guestA"
+  )));
 });
 
 test("participante consulta únicamente recursos filtrados por su sesión", async () => {

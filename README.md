@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 44** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 45** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -31,6 +31,9 @@ crítica con umbrales automáticos de cobertura antes de integrar o desplegar.
 La suite E2E construye y abre las tres interfaces en Chrome contra la Emulator
 Suite. También recorre una misma orden desde el QR y el pedido hasta su cierre y
 un pago simulado conciliado, sin tocar desarrollo ni producción.
+El endurecimiento de seguridad exige App Check fuera del emulador, aplica CSP a
+los tres sitios, redacta errores internos, neutraliza el JSON-LD y vigila reglas,
+dependencias y sinks frontend mediante controles automáticos.
 La aplicación reconoce enlaces QR `/e/:slug/table/:tableId`, conserva la ruta al
 recargar y rechaza contextos de mesa mal formados sin tratarlos como autorización.
 El token QR se canjea mediante Auth anónima y Functions, se elimina de la URL y
@@ -144,6 +147,8 @@ encuentran en:
 - `docs/stage-42-seo-accessibility.md`
 - `docs/stage-43-unit-widget-component-tests.md`
 - `docs/stage-44-emulators-integration-e2e.md`
+- `docs/stage-45-security-hardening.md`
+- `docs/threat-model.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -173,11 +178,11 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 318
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 330
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
 cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-15 de contratos, nueve de landing, 76 del panel, 78 de Flutter y 59 de Functions), más los lint y builds
+15 de contratos, 10 de landing, ocho de seguridad, 76 del panel, 78 de Flutter y 62 de Functions), más los lint y builds
 TypeScript. Este comando no consulta servicios remotos.
 
 Para ejecutar únicamente la suite crítica y sus umbrales de cobertura:
@@ -252,7 +257,7 @@ npm.cmd run test:emulators
 ```
 
 El smoke valida los tres sitios Hosting, el endpoint Functions `health`,
-Auth/Firestore, el CRUD tipado con aislamiento por tenant, 16 casos de reglas
+Auth/Firestore, el CRUD tipado con aislamiento por tenant, 18 casos de reglas
 Firestore y nueve casos de reglas Storage: roles, membresía activa,
 aislamiento entre tenants, tipos, tamaños, extensión, metadata exacta, rutas y
 actualizaciones.
@@ -323,6 +328,22 @@ fixture y limpia la credencial de la barra; la URL termina en
 `http://127.0.0.1:5100/e/mesa-flow-demo/table/mesa-01` y se puede recargar sin
 perder la sesión. Las raíces cloud esperan un QR válido.
 
+## Seguridad
+
+Los controles locales y la auditoría online se ejecutan por separado:
+
+```powershell
+npm.cmd run test:security
+npm.cmd run security:audit
+```
+
+El primero no usa red y ya forma parte de `npm.cmd run check`. El segundo consulta
+el registro npm: exige cero vulnerabilidades de producción y solo acepta el aviso
+dev documentado de Firebase CLI. El modelo de amenazas está en
+`docs/threat-model.md`. App Check queda obligatorio en Functions cloud; registrar
+ambas aplicaciones Web y configurar sus claves públicas es requisito previo al
+despliegue de la Etapa 47.
+
 ## Cloud Functions local
 
 La base TypeScript usa Functions 2nd gen y runtime desplegable Node 22. El build,
@@ -352,7 +373,7 @@ El primer shell visual está en `apps/customer`. Se ejecuta con:
 ```powershell
 cd apps/customer
 flutter.bat pub get
-flutter.bat build web --dart-define=MESAFLOW_ENV=emulator
+flutter.bat build web --csp --no-web-resources-cdn --dart-define=MESAFLOW_ENV=emulator
 cd ../..
 npm.cmd run preview:customer
 ```

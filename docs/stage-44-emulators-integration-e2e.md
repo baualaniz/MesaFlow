@@ -76,4 +76,5 @@ emuladores de Firebase.
 - fixtures dinámicos eliminados y Emulator Suite apagada correctamente;
 - comando integral finalizado con código de salida 0.
 
-La Etapa 45 continuará con el threat model y el endurecimiento de seguridad.
+El threat model y el endurecimiento de seguridad quedaron completados en la
+Etapa 45.

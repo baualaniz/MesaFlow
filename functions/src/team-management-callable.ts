@@ -6,6 +6,7 @@ import {
   TeamManagementError,
   type TeamManagementResult
 } from "./team-management.js";
+import { CALLABLE_SECURITY_OPTIONS, logInternalError } from "./security.js";
 
 const callableOptions = {
   region: "southamerica-east1",
@@ -14,12 +15,12 @@ const callableOptions = {
   minInstances: 0,
   maxInstances: 3,
   concurrency: 20,
-  enforceAppCheck: false
+  ...CALLABLE_SECURITY_OPTIONS
 } as const;
 
 function callableError(error: unknown): HttpsError {
   if (error instanceof TeamManagementError) return new HttpsError(error.code, error.message);
-  console.error("Fallo interno al administrar el equipo", error);
+  logInternalError("Fallo interno al administrar el equipo", error);
   return new HttpsError("internal", "No pudimos administrar el equipo en este momento.");
 }
 

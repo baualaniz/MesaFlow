@@ -11,12 +11,13 @@ import {
   EmulatorPaymentProvider,
   MercadoPagoProvider
 } from "./payments/mercado-pago-provider.js";
+import { CALLABLE_SECURITY_OPTIONS, logInternalError } from "./security.js";
 
 function callableError(error: unknown): HttpsError {
   if (error instanceof PaymentPreferenceError) {
     return new HttpsError(error.code, error.message, { reason: error.reason });
   }
-  console.error("Fallo interno al crear la preferencia de pago", error);
+  logInternalError("Fallo interno al crear la preferencia de pago", error);
   return new HttpsError("internal", "No pudimos preparar el pago en este momento.");
 }
 
@@ -49,7 +50,7 @@ export const createPaymentPreference = onCall(
     minInstances: 0,
     maxInstances: 3,
     concurrency: 20,
-    enforceAppCheck: false,
+    ...CALLABLE_SECURITY_OPTIONS,
     secrets: [mercadoPagoAccessToken]
   },
   handleCreatePaymentPreference

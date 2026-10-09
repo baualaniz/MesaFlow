@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "appCheck": {
+    "requiredOutsideEmulator": true,
+    "emulatorEnvironmentKey": "FUNCTIONS_EMULATOR",
+    "emulatorEnvironmentValue": "true"
+  },
+  "frontend": {
+    "prohibitedSinks": [
+      "dangerouslySetInnerHTML",
+      "innerHTML assignment",
+      "insertAdjacentHTML",
+      "document.write",
+      "eval",
+      "Function constructor",
+      "javascript URL"
+    ],
+    "jsonLdEscapesLessThan": true,
+    "contentSecurityPolicyRequired": true
+  },
+  "logging": {
+    "rawErrorObjectsForbidden": true,
+    "allowedInternalFields": ["errorName"]
+  },
+  "dependencies": {
+    "productionVulnerabilitiesAllowed": 0,
+    "acceptedDevelopmentAdvisories": [
+      {
+        "id": "GHSA-vfj7-8cjw-p6xm",
+        "package": "braces",
+        "path": ["firebase-tools", "chokidar", "braces"],
+        "scope": "local-development-only"
+      }
+    ]
+  }
+}

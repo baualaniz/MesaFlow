@@ -7,6 +7,7 @@ import {
   type AssistanceResult
 } from "./assistance-request.js";
 import { FirestoreAssistanceRepository } from "./data/firestore-assistance-repository.js";
+import { CALLABLE_SECURITY_OPTIONS, logInternalError } from "./security.js";
 
 const callableOptions = {
   region: "southamerica-east1",
@@ -15,14 +16,14 @@ const callableOptions = {
   minInstances: 0,
   maxInstances: 3,
   concurrency: 20,
-  enforceAppCheck: false
+  ...CALLABLE_SECURITY_OPTIONS
 } as const;
 
 function callableError(error: unknown): HttpsError {
   if (error instanceof AssistanceError) {
     return new HttpsError(error.code, error.message, { reason: error.reason });
   }
-  console.error("Fallo interno al gestionar una solicitud de asistencia", error);
+  logInternalError("Fallo interno al gestionar una solicitud de asistencia", error);
   return new HttpsError("internal", "No pudimos gestionar la solicitud en este momento.");
 }
 
