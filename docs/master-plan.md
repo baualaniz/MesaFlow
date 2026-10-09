@@ -5,8 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–43 completadas en alcance local. La siguiente etapa
-automatizará el recorrido integrado y E2E sobre los emuladores completos.
+Estado actual: Etapas 1–44 completadas en alcance local. La siguiente etapa
+revisará amenazas, abuso, superficies web, dependencias y registros.
 
 ## Fases 1–10: base y Firebase
 
@@ -130,6 +130,7 @@ automatizará el recorrido integrado y E2E sobre los emuladores completos.
 | 41 | Completa localmente: landing Astro responsive, narrativa comercial, planes, CTAs, recursos locales, 404 real y build integrado con Hosting | `docs/stage-41-commercial-landing.md` |
 | 42 | Completa localmente: metadata social/canónica, JSON-LD, robots/sitemap/manifiesto, teclado, contraste, WebP y Lighthouse 98/100/100/100 | `docs/stage-42-seo-accessibility.md` |
 | 43 | Completa localmente: 76 pruebas React/TS, 78 Flutter, componentes críticos y umbrales automáticos de cobertura | `docs/stage-43-unit-widget-component-tests.md` |
+| 44 | Completa localmente: tres interfaces verificadas en Chrome y flujo QR→pedido→operación→pago simulado sobre Auth, Firestore, Functions, Storage y Hosting | `docs/stage-44-emulators-integration-e2e.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 
 import { useAuth } from "../auth/auth-context";
@@ -17,6 +17,12 @@ export function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (auth.user !== null) {
+      void navigate({ to: safeInternalRedirect(search.redirect) });
+    }
+  }, [auth.user, navigate, search.redirect]);
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting) return;
@@ -24,7 +30,6 @@ export function LoginPage() {
     setSubmitting(true);
     try {
       await auth.signIn(email, password);
-      await navigate({ to: safeInternalRedirect(search.redirect) });
     } catch (nextError) {
       setError(signInErrorMessage(nextError));
     } finally {

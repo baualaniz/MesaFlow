@@ -38,6 +38,13 @@ let paymentIntentId;
 let paymentDocumentId;
 let webhookEventId;
 const createdOrderIds = [];
+const createdAuditRequestIds = [
+  "a1111111111111111111111111111111",
+  "b2222222222222222222222222222222",
+  "c3333333333333333333333333333333",
+  "d4444444444444444444444444444444",
+  "e5555555555555555555555555555555"
+];
 const originalMetrics = new Map();
 const orderMetricDate = new Intl.DateTimeFormat("en-CA", {
   timeZone: "America/Argentina/Buenos_Aires",
@@ -74,6 +81,19 @@ async function anonymousUser() {
   assert.equal(typeof result.data.localId, "string");
   assert.equal(typeof result.data.idToken, "string");
   users.push(result.data);
+  return result.data;
+}
+
+async function passwordUser(email) {
+  const result = await jsonRequest(`${authBase}/accounts:signInWithPassword?key=demo-key`, {
+    body: {
+      email,
+      password: "MesaFlowDemo31!",
+      returnSecureToken: true
+    }
+  });
+  assert.equal(result.status, 200);
+  assert.equal(typeof result.data.idToken, "string");
   return result.data;
 }
 
@@ -220,6 +240,36 @@ try {
   console.log("[OK] Pedido transaccional recalcula precio y el reintento no duplica consumo");
   console.log("[OK] Marca pública aplicada y pausa de pedidos respetada por backend");
   console.log("[OK] Consumo recompone pedidos y pagos con saldo verificado en servidor");
+
+  const [staff, kitchen, owner] = await Promise.all([
+    passwordUser("staff@mesaflow.example.invalid"),
+    passwordUser("kitchen@mesaflow.example.invalid"),
+    passwordUser("owner@mesaflow.example.invalid")
+  ]);
+  const transitions = [
+    { token: staff.idToken, expectedStatus: "created", nextStatus: "confirmed" },
+    { token: kitchen.idToken, expectedStatus: "confirmed", nextStatus: "preparing" },
+    { token: kitchen.idToken, expectedStatus: "preparing", nextStatus: "ready" },
+    { token: staff.idToken, expectedStatus: "ready", nextStatus: "delivered" },
+    { token: owner.idToken, expectedStatus: "delivered", nextStatus: "completed" }
+  ];
+  for (const [index, transition] of transitions.entries()) {
+    const result = await callable("updateOrderStatus", {
+      establishmentId: "mesa-flow-demo",
+      orderId,
+      expectedStatus: transition.expectedStatus,
+      nextStatus: transition.nextStatus,
+      requestId: createdAuditRequestIds[index]
+    }, transition.token);
+    assert.equal(result.status, 200);
+    assert.equal(result.data.result.status, transition.nextStatus);
+  }
+  const completedOrder = (await firestore.doc(
+    `establishments/mesa-flow-demo/orders/${orderId}`
+  ).get()).data();
+  assert.equal(completedOrder.status, "completed");
+  assert.equal(Object.keys(completedOrder.statusTimestamps).includes("completed"), true);
+  console.log("[OK] La misma orden recorre salón → cocina → entrega → cierre con auditoría");
 
   const assistanceContext = {
     establishmentId: "mesa-flow-demo",
@@ -404,6 +454,11 @@ try {
       for (const orderId of createdOrderIds) {
         await firestore.doc(
           `establishments/mesa-flow-demo/orders/${orderId}`
+        ).delete();
+      }
+      for (const requestId of createdAuditRequestIds) {
+        await firestore.doc(
+          `establishments/mesa-flow-demo/auditLogs/order-status-${requestId}`
         ).delete();
       }
       if (paymentIntentId) {

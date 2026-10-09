@@ -11,7 +11,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 43** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 44** están terminadas en su alcance local. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -28,6 +28,9 @@ manifiesto, robots y sitemap; su navegación por teclado, contraste y rendimient
 se controlan con pruebas y Lighthouse local.
 La suite rápida de calidad cubre componentes React, widgets Flutter y lógica
 crítica con umbrales automáticos de cobertura antes de integrar o desplegar.
+La suite E2E construye y abre las tres interfaces en Chrome contra la Emulator
+Suite. También recorre una misma orden desde el QR y el pedido hasta su cierre y
+un pago simulado conciliado, sin tocar desarrollo ni producción.
 La aplicación reconoce enlaces QR `/e/:slug/table/:tableId`, conserva la ruta al
 recargar y rechaza contextos de mesa mal formados sin tratarlos como autorización.
 El token QR se canjea mediante Auth anónima y Functions, se elimina de la URL y
@@ -140,6 +143,7 @@ encuentran en:
 - `docs/stage-41-commercial-landing.md`
 - `docs/stage-42-seo-accessibility.md`
 - `docs/stage-43-unit-widget-component-tests.md`
+- `docs/stage-44-emulators-integration-e2e.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
 
@@ -248,7 +252,7 @@ npm.cmd run test:emulators
 ```
 
 El smoke valida los tres sitios Hosting, el endpoint Functions `health`,
-Auth/Firestore, el CRUD tipado con aislamiento por tenant, 15 casos de reglas
+Auth/Firestore, el CRUD tipado con aislamiento por tenant, 16 casos de reglas
 Firestore y nueve casos de reglas Storage: roles, membresía activa,
 aislamiento entre tenants, tipos, tamaños, extensión, metadata exacta, rutas y
 actualizaciones.
@@ -271,6 +275,19 @@ El flujo de equipo comprueba además invitación idempotente, correo de acceso,
 roles derivados, aislamiento por tenant y protección del último propietario.
 Finalmente crea dos veces una preferencia de pago para la misma sesión y confirma
 que ambos intentos reutilizan el mismo checkout y un único documento interno.
+Además abre las tres interfaces con Chrome: verifica la landing y su CTA, inicia
+sesión como owner en el panel y canjea un QR en el cliente móvil hasta mostrar el
+menú. La orden creada por el recorrido pasa por salón, cocina, entrega y cierre;
+un webhook firmado simulado acredita el pago y deja el saldo en cero.
+
+El nombre explícito del control integral de la Etapa 44 es:
+
+```powershell
+npm.cmd run test:e2e
+```
+
+Es un alias del recorrido completo de emuladores; no hay que iniciar otra
+terminal ni dejar procesos locales abiertos previamente.
 
 La misma prueba carga además el dataset completo de la Etapa 16 y confirma una
 segunda aplicación sin cambios: 4 roles, 10 mesas, 18 productos, 4 pedidos y 3

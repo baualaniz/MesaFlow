@@ -74,4 +74,5 @@ nube, no se despliega y no se requieren credenciales.
 - lint y build del panel aprobados;
 - verificación principal preparada para impedir regresiones de cobertura.
 
-La Etapa 44 continuará con integración y E2E sobre los emuladores completos.
+La integración y el E2E sobre los emuladores completos quedaron aprobados en la
+Etapa 44.

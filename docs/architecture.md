@@ -222,6 +222,27 @@ etapa siguiente.
 incluye, de modo que una regresión funcional o de cobertura bloquea el cierre
 local antes de llegar a integración, CI o despliegue.
 
+## Integración y E2E local — Etapa 44
+
+`npm run test:e2e` construye los tres frontends y Functions, inicia Auth,
+Firestore, Functions, Storage, Hosting y Emulator Hub bajo el proyecto fijo
+`demo-mesaflow`, carga el seed idempotente y ejecuta los recorridos integrados.
+Ningún adaptador puede seleccionar un proyecto cloud desde este camino.
+
+Playwright Core reutiliza Chrome instalado y descubre los puertos Hosting a
+través del Hub. Comprueba la landing y su CTA, el login del panel contra Firebase
+Auth más su tenant activo, y el cliente Flutter en viewport móvil desde un QR
+hasta el menú Firestore. La espera de autenticación del panel está dirigida por
+el estado del contexto y no por la resolución anticipada de `signIn`, evitando
+una carrera con el guard de rutas.
+
+El escenario backend conserva una identidad anónima y una misma orden durante
+todo el recorrido: canje QR, creación idempotente, estados de salón/cocina,
+cierre, preferencia simulada, webhook firmado, conciliación, saldo cero y
+métricas. Roles y auditoría se validan en cada transición. Las pruebas de reglas
+completan los límites de cliente directo con 16 casos Firestore y nueve de
+Storage; los fixtures dinámicos se eliminan al finalizar.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por

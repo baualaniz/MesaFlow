@@ -112,7 +112,7 @@ describe("páginas de autenticación", () => {
   it("inicia sesión, permite revisar la contraseña y respeta el retorno seguro", async () => {
     const user = userEvent.setup();
     const auth = authValue();
-    renderWithAuth(<LoginPage />, auth);
+    const view = renderWithAuth(<LoginPage />, auth);
 
     const password = screen.getByLabelText("Contraseña");
     expect(password).toHaveAttribute("type", "password");
@@ -127,6 +127,12 @@ describe("páginas de autenticación", () => {
       "equipo@mesaflow.test",
       "clave-segura"
     ));
+    view.rerender(
+      <AuthContext.Provider value={{ ...auth, user: { uid: "usuario-prueba" } as User }}>
+        <LoginPage />
+      </AuthContext.Provider>
+    );
+    await waitFor(() => expect(router.navigate).toHaveBeenCalled());
     expect(router.navigate).toHaveBeenCalledWith({ to: "/operacion/pedidos" });
   });
 
