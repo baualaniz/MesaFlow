@@ -93,4 +93,5 @@ clientes no podrían utilizarlas.
 - aislamiento de Firestore y Storage reforzado en Emulator Suite;
 - aviso alto dev sin parche acotado, aceptado y vigilado automáticamente.
 
-La Etapa 46 continuará con integración continua en GitHub Actions.
+La integración continua quedó implementada en la Etapa 46 con controles rápidos,
+auditoría y recorrido E2E en GitHub Actions.

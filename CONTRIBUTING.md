@@ -9,7 +9,8 @@ El MVP usa un flujo deliberadamente simple:
 3. La rama se valida localmente antes de integrarla.
 4. Para trabajo individual se puede integrar mediante pull request o merge local;
    para colaboración, se requiere pull request.
-5. Los despliegues de producción se etiquetan como `v0.x.y` durante el MVP.
+5. GitHub Actions debe aprobar calidad y E2E antes de integrar un pull request.
+6. Los despliegues de producción se etiquetan como `v0.x.y` durante el MVP.
 
 El repositorio es público. No se deben incluir datos reales de clientes,
 credenciales, capturas con información privada ni exportaciones de producción en
@@ -45,12 +46,14 @@ Tipos aceptados: `feat`, `fix`, `test`, `docs`, `refactor`, `perf`, `build`,
 Desde la raíz:
 
 ```powershell
-npm run check
+npm.cmd run check
+npm.cmd run test:e2e
 ```
 
-Cuando existan las aplicaciones, el comando se ampliará para invocar sus
-validaciones. No se deben integrar secretos, archivos `.env`, cuentas de servicio,
-salidas de build ni datos exportados de Firebase.
+`npm.cmd run check` reproduce el job rápido de CI. El recorrido E2E levanta y
+apaga únicamente Emulator Suite con el proyecto ficticio `demo-mesaflow`. No se
+deben integrar secretos, archivos `.env`, cuentas de servicio, salidas de build
+ni datos exportados de Firebase.
 
 ## Revisión
 

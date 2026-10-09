@@ -264,6 +264,19 @@ JSON-LD insertado como HTML. Firestore y Storage conservan denegación final y s
 pruebas incluyen enumeración global y documentos cruzados forjados. El detalle de
 activos, actores y riesgos residuales vive en `docs/threat-model.md`.
 
+## Integración continua — Etapa 46
+
+`.github/workflows/ci.yml` separa dos límites de validación. `quality` ejecuta la
+suite rápida, coberturas, lint, builds y auditoría de dependencias. `e2e` depende
+de ese resultado y levanta Emulator Suite para recorrer las tres aplicaciones en
+Chrome. Ningún job despliega o conoce credenciales de Firebase.
+
+El workflow usa `pull_request`, nunca `pull_request_target`, permisos globales de
+solo lectura, checkout sin credenciales persistentes, runner `ubuntu-24.04` y
+timeouts explícitos. Las acciones de terceros y GitHub se fijan por SHA completo.
+Node, npm, Java y Flutter tienen versiones canónicas dentro del repositorio para
+que el resultado local y remoto no dependa de la imagen más reciente del runner.
+
 ## Stack elegido
 
 Nota incremental de Etapa 5: Firebase Auth identifica al personal por

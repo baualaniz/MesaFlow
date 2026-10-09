@@ -5,8 +5,9 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–45 completadas en alcance local. La siguiente etapa
-automatizará checks reproducibles por pull request con GitHub Actions.
+Estado actual: Etapas 1–46 completadas. GitHub Actions ya automatiza los checks
+reproducibles y el E2E por pull request. La siguiente etapa preparará el despliegue
+controlado al proyecto de desarrollo.
 
 ## Fases 1–10: base y Firebase
 
@@ -132,6 +133,7 @@ automatizará checks reproducibles por pull request con GitHub Actions.
 | 43 | Completa localmente: 76 pruebas React/TS, 78 Flutter, componentes críticos y umbrales automáticos de cobertura | `docs/stage-43-unit-widget-component-tests.md` |
 | 44 | Completa localmente: tres interfaces verificadas en Chrome y flujo QR→pedido→operación→pago simulado sobre Auth, Firestore, Functions, Storage y Hosting | `docs/stage-44-emulators-integration-e2e.md` |
 | 45 | Completa localmente: threat model, App Check cloud, CSP, XSS, logs redactados, reglas cruzadas y dependencias auditadas | `docs/stage-45-security-hardening.md` |
+| 46 | Completa: GitHub Actions de solo lectura con toolchain fijado, 338 pruebas, auditoría y Emulator Suite E2E por PR/main | `docs/stage-46-continuous-integration.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

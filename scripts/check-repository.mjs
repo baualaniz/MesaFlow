@@ -17,6 +17,9 @@ const root = process.cwd();
 const execFileAsync = promisify(execFile);
 
 const requiredPaths = [
+  ".github/workflows/ci.yml",
+  ".nvmrc",
+  ".java-version",
   ".editorconfig",
   ".env.example",
   ".firebaserc",
@@ -193,6 +196,7 @@ const requiredPaths = [
   "docs/stage-43-unit-widget-component-tests.md",
   "docs/stage-44-emulators-integration-e2e.md",
   "docs/stage-45-security-hardening.md",
+  "docs/stage-46-continuous-integration.md",
   "docs/threat-model.md",
   "functions/src/data/firestore-converters.ts",
   "functions/src/data/tenant-repository.ts",
@@ -269,6 +273,7 @@ const requiredPaths = [
   "scripts/lib/firestore-indexes.mjs",
   "scripts/firestore-indexes.test.mjs",
   "scripts/security-posture.test.mjs",
+  "scripts/ci-config.test.mjs",
   "scripts/check-firestore-indexes.mjs",
   "scripts/check-firestore-queries.mjs",
   "scripts/lib/mercado-pago-config.mjs",

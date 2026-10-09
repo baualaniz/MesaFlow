@@ -6,12 +6,14 @@ real para el personal, pagos y métricas para administración.
 
 Repositorio público: [github.com/baualaniz/MesaFlow](https://github.com/baualaniz/MesaFlow).
 
+[![CI](https://github.com/baualaniz/MesaFlow/actions/workflows/ci.yml/badge.svg)](https://github.com/baualaniz/MesaFlow/actions/workflows/ci.yml)
+
 Que el código sea visible públicamente no convierte las credenciales en públicas:
 tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 45** están terminadas en su alcance local. Los dos proyectos
+Las **Etapas 1 a 46** están terminadas. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
@@ -34,6 +36,9 @@ un pago simulado conciliado, sin tocar desarrollo ni producción.
 El endurecimiento de seguridad exige App Check fuera del emulador, aplica CSP a
 los tres sitios, redacta errores internos, neutraliza el JSON-LD y vigila reglas,
 dependencias y sinks frontend mediante controles automáticos.
+GitHub Actions repite en cada pull request y actualización de `main` los lint,
+tests, coberturas, builds, auditoría de dependencias y el recorrido E2E completo
+contra emuladores, sin secretos ni acceso a los proyectos Firebase reales.
 La aplicación reconoce enlaces QR `/e/:slug/table/:tableId`, conserva la ruta al
 recargar y rechaza contextos de mesa mal formados sin tratarlos como autorización.
 El token QR se canjea mediante Auth anónima y Functions, se elimina de la URL y
@@ -148,6 +153,7 @@ encuentran en:
 - `docs/stage-43-unit-widget-component-tests.md`
 - `docs/stage-44-emulators-integration-e2e.md`
 - `docs/stage-45-security-hardening.md`
+- `docs/stage-46-continuous-integration.md`
 - `docs/threat-model.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
@@ -178,11 +184,11 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 330
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 338
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
 cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-15 de contratos, 10 de landing, ocho de seguridad, 76 del panel, 78 de Flutter y 62 de Functions), más los lint y builds
+15 de contratos, 10 de landing, ocho de seguridad, ocho de CI, 76 del panel, 78 de Flutter y 62 de Functions), más los lint y builds
 TypeScript. Este comando no consulta servicios remotos.
 
 Para ejecutar únicamente la suite crítica y sus umbrales de cobertura:

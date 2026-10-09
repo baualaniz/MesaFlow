@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+
+jobs:
+  quality:
+    name: Calidad, seguridad y builds
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Preparar Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: stable
+          flutter-version-file: apps/customer/pubspec.yaml
+          cache: true
+
+      - name: Fijar npm
+        run: npm install --global npm@11.17.0
+
+      - name: Mostrar herramientas
+        run: |
+          node --version
+          npm --version
+          flutter --version
+
+      - name: Instalar dependencias Node
+        run: npm ci --ignore-scripts
+
+      - name: Ejecutar lint, pruebas, cobertura y builds
+        run: npm run check
+
+      - name: Auditar dependencias
+        run: npm run security:audit
+
+  e2e:
+    name: Emuladores y recorrido E2E
+    needs: quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Preparar Java
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version-file: .java-version
+
+      - name: Preparar Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: stable
+          flutter-version-file: apps/customer/pubspec.yaml
+          cache: true
+
+      - name: Fijar npm
+        run: npm install --global npm@11.17.0
+
+      - name: Verificar herramientas de integración
+        run: |
+          node --version
+          npm --version
+          java -version
+          flutter --version
+          google-chrome --version
+
+      - name: Instalar dependencias Node
+        run: npm ci --ignore-scripts
+
+      - name: Ejecutar Emulator Suite y recorrido real
+        run: npm run test:e2e
