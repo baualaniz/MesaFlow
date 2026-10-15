@@ -47,12 +47,19 @@ try {
   }
   assertTrackedWorktreeClean(gitStatus.stdout);
 
-  const npm = process.platform === "win32" ? "npm.cmd" : "npm";
-  const firebase = path.join(root, "node_modules", ".bin",
-    process.platform === "win32" ? "firebase.cmd" : "firebase");
-  await run(npm, ["run", "check"]);
-  await run(npm, ["run", "hosting:build:dev"]);
-  await run(firebase, [
+  const npmCli = process.env.npm_execpath;
+  if (!npmCli) throw new Error("No se pudo localizar npm para validar el deploy.");
+  const firebaseCli = path.join(
+    root,
+    "node_modules",
+    "firebase-tools",
+    "lib",
+    "bin",
+    "firebase.js"
+  );
+  await run(process.execPath, [npmCli, "run", "check"]);
+  await run(process.execPath, [npmCli, "run", "hosting:build:dev"]);
+  await run(process.execPath, [firebaseCli,
     "deploy",
     "--only", FREE_DEPLOYMENT_COMPONENTS.join(","),
     "--project", DEVELOPMENT_PROJECT_ID
