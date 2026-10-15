@@ -26,8 +26,8 @@ export function validateDeployConfig(policy, rc, hostingPolicy) {
     throw new Error("La política de deploy no está anclada al ambiente de desarrollo.");
   }
   if (!policy.forbiddenProjectIds?.includes(PRODUCTION_PROJECT_ID) ||
-      policy.productionDeployment !== "forbidden-in-stage-47") {
-    throw new Error("Producción debe permanecer explícitamente bloqueada en la Etapa 47.");
+      policy.productionDeployment !== "managed-separately-stage-48") {
+    throw new Error("El despliegue de desarrollo debe mantener producción en un flujo separado.");
   }
   if (!sameValues(policy.freeDeployment, FREE_DEPLOYMENT_COMPONENTS) ||
       !sameValues(policy.paidDeployment, ["functions"])) {

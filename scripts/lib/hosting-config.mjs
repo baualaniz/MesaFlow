@@ -14,6 +14,11 @@ export const HOSTING_DEVELOPMENT_SITES = Object.freeze({
   admin: "mesaflow-desarrollo-admin",
   landing: "mesaflow-desarrollo-landing"
 });
+export const HOSTING_PRODUCTION_SITES = Object.freeze({
+  customer: "mesaflow-produccion",
+  admin: "mesaflow-produccion-admin",
+  landing: "mesaflow-produccion-landing"
+});
 export const HOSTING_KINDS = Object.freeze({
   customer: "spa",
   admin: "spa",
@@ -124,9 +129,17 @@ export function validateHostingConfig(config, rc, policy) {
     }
   }
 
+  const productionTargets = rc?.targets?.["mesaflow-produccion"]?.hosting;
+  for (const target of HOSTING_TARGETS) {
+    if (productionTargets?.[target]?.length !== 1 ||
+        productionTargets[target][0] !== HOSTING_PRODUCTION_SITES[target]) {
+      throw new Error(`Falta el target Hosting ${target} para mesaflow-produccion.`);
+    }
+  }
+
   if (policy?.version !== 1 || policy?.localProjectId !== "demo-mesaflow" ||
       policy?.cloudStatus?.development !== "sites-created-targets-configured" ||
-      policy?.cloudStatus?.production !== "deferred" ||
+      policy?.cloudStatus?.production !== "targets-configured-pending-cloud-sites" ||
       policy?.targets?.length !== HOSTING_TARGETS.length) {
     throw new Error("La política Hosting no declara el entorno local o difiere del esquema esperado.");
   }

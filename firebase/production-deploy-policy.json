@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "environment": "production",
+  "projectId": "mesaflow-produccion",
+  "firebaseAlias": "prod",
+  "forbiddenProjectIds": ["mesaflow-desarrollo", "demo-mesaflow"],
+  "confirmationPhrase": "PUBLICAR-MESAFLOW-PRODUCCION",
+  "webAppId": "1:619377674437:web:3643ee20e7c37954a288ac",
+  "hostingSites": {
+    "customer": "mesaflow-produccion",
+    "admin": "mesaflow-produccion-admin",
+    "landing": "mesaflow-produccion-landing"
+  },
+  "freeDeployment": ["firestore:rules", "firestore:indexes", "hosting"],
+  "paidDeployment": ["functions"],
+  "hosting": {
+    "sitesStatus": "pending-admin-and-landing"
+  },
+  "appCheck": {
+    "provider": "recaptcha-enterprise",
+    "siteKeyEnvironmentVariable": "MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY",
+    "registrationStatus": "pending-user-console"
+  },
+  "authentication": {
+    "baseConfigurationStatus": "verified-read-only",
+    "requiredAuthorizedDomains": [
+      "mesaflow-produccion-admin.web.app",
+      "mesaflow-produccion-admin.firebaseapp.com"
+    ],
+    "domainsStatus": "pending-user-console"
+  },
+  "firestore": {
+    "databaseStatus": "verified-read-only",
+    "location": "southamerica-east1",
+    "edition": "STANDARD"
+  },
+  "domain": {
+    "strategy": "firebase-provided-domains",
+    "customDomainStatus": "not-required-for-mvp"
+  },
+  "functions": {
+    "billingStatus": "blocked-no-user-consent",
+    "secretStatus": "local-only"
+  },
+  "webhook": {
+    "status": "blocked-requires-functions-and-secrets"
+  },
+  "rollback": {
+    "hosting": "firebase-console-release-history",
+    "firestore": "redeploy-previous-git-revision"
+  }
+}

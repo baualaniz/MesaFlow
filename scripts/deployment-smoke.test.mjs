@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   DEVELOPMENT_SMOKE_PLAN,
+  PRODUCTION_SMOKE_PLAN,
   validateSmokeResponse
 } from "./lib/deployment-smoke.mjs";
 
@@ -11,6 +12,13 @@ test("el smoke cubre raíces, rutas SPA y 404 sin producción", () => {
   assert.ok(DEVELOPMENT_SMOKE_PLAN.every(({ url }) =>
     url.startsWith("https://mesaflow-desarrollo") && !url.includes("produccion")));
   assert.equal(DEVELOPMENT_SMOKE_PLAN.at(-1).status, 404);
+});
+
+test("el smoke productivo usa solo sus tres sitios y conserva rutas profundas", () => {
+  assert.equal(PRODUCTION_SMOKE_PLAN.length, 6);
+  assert.ok(PRODUCTION_SMOKE_PLAN.every(({ url }) =>
+    url.startsWith("https://mesaflow-produccion") && !url.includes("desarrollo")));
+  assert.equal(PRODUCTION_SMOKE_PLAN.at(-1).status, 404);
 });
 
 test("acepta una respuesta endurecida de cliente", async () => {

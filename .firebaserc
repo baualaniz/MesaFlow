@@ -12,6 +12,13 @@
         "landing": ["mesaflow-desarrollo-landing"]
       }
     },
+    "mesaflow-produccion": {
+      "hosting": {
+        "customer": ["mesaflow-produccion"],
+        "admin": ["mesaflow-produccion-admin"],
+        "landing": ["mesaflow-produccion-landing"]
+      }
+    },
     "demo-mesaflow": {
       "hosting": {
         "customer": ["demo-mesaflow-customer"],

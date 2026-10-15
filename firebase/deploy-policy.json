@@ -28,5 +28,5 @@
     "billingStatus": "blocked-no-user-consent",
     "secretStatus": "local-only"
   },
-  "productionDeployment": "forbidden-in-stage-47"
+  "productionDeployment": "managed-separately-stage-48"
 }

@@ -13,11 +13,13 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 46** están terminadas. Los dos proyectos
+Las **Etapas 1 a 47** están terminadas y la Etapa 48 está en progreso. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
-Solo los índices de Firestore en desarrollo fueron desplegados; reglas, Functions
-y sitios continúan locales. La app Flutter inicializa Firebase Core con apps Web
+Rules, índices y los tres sitios de desarrollo están publicados y verificados;
+Functions continúa local. Producción ya tiene Authentication y Firestore
+verificados en solo lectura, con build, guardas y rollback preparados; faltan dos
+sitios Hosting y App Check antes de publicar. La app Flutter inicializa Firebase Core con apps Web
 separadas para desarrollo y producción, y usa `demo-mesaflow` por defecto local.
 El sistema visual incluye Poppins/Inter empaquetadas, tokens y componentes
 semánticos probados en móvil y escritorio.
@@ -154,6 +156,8 @@ encuentran en:
 - `docs/stage-44-emulators-integration-e2e.md`
 - `docs/stage-45-security-hardening.md`
 - `docs/stage-46-continuous-integration.md`
+- `docs/stage-47-development-deployment.md`
+- `docs/stage-48-production-domain.md`
 - `docs/threat-model.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
@@ -184,11 +188,11 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 338
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 357
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
-cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-15 de contratos, 10 de landing, ocho de seguridad, ocho de CI, 76 del panel, 78 de Flutter y 62 de Functions), más los lint y builds
+11 de despliegue, cuatro de smoke cloud, cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
+15 de contratos, 10 de landing, ocho de seguridad, ocho de CI, 77 del panel, 81 de Flutter y 62 de Functions), más los lint y builds
 TypeScript. Este comando no consulta servicios remotos.
 
 Para ejecutar únicamente la suite crítica y sus umbrales de cobertura:

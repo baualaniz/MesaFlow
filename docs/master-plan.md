@@ -5,9 +5,10 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–47 completadas dentro del alcance gratuito autorizado.
-Rules, índices y los tres sitios de desarrollo están publicados; smoke HTTP,
-enlaces cloud y App Check fueron verificados en navegador. Functions permanece
+Estado actual: Etapas 1–47 completadas dentro del alcance gratuito autorizado y
+Etapa 48 en progreso. Producción tiene Authentication y Firestore verificados;
+el flujo de build/deploy/rollback está protegido y resta crear dos sitios,
+configurar App Check y autorizar los dominios del panel. Functions permanece
 local y diferido porque no hubo autorización para activar Blaze.
 
 ## Fases 1–10: base y Firebase
@@ -136,6 +137,7 @@ local y diferido porque no hubo autorización para activar Blaze.
 | 45 | Completa localmente: threat model, App Check cloud, CSP, XSS, logs redactados, reglas cruzadas y dependencias auditadas | `docs/stage-45-security-hardening.md` |
 | 46 | Completa: GitHub Actions de solo lectura con toolchain fijado, 338 pruebas, auditoría y Emulator Suite E2E por PR/main | `docs/stage-46-continuous-integration.md` |
 | 47 | Completa en alcance gratuito: Rules, índices y tres sitios dev publicados; smoke HTTP, enlaces y App Check aprobados; Functions diferido sin Blaze | `docs/stage-47-development-deployment.md` |
+| 48 | En progreso: Auth/Firestore prod verificados y despliegue protegido; pendientes dos sitios Hosting, App Check y dominios del panel | `docs/stage-48-production-domain.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

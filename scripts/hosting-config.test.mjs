@@ -75,16 +75,16 @@ test("rechaza encabezados de seguridad debilitados", () => {
   }
 });
 
-test("targets demo y desarrollo quedan aislados de producción", () => {
+test("targets demo, desarrollo y producción quedan aislados", () => {
   const badRc = structuredClone(rc);
   delete badRc.targets["demo-mesaflow"].hosting.admin;
   assert.throws(() => validateHostingConfig(config, badRc, policy));
   const crossedDev = structuredClone(rc);
   crossedDev.targets["mesaflow-desarrollo"].hosting.admin = ["mesaflow-produccion-admin"];
   assert.throws(() => validateHostingConfig(config, crossedDev, policy));
-  const activeCloud = structuredClone(policy);
-  activeCloud.cloudStatus.production = "configured";
-  assert.throws(() => validateHostingConfig(config, rc, activeCloud));
+  const crossedProd = structuredClone(rc);
+  crossedProd.targets["mesaflow-produccion"].hosting.customer = ["mesaflow-desarrollo"];
+  assert.throws(() => validateHostingConfig(config, crossedProd, policy));
 });
 
 test("el panel y la landing declaran builds reales", () => {

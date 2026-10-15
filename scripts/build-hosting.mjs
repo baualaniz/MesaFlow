@@ -9,16 +9,18 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const customer = path.join(root, "apps/customer");
 const requestedEnvironment = process.argv[2] ?? "emulator";
-if (!["emulator", "dev"].includes(requestedEnvironment)) {
-  throw new Error("hosting:build solo admite emulator o dev; producción pertenece a la Etapa 48.");
+if (!["emulator", "dev", "prod"].includes(requestedEnvironment)) {
+  throw new Error("hosting:build solo admite emulator, dev o prod.");
 }
 const cloudSiteKey = process.env.MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY?.trim() ?? "";
-if (requestedEnvironment === "dev" && !cloudSiteKey) {
+if (requestedEnvironment !== "emulator" && !cloudSiteKey) {
   throw new Error(
-    "Falta MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY para construir Hosting de desarrollo."
+    `Falta MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY para construir Hosting ${requestedEnvironment}.`
   );
 }
-const buildMode = requestedEnvironment === "dev" ? "development" : "emulator";
+const buildMode = requestedEnvironment === "prod"
+  ? "production"
+  : requestedEnvironment === "dev" ? "development" : "emulator";
 const appCheckKeyFingerprint = cloudSiteKey
   ? createHash("sha256").update(cloudSiteKey).digest("hex").slice(0, 12)
   : "none";
@@ -27,6 +29,15 @@ const CUSTOMER_BUILD_PROFILE =
 const developmentCustomerUrl = "https://mesaflow-desarrollo.web.app";
 const developmentAdminUrl = "https://mesaflow-desarrollo-admin.web.app";
 const developmentLandingUrl = "https://mesaflow-desarrollo-landing.web.app";
+const productionCustomerUrl = "https://mesaflow-produccion.web.app";
+const productionAdminUrl = "https://mesaflow-produccion-admin.web.app";
+const productionLandingUrl = "https://mesaflow-produccion-landing.web.app";
+
+function publicUrl(environment, developmentUrl, productionUrl, emulatorUrl) {
+  if (environment === "dev") return developmentUrl;
+  if (environment === "prod") return productionUrl;
+  return emulatorUrl;
+}
 
 async function newestMtime(target) {
   const info = await stat(target);
@@ -135,15 +146,24 @@ function runLandingBuild() {
         stdio: "inherit",
         env: {
           ...process.env,
-          PUBLIC_CUSTOMER_URL: requestedEnvironment === "dev"
-            ? developmentCustomerUrl
-            : "http://127.0.0.1:5100",
-          PUBLIC_ADMIN_URL: requestedEnvironment === "dev"
-            ? developmentAdminUrl
-            : "http://127.0.0.1:5105",
-          PUBLIC_LANDING_URL: requestedEnvironment === "dev"
-            ? developmentLandingUrl
-            : "http://127.0.0.1:5106"
+          PUBLIC_CUSTOMER_URL: publicUrl(
+            requestedEnvironment,
+            developmentCustomerUrl,
+            productionCustomerUrl,
+            "http://127.0.0.1:5100"
+          ),
+          PUBLIC_ADMIN_URL: publicUrl(
+            requestedEnvironment,
+            developmentAdminUrl,
+            productionAdminUrl,
+            "http://127.0.0.1:5105"
+          ),
+          PUBLIC_LANDING_URL: publicUrl(
+            requestedEnvironment,
+            developmentLandingUrl,
+            productionLandingUrl,
+            "http://127.0.0.1:5106"
+          )
         }
       }
     );
