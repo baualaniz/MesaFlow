@@ -43,13 +43,15 @@ test("rechaza incluir Functions en el deploy gratuito", () => {
 });
 
 test("bloquea la publicación hasta completar App Check y confirmar el proyecto", () => {
+  const pendingAppCheck = structuredClone(policy);
+  pendingAppCheck.appCheck.registrationStatus = "pending-user-console";
   assert.throws(() => assertStaticDeploymentReady({
-    policy,
+    policy: pendingAppCheck,
     confirmation: DEVELOPMENT_PROJECT_ID,
     siteKey: "public-key"
   }), /App Check/u);
   const ready = structuredClone(policy);
-  ready.appCheck.registrationStatus = "configured-in-firebase-console";
+  ready.authentication.domainsStatus = "pending-user-console";
   assert.throws(() => assertStaticDeploymentReady({
     policy: ready,
     confirmation: DEVELOPMENT_PROJECT_ID,

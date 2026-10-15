@@ -1,9 +1,10 @@
 # Etapa 47 — Despliegue controlado a desarrollo
 
 Estado: **en progreso**. Los tres sitios Hosting de desarrollo existen, los
-targets están versionados y ambos clientes inicializan App Check. La publicación
-permanece bloqueada hasta registrar la clave pública de reCAPTCHA Enterprise.
-Functions continúa fuera de alcance porque el usuario no autorizó Blaze.
+targets están versionados, ambos clientes inicializan App Check y el usuario
+confirmó el registro de reCAPTCHA Enterprise junto con los dominios Auth del
+panel. Resta publicar y ejecutar el smoke cloud. Functions continúa fuera de
+alcance porque el usuario no autorizó Blaze.
 
 ## Recursos creados
 
@@ -31,7 +32,7 @@ pública `MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY`; su ausencia detiene la
 compilación. La clave es pública, pero no se guarda en Git para evitar mezclar
 ambientes.
 
-### Acción manual pendiente: registrar App Check
+### Acción manual completada: registrar App Check
 
 1. Abrir Google Cloud Console con el proyecto `mesaflow-desarrollo` seleccionado.
 2. Ir a **Seguridad → reCAPTCHA** (puede mostrarse como Fraud Defense) y habilitar
@@ -59,6 +60,10 @@ ambientes.
 
 Como cliente y panel usan el mismo App ID, se realiza un único registro con los
 cuatro dominios anteriores. La landing no usa Firebase y no necesita App Check.
+
+El usuario confirmó ambos controles el 15 de octubre de 2026. La clave pública
+solo se entrega al proceso de build mediante variable de entorno y no se guarda
+en el repositorio.
 
 ## Guardas de despliegue
 
@@ -114,8 +119,7 @@ hasta autorizar y configurar el backend cloud.
 
 ## Criterio de cierre restante
 
-- registrar App Check sin facturación y compilar con la clave real;
-- publicar rules, indexes y los tres sitios;
+- publicar rules, indexes y los tres sitios con la clave real;
 - ejecutar `npm.cmd run deploy:smoke:dev` y el recorrido de navegador sobre las
   tres URLs;
 - decidir explícitamente si Functions se mantiene local o se autoriza Blaze.

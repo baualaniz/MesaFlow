@@ -6,8 +6,8 @@ local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
 Estado actual: Etapas 1–46 completadas y Etapa 47 en progreso. Los sitios de
-desarrollo y la integración App Check ya están preparados; la publicación espera
-el registro manual de la clave pública. Functions continúa bloqueado sin
+desarrollo, la integración App Check, su registro y los dominios Auth ya están
+preparados; resta publicar y validar las URLs. Functions continúa bloqueado sin
 consentimiento para Blaze.
 
 ## Fases 1–10: base y Firebase
@@ -135,7 +135,7 @@ consentimiento para Blaze.
 | 44 | Completa localmente: tres interfaces verificadas en Chrome y flujo QR→pedido→operación→pago simulado sobre Auth, Firestore, Functions, Storage y Hosting | `docs/stage-44-emulators-integration-e2e.md` |
 | 45 | Completa localmente: threat model, App Check cloud, CSP, XSS, logs redactados, reglas cruzadas y dependencias auditadas | `docs/stage-45-security-hardening.md` |
 | 46 | Completa: GitHub Actions de solo lectura con toolchain fijado, 338 pruebas, auditoría y Emulator Suite E2E por PR/main | `docs/stage-46-continuous-integration.md` |
-| 47 | En progreso: tres sitios dev creados, targets/política segura, App Check y builds cloud listos; registro de clave y deploy pendientes; Functions bloqueado sin Blaze | `docs/stage-47-development-deployment.md` |
+| 47 | En progreso: tres sitios dev creados, targets/política segura, App Check registrado, dominios Auth y builds cloud listos; deploy pendiente; Functions bloqueado sin Blaze | `docs/stage-47-development-deployment.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

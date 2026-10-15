@@ -15,14 +15,14 @@
   "appCheck": {
     "provider": "recaptcha-enterprise",
     "siteKeyEnvironmentVariable": "MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY",
-    "registrationStatus": "pending-user-console"
+    "registrationStatus": "configured-in-firebase-console"
   },
   "authentication": {
     "requiredAuthorizedDomains": [
       "mesaflow-desarrollo-admin.web.app",
       "mesaflow-desarrollo-admin.firebaseapp.com"
     ],
-    "domainsStatus": "pending-user-console"
+    "domainsStatus": "configured-in-firebase-console"
   },
   "functions": {
     "billingStatus": "blocked-no-user-consent",
