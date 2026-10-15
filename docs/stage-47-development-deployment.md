@@ -131,14 +131,15 @@ hasta autorizar y configurar el backend cloud.
 - verificación de App Check bloqueada por API de reCAPTCHA Enterprise
   deshabilitada en el proyecto de desarrollo;
 - la revisión visual encontró CTAs locales en la landing; el build se corrigió
-  para inyectar las URLs cloud y recompilar si cambia la clave pública.
+  para inyectar las URLs cloud y recompilar si cambia la clave pública;
+- la landing corregida se republicó y el navegador confirmó que sus CTAs ya
+  apuntan a los sitios cloud de cliente y panel.
 
 ## Criterio de cierre restante
 
 - habilitar la API de reCAPTCHA Enterprise en el proyecto correcto y volver a
   comprobar la emisión de tokens;
-- republicar la corrección de enlaces de la landing y repetir el recorrido de
-  navegador sobre las tres URLs;
+- repetir el recorrido de navegador sobre cliente y panel con App Check válido;
 - decidir explícitamente si Functions se mantiene local o se autoriza Blaze.
 
 ## Fuentes oficiales

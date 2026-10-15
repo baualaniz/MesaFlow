@@ -8,8 +8,9 @@ usuario.
 Estado actual: Etapas 1–46 completadas y Etapa 47 en progreso. Rules, índices y
 los tres sitios de desarrollo ya están publicados, y el smoke HTTP pasó. Resta
 corregir en Google Cloud la API deshabilitada de reCAPTCHA Enterprise, validar
-App Check en navegador y republicar los enlaces cloud de la landing. Functions
-continúa bloqueado sin consentimiento para Blaze.
+App Check en navegador y recorrer cliente/panel; los enlaces cloud de la landing
+ya fueron corregidos y republicados. Functions continúa bloqueado sin
+consentimiento para Blaze.
 
 ## Fases 1–10: base y Firebase
 
