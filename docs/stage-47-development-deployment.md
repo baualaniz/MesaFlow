@@ -1,10 +1,9 @@
 # Etapa 47 — Despliegue controlado a desarrollo
 
-Estado: **en progreso**. Firestore Rules, índices y los tres sitios Hosting ya
-se publicaron en desarrollo, y el smoke HTTP cloud pasó. La verificación en
-navegador detectó que App Check aún no puede emitir tokens porque la API de
-reCAPTCHA Enterprise figura deshabilitada en `mesaflow-desarrollo`. Functions
-continúa fuera de alcance porque el usuario no autorizó Blaze.
+Estado: **completa en el alcance gratuito autorizado**. Firestore Rules,
+índices y los tres sitios Hosting están publicados en desarrollo; el smoke HTTP
+y la verificación real en navegador pasaron. Functions queda diferido porque el
+usuario no autorizó Blaze.
 
 ## Recursos creados
 
@@ -65,14 +64,18 @@ El usuario confirmó ambos controles el 15 de octubre de 2026. La clave pública
 solo se entrega al proceso de build mediante variable de entorno y no se guarda
 en el repositorio.
 
-La consulta remota posterior confirmó que Firebase App Check tiene registrada
-exactamente la clave entregada para la app Web. Sin embargo, Google Cloud
-respondió que `recaptchaenterprise.googleapis.com` está deshabilitada en
-`mesaflow-desarrollo`; por eso el navegador recibe HTTP 400 al solicitar el
-token. Antes de considerar App Check operativo se debe comprobar que la clave
-fue creada con `mesaflow-desarrollo` seleccionado y habilitar allí la API. No se
-habilitó nada automáticamente para respetar la decisión de no activar servicios
-sin revisar su alcance.
+La primera clave entregada pertenecía a otro proyecto de Google Cloud. Se creó
+una nueva en `mesaflow-desarrollo`, basada en puntuación y limitada a los cuatro
+dominios previstos. La consulta remota confirmó su proyecto, tipo y dominios;
+Firebase App Check quedó actualizado con umbral `0.5` y TTL de una hora, sin
+activar enforcement. La clave pública solo se inyectó en los builds y no se
+versionó.
+
+La primera carga cloud también reveló que la CSP de Flutter permitía los
+bootstrap dinámicos de Core, Firestore, Functions y Auth, pero no el nuevo
+bootstrap de `firebase_app_check`. Se agregó únicamente su hash SHA-256 exacto,
+sin habilitar `unsafe-inline`. Una sesión limpia del navegador confirmó que
+cliente y panel inicializan App Check sin errores ni advertencias.
 
 ## Guardas de despliegue
 
@@ -128,19 +131,22 @@ hasta autorizar y configurar el backend cloud.
 - deploy gratuito completado: Rules, indexes y los tres targets Hosting;
 - smoke HTTP cloud aprobado en raíces, rutas profundas y 404 de landing;
 - panel cloud carga su pantalla de acceso;
-- verificación de App Check bloqueada por API de reCAPTCHA Enterprise
-  deshabilitada en el proyecto de desarrollo;
+- clave reCAPTCHA Enterprise validada remotamente dentro del proyecto correcto;
+- App Check actualizado y verificado en sesiones limpias de cliente y panel;
+- CSP del cliente ampliada solo con el hash exacto del bootstrap App Check;
 - la revisión visual encontró CTAs locales en la landing; el build se corrigió
   para inyectar las URLs cloud y recompilar si cambia la clave pública;
 - la landing corregida se republicó y el navegador confirmó que sus CTAs ya
   apuntan a los sitios cloud de cliente y panel.
 
-## Criterio de cierre restante
+## Cierre
 
-- habilitar la API de reCAPTCHA Enterprise en el proyecto correcto y volver a
-  comprobar la emisión de tokens;
-- repetir el recorrido de navegador sobre cliente y panel con App Check válido;
-- decidir explícitamente si Functions se mantiene local o se autoriza Blaze.
+El alcance gratuito queda aprobado. La raíz del cliente muestra la indicación
+para escanear un QR, el panel muestra el acceso y la landing enlaza ambos sitios.
+Una ruta de mesa sin sesión válida muestra el error controlado correspondiente,
+porque el canje seguro del QR depende de Functions. El flujo completo de QR,
+pedidos, asistencia y pagos permanece disponible en Emulator Suite; su traslado
+a cloud requiere una decisión futura y explícita sobre Blaze.
 
 ## Fuentes oficiales
 
