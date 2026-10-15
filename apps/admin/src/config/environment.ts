@@ -41,5 +41,23 @@ export function firebaseOptionsFor(environment: AdminEnvironment): FirebaseOptio
   return environment === "emulator" ? emulatorOptions : cloudOptions[environment];
 }
 
+export function appCheckSiteKeyFor(
+  environment: AdminEnvironment,
+  candidate: string | undefined
+): string | null {
+  if (environment === "emulator") return null;
+  const normalized = candidate?.trim() ?? "";
+  if (!normalized) {
+    throw new TypeError(
+      "Falta VITE_MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY para el build cloud."
+    );
+  }
+  return normalized;
+}
+
 export const adminEnvironment = parseAdminEnvironment(import.meta.env.MODE);
 export const adminFirebaseOptions = firebaseOptionsFor(adminEnvironment);
+export const adminAppCheckSiteKey = appCheckSiteKeyFor(
+  adminEnvironment,
+  import.meta.env.VITE_MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY
+);

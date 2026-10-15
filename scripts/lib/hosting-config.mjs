@@ -9,6 +9,11 @@ export const HOSTING_DEMO_SITES = Object.freeze({
   admin: "demo-mesaflow-admin",
   landing: "demo-mesaflow-landing"
 });
+export const HOSTING_DEVELOPMENT_SITES = Object.freeze({
+  customer: "mesaflow-desarrollo",
+  admin: "mesaflow-desarrollo-admin",
+  landing: "mesaflow-desarrollo-landing"
+});
 export const HOSTING_KINDS = Object.freeze({
   customer: "spa",
   admin: "spa",
@@ -27,8 +32,8 @@ const REQUIRED_SECURITY_HEADERS = Object.freeze({
   "permissions-policy": "camera=(), microphone=(), geolocation=()"
 });
 export const CONTENT_SECURITY_POLICIES = Object.freeze({
-  customer: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://www.gstatic.com 'wasm-unsafe-eval' 'sha256-pPjjoSpBd13bHnogATkOaA29BKZz9GGHosqgFMogFpk=' 'sha256-CUvLjkG73E0SHKSIhFgZD0F2EeVOnhhrNXG5sz99PX8=' 'sha256-rxktUz/x5IiyDZdpCpEfBIPBgiLT4AvfutH1eR/LxRo=' 'sha256-rfg7hv0pkrN9jeIyHIK7vibT9cn0Kq7ZRLaivuDuWks='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://*.mercadopago.com https://*.mercadolibre.com; worker-src 'self' blob:",
-  admin: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net",
+  customer: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://www.gstatic.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ 'wasm-unsafe-eval' 'sha256-pPjjoSpBd13bHnogATkOaA29BKZz9GGHosqgFMogFpk=' 'sha256-CUvLjkG73E0SHKSIhFgZD0F2EeVOnhhrNXG5sz99PX8=' 'sha256-rxktUz/x5IiyDZdpCpEfBIPBgiLT4AvfutH1eR/LxRo=' 'sha256-rfg7hv0pkrN9jeIyHIK7vibT9cn0Kq7ZRLaivuDuWks='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://www.gstatic.com https://www.google.com/recaptcha/ https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://*.mercadopago.com https://*.mercadolibre.com; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; worker-src 'self' blob:",
+  admin: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://www.google.com/recaptcha/ https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/",
   landing: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
 });
 const CACHE_REGEX = Object.freeze({
@@ -104,8 +109,18 @@ export function validateHostingConfig(config, rc, policy) {
     }
   }
 
+  const developmentTargets = rc?.targets?.["mesaflow-desarrollo"]?.hosting;
+  for (const target of HOSTING_TARGETS) {
+    if (developmentTargets?.[target]?.length !== 1 ||
+        developmentTargets[target][0] !== HOSTING_DEVELOPMENT_SITES[target]) {
+      throw new Error(`Falta el target Hosting ${target} para mesaflow-desarrollo.`);
+    }
+  }
+
   if (policy?.version !== 1 || policy?.localProjectId !== "demo-mesaflow" ||
-      policy?.cloudStatus !== "deferred" || policy?.targets?.length !== HOSTING_TARGETS.length) {
+      policy?.cloudStatus?.development !== "sites-created-targets-configured" ||
+      policy?.cloudStatus?.production !== "deferred" ||
+      policy?.targets?.length !== HOSTING_TARGETS.length) {
     throw new Error("La política Hosting no declara el entorno local o difiere del esquema esperado.");
   }
   for (const target of HOSTING_TARGETS) {

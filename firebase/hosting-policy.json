@@ -37,5 +37,8 @@
       "landing": "mesaflow-produccion-landing"
     }
   },
-  "cloudStatus": "deferred"
+  "cloudStatus": {
+    "development": "sites-created-targets-configured",
+    "production": "deferred"
+  }
 }

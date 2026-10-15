@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  appCheckSiteKeyFor,
   firebaseOptionsFor,
   parseAdminEnvironment
 } from "./environment";
@@ -27,5 +28,13 @@ describe("configuración de ambiente", () => {
     const emulator = firebaseOptionsFor("emulator");
     expect(emulator.projectId).toBe("demo-mesaflow");
     expect(emulator.apiKey).toBe("demo-key");
+  });
+
+  it("omite App Check en emulador y lo exige en cloud", () => {
+    expect(appCheckSiteKeyFor("emulator", undefined)).toBeNull();
+    expect(() => appCheckSiteKeyFor("development", " ")).toThrow(
+      /VITE_MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY/u
+    );
+    expect(appCheckSiteKeyFor("production", " public-key ")).toBe("public-key");
   });
 });

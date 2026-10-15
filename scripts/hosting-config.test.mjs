@@ -75,12 +75,15 @@ test("rechaza encabezados de seguridad debilitados", () => {
   }
 });
 
-test("targets demo y estado cloud diferido son obligatorios", () => {
+test("targets demo y desarrollo quedan aislados de producción", () => {
   const badRc = structuredClone(rc);
   delete badRc.targets["demo-mesaflow"].hosting.admin;
   assert.throws(() => validateHostingConfig(config, badRc, policy));
+  const crossedDev = structuredClone(rc);
+  crossedDev.targets["mesaflow-desarrollo"].hosting.admin = ["mesaflow-produccion-admin"];
+  assert.throws(() => validateHostingConfig(config, crossedDev, policy));
   const activeCloud = structuredClone(policy);
-  activeCloud.cloudStatus = "configured";
+  activeCloud.cloudStatus.production = "configured";
   assert.throws(() => validateHostingConfig(config, rc, activeCloud));
 });
 

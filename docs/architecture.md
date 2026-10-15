@@ -24,9 +24,9 @@ transitivas documentadas en `tooling-security.md`. No cambia el stack del MVP.
 
 Nota incremental de Etapa 10: Firebase Hosting expone localmente `customer`,
 `admin` y `landing` como sitios independientes. Cliente y panel tienen fallback
-SPA; la landing conserva 404. Los sitios reales y sus targets no existen todavía:
-se crearán al desplegar desarrollo en la Etapa 47. La política canónica vive en
-`firebase/hosting-policy.json`.
+SPA; la landing conserva 404. La Etapa 47 creó los tres sitios de desarrollo y
+versionó sus targets; producción permanece diferida. Las políticas canónicas
+viven en `firebase/hosting-policy.json` y `firebase/deploy-policy.json`.
 
 ## Panel administrativo — Etapas 31 y 32
 
@@ -664,8 +664,8 @@ ruta y solo devuelve contexto si existe un participant activo con el UID
 autenticado. Esto permite recargar durante `open` o `payment_pending` sin guardar
 tokens en almacenamiento de aplicación. El fixture local es conocido y solo
 coincide con `demo-mesaflow`; producción deberá generar 128 bits aleatorios por
-versión. App Check queda como requisito previo al despliegue cloud de las
-callables.
+versión. La Etapa 47 integró App Check en ambos clientes; resta registrar la clave
+pública en Firebase Console antes del despliegue cloud de las callables.
 
 ## Menú dinámico cliente — Etapa 21
 

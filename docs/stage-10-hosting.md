@@ -75,17 +75,15 @@ Una Content Security Policy estricta se definirá después de construir React y
 Astro y de auditar el runtime generado por Flutter; anticiparla ahora podría
 romper el arranque sin representar la aplicación final.
 
-## Sitios cloud diferidos
+## Sitios cloud (actualización de Etapa 47)
 
-`firebase/hosting-policy.json` registra nombres propuestos para dev y prod, pero
-`.firebaserc` solo asocia targets del proyecto ficticio. Los sitios reales deben
-crearse y asociarse recién en la Etapa 47, después de listar los existentes y
-confirmar nombres globalmente disponibles. En ese momento se ejecutarán comandos
-explícitos con `--project dev` y luego, tras validar, con `--project prod`.
+La Etapa 47 creó y asoció los tres sitios de desarrollo. `.firebaserc` contiene
+targets separados para `demo-mesaflow` y `mesaflow-desarrollo`; producción sigue
+diferida. La política y el procedimiento vigentes están documentados en
+`docs/stage-47-development-deployment.md`.
 
-No ejecutar todavía `firebase deploy`, `hosting:sites:create` ni `target:apply`
-contra los proyectos reales. Publicar contenido estático y desplegar Functions
-son operaciones separadas; esta configuración no despliega el backend.
+Publicar contenido estático y desplegar Functions siguen siendo operaciones
+separadas. Functions no está autorizado mientras Blaze permanezca deshabilitado.
 
 ## Criterio de aceptación
 

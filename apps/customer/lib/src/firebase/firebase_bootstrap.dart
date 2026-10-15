@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import '../config/app_environment.dart';
+import 'app_check_config.dart';
 import 'firebase_options_dev.dart' as development;
 import 'firebase_options_prod.dart' as production;
 
@@ -48,6 +50,14 @@ Future<MesaFlowFirebaseServices> initializeMesaFlowFirebase(
     app = await Firebase.initializeApp(
       options: cloudFirebaseOptionsFor(environment),
     );
+  }
+  final appCheckSiteKey = appCheckSiteKeyFor(environment);
+  if (appCheckSiteKey != null) {
+    final appCheck = FirebaseAppCheck.instanceFor(app: app);
+    await appCheck.activate(
+      providerWeb: ReCaptchaEnterpriseProvider(appCheckSiteKey),
+    );
+    await appCheck.setTokenAutoRefreshEnabled(true);
   }
   final auth = FirebaseAuth.instanceFor(app: app);
   final firestore = FirebaseFirestore.instanceFor(app: app);

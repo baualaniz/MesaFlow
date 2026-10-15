@@ -1,5 +1,9 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider
+} from "firebase/app-check";
+import {
   browserLocalPersistence,
   connectAuthEmulator,
   getAuth,
@@ -15,6 +19,7 @@ import {
 } from "firebase/functions";
 
 import {
+  adminAppCheckSiteKey,
   adminEnvironment,
   adminFirebaseOptions
 } from "../config/environment";
@@ -23,6 +28,13 @@ const appName = "mesaflow-admin";
 const app = getApps().some(({ name }) => name === appName)
   ? getApp(appName)
   : initializeApp(adminFirebaseOptions, appName);
+
+if (adminAppCheckSiteKey) {
+  initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider(adminAppCheckSiteKey),
+    isTokenAutoRefreshEnabled: true
+  });
+}
 
 export const adminAuth = getAuth(app);
 export const adminFirestore = getFirestore(app);

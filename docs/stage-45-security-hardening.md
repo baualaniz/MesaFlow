@@ -77,10 +77,9 @@ npm.cmd run test:e2e
 
 ## Condición previa al despliegue
 
-App Check ya es obligatorio en Functions cloud, pero los clientes todavía no
-tienen una clave pública de reCAPTCHA porque no hay sitios desplegados. Antes de
-la Etapa 47 se deberán registrar las apps Web en Firebase App Check, configurar
-las claves públicas en ambos builds y verificar sus métricas. Desplegar Functions
+App Check ya es obligatorio en Functions cloud. La Etapa 47 incorporó el SDK a
+cliente y panel, configuró el build cloud y creó los sitios, pero la clave pública
+de reCAPTCHA Enterprise todavía debe registrarse manualmente. Desplegar Functions
 sin completar ese paso dejaría las callables correctamente cerradas, pero los
 clientes no podrían utilizarlas.
 

@@ -7,7 +7,19 @@ import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const customer = path.join(root, "apps/customer");
-const CUSTOMER_BUILD_PROFILE = "emulator-csp-local-resources-v1";
+const requestedEnvironment = process.argv[2] ?? "emulator";
+if (!["emulator", "dev"].includes(requestedEnvironment)) {
+  throw new Error("hosting:build solo admite emulator o dev; producción pertenece a la Etapa 48.");
+}
+const cloudSiteKey = process.env.MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY?.trim() ?? "";
+if (requestedEnvironment === "dev" && !cloudSiteKey) {
+  throw new Error(
+    "Falta MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY para construir Hosting de desarrollo."
+  );
+}
+const buildMode = requestedEnvironment === "dev" ? "development" : "emulator";
+const CUSTOMER_BUILD_PROFILE = `${buildMode}-csp-local-resources-app-check-v1`;
+const developmentLandingUrl = "https://mesaflow-desarrollo-landing.web.app";
 
 async function newestMtime(target) {
   const info = await stat(target);
@@ -42,8 +54,11 @@ function runFlutterBuild() {
   let executable = "flutter";
   let args = [
     "build", "web", "--release", "--csp", "--no-web-resources-cdn",
-    "--dart-define=MESAFLOW_ENV=emulator"
+    `--dart-define=MESAFLOW_ENV=${buildMode}`
   ];
+  if (cloudSiteKey) {
+    args.push(`--dart-define=MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY=${cloudSiteKey}`);
+  }
   let env = process.env;
   if (windows) {
     const flutterBin = (process.env.Path ?? process.env.PATH ?? "")
@@ -58,8 +73,11 @@ function runFlutterBuild() {
       `--packages=${path.join(flutterRoot, "packages/flutter_tools/.dart_tool/package_config.json")}`,
       path.join(flutterRoot, "bin/cache/flutter_tools.snapshot"),
       "build", "web", "--release", "--csp", "--no-web-resources-cdn",
-      "--dart-define=MESAFLOW_ENV=emulator"
+      `--dart-define=MESAFLOW_ENV=${buildMode}`
     ];
+    if (cloudSiteKey) {
+      args.push(`--dart-define=MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY=${cloudSiteKey}`);
+    }
     env = { ...process.env, FLUTTER_ROOT: flutterRoot };
   }
   return new Promise((resolve, reject) => {
@@ -78,8 +96,15 @@ function runAdminBuild() {
   return new Promise((resolve, reject) => {
     const child = spawn(
       process.execPath,
-      [npmCli, "run", "build", "--workspace", "@mesaflow/admin", "--", "--mode", "emulator"],
-      { cwd: root, stdio: "inherit", env: process.env }
+      [npmCli, "run", "build", "--workspace", "@mesaflow/admin", "--", "--mode", buildMode],
+      {
+        cwd: root,
+        stdio: "inherit",
+        env: {
+          ...process.env,
+          VITE_MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY: cloudSiteKey
+        }
+      }
     );
     child.on("error", (error) => reject(new Error(
       `No se pudo iniciar el build administrativo: ${error.message}`
@@ -98,7 +123,16 @@ function runLandingBuild() {
     const child = spawn(
       process.execPath,
       [npmCli, "run", "build", "--workspace", "@mesaflow/landing"],
-      { cwd: root, stdio: "inherit", env: process.env }
+      {
+        cwd: root,
+        stdio: "inherit",
+        env: {
+          ...process.env,
+          PUBLIC_LANDING_URL: requestedEnvironment === "dev"
+            ? developmentLandingUrl
+            : "http://127.0.0.1:5106"
+        }
+      }
     );
     child.on("error", (error) => reject(new Error(
       `No se pudo iniciar el build de la landing: ${error.message}`
@@ -131,7 +165,9 @@ try {
   ]) {
     await access(path.join(root, relativePath), constants.R_OK);
   }
-  console.log("[OK] Builds de customer, admin y landing listos para Hosting local.");
+  console.log(
+    `[OK] Builds de customer, admin y landing listos para Hosting ${requestedEnvironment}.`
+  );
 } catch (error) {
   console.error(error instanceof Error ? error.message : error);
   process.exitCode = 1;

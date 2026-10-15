@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "environment": "development",
+  "projectId": "mesaflow-desarrollo",
+  "firebaseAlias": "dev",
+  "forbiddenProjectIds": ["mesaflow-produccion"],
+  "webAppId": "1:685584709099:web:2d9cac26a22fbdcae815ae",
+  "hostingSites": {
+    "customer": "mesaflow-desarrollo",
+    "admin": "mesaflow-desarrollo-admin",
+    "landing": "mesaflow-desarrollo-landing"
+  },
+  "freeDeployment": ["firestore:rules", "firestore:indexes", "hosting"],
+  "paidDeployment": ["functions"],
+  "appCheck": {
+    "provider": "recaptcha-enterprise",
+    "siteKeyEnvironmentVariable": "MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY",
+    "registrationStatus": "pending-user-console"
+  },
+  "functions": {
+    "billingStatus": "blocked-no-user-consent",
+    "secretStatus": "local-only"
+  },
+  "productionDeployment": "forbidden-in-stage-47"
+}

@@ -5,6 +5,13 @@
     "prod": "mesaflow-produccion"
   },
   "targets": {
+    "mesaflow-desarrollo": {
+      "hosting": {
+        "customer": ["mesaflow-desarrollo"],
+        "admin": ["mesaflow-desarrollo-admin"],
+        "landing": ["mesaflow-desarrollo-landing"]
+      }
+    },
     "demo-mesaflow": {
       "hosting": {
         "customer": ["demo-mesaflow-customer"],
