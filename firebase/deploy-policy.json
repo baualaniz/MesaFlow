@@ -17,6 +17,13 @@
     "siteKeyEnvironmentVariable": "MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY",
     "registrationStatus": "pending-user-console"
   },
+  "authentication": {
+    "requiredAuthorizedDomains": [
+      "mesaflow-desarrollo-admin.web.app",
+      "mesaflow-desarrollo-admin.firebaseapp.com"
+    ],
+    "domainsStatus": "pending-user-console"
+  },
   "functions": {
     "billingStatus": "blocked-no-user-consent",
     "secretStatus": "local-only"

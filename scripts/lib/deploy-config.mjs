@@ -10,6 +10,10 @@ export const FREE_DEPLOYMENT_COMPONENTS = Object.freeze([
   "firestore:indexes",
   "hosting"
 ]);
+export const DEVELOPMENT_AUTHORIZED_DOMAINS = Object.freeze([
+  "mesaflow-desarrollo-admin.web.app",
+  "mesaflow-desarrollo-admin.firebaseapp.com"
+]);
 
 function sameValues(actual, expected) {
   return Array.isArray(actual) && actual.length === expected.length &&
@@ -34,6 +38,12 @@ export function validateDeployConfig(policy, rc, hostingPolicy) {
         "MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY") {
     throw new Error("App Check debe usar la clave pública de reCAPTCHA Enterprise.");
   }
+  if (!sameValues(
+    policy.authentication?.requiredAuthorizedDomains,
+    DEVELOPMENT_AUTHORIZED_DOMAINS
+  )) {
+    throw new Error("Faltan los dominios Auth requeridos por el panel de desarrollo.");
+  }
   if (policy.functions?.billingStatus !== "blocked-no-user-consent") {
     throw new Error("Functions no puede habilitarse sin consentimiento de facturación.");
   }
@@ -52,7 +62,8 @@ export function validateDeployConfig(policy, rc, hostingPolicy) {
   return Object.freeze({
     projectId: DEVELOPMENT_PROJECT_ID,
     components: [...FREE_DEPLOYMENT_COMPONENTS],
-    appCheckRegistrationStatus: policy.appCheck.registrationStatus
+    appCheckRegistrationStatus: policy.appCheck.registrationStatus,
+    authDomainsStatus: policy.authentication.domainsStatus
   });
 }
 
@@ -64,6 +75,9 @@ export function assertStaticDeploymentReady({ policy, confirmation, siteKey }) {
   }
   if (policy.appCheck?.registrationStatus !== "configured-in-firebase-console") {
     throw new Error("App Check todavía no figura configurado en Firebase Console.");
+  }
+  if (policy.authentication?.domainsStatus !== "configured-in-firebase-console") {
+    throw new Error("Los dominios del panel todavía no figuran autorizados en Firebase Auth.");
   }
   if (!siteKey?.trim()) {
     throw new Error("Falta MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY.");

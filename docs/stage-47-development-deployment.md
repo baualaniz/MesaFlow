@@ -51,6 +51,11 @@ ambientes.
 9. No habilitar todavía enforcement para Authentication ni Firestore. Primero se
    publicará y se observarán métricas; las callables ya exigen App Check desde el
    código de Functions.
+10. En Firebase Console abrir **Authentication → Configuración → Dominios
+    autorizados** y agregar:
+    - `mesaflow-desarrollo-admin.web.app`
+    - `mesaflow-desarrollo-admin.firebaseapp.com`
+11. No agregar los dominios de producción en esta etapa.
 
 Como cliente y panel usan el mismo App ID, se realiza un único registro con los
 cuatro dominios anteriores. La landing no usa Firebase y no necesita App Check.
@@ -64,6 +69,7 @@ publicación:
 - acepta solamente `mesaflow-desarrollo` como confirmación;
 - rechaza cualquier target cruzado con producción;
 - exige que el registro manual de App Check esté confirmado;
+- exige que los dominios del panel estén autorizados en Firebase Auth;
 - exige la clave pública solo en la sesión de PowerShell;
 - exige que todos los cambios versionables estén guardados en un commit;
 - ejecuta todos los checks y builds antes de publicar;

@@ -17,6 +17,11 @@ try {
   } else {
     console.log("[PENDIENTE] Registrar reCAPTCHA Enterprise en App Check.");
   }
+  if (result.authDomainsStatus === "configured-in-firebase-console") {
+    console.log("[OK] Dominios del panel autorizados en Firebase Authentication.");
+  } else {
+    console.log("[PENDIENTE] Autorizar los dominios Hosting del panel en Authentication.");
+  }
   console.log("Este comando no crea, modifica ni elimina recursos cloud.");
 } catch (error) {
   console.error(error instanceof Error ? error.message : error);

@@ -52,6 +52,12 @@ test("bloquea la publicación hasta completar App Check y confirmar el proyecto"
   ready.appCheck.registrationStatus = "configured-in-firebase-console";
   assert.throws(() => assertStaticDeploymentReady({
     policy: ready,
+    confirmation: DEVELOPMENT_PROJECT_ID,
+    siteKey: "public-key"
+  }), /dominios/iu);
+  ready.authentication.domainsStatus = "configured-in-firebase-console";
+  assert.throws(() => assertStaticDeploymentReady({
+    policy: ready,
     confirmation: "mesaflow-produccion",
     siteKey: "public-key"
   }), /confirmación/iu);
