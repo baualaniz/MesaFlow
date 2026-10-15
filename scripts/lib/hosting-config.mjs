@@ -31,8 +31,15 @@ const REQUIRED_SECURITY_HEADERS = Object.freeze({
   "referrer-policy": "strict-origin-when-cross-origin",
   "permissions-policy": "camera=(), microphone=(), geolocation=()"
 });
+export const CUSTOMER_FLUTTERFIRE_SCRIPT_HASHES = Object.freeze([
+  "sha256-pPjjoSpBd13bHnogATkOaA29BKZz9GGHosqgFMogFpk=",
+  "sha256-CUvLjkG73E0SHKSIhFgZD0F2EeVOnhhrNXG5sz99PX8=",
+  "sha256-rxktUz/x5IiyDZdpCpEfBIPBgiLT4AvfutH1eR/LxRo=",
+  "sha256-VcqKolZSII5VJPSIzE3rZD3Gow0f4J82y2FHMhDzPZE=",
+  "sha256-rfg7hv0pkrN9jeIyHIK7vibT9cn0Kq7ZRLaivuDuWks="
+]);
 export const CONTENT_SECURITY_POLICIES = Object.freeze({
-  customer: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://www.gstatic.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ 'wasm-unsafe-eval' 'sha256-pPjjoSpBd13bHnogATkOaA29BKZz9GGHosqgFMogFpk=' 'sha256-CUvLjkG73E0SHKSIhFgZD0F2EeVOnhhrNXG5sz99PX8=' 'sha256-rxktUz/x5IiyDZdpCpEfBIPBgiLT4AvfutH1eR/LxRo=' 'sha256-rfg7hv0pkrN9jeIyHIK7vibT9cn0Kq7ZRLaivuDuWks='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://www.gstatic.com https://www.google.com/recaptcha/ https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://*.mercadopago.com https://*.mercadolibre.com; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; worker-src 'self' blob:",
+  customer: `default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://www.gstatic.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ 'wasm-unsafe-eval' ${CUSTOMER_FLUTTERFIRE_SCRIPT_HASHES.map((hash) => `'${hash}'`).join(" ")}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://www.gstatic.com https://www.google.com/recaptcha/ https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://*.mercadopago.com https://*.mercadolibre.com; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; worker-src 'self' blob:`,
   admin: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:* ws://127.0.0.1:* https://www.google.com/recaptcha/ https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net; frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/",
   landing: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
 });

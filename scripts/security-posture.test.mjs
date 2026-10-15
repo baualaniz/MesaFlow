@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readdir, readFile } from "node:fs/promises";
 import test from "node:test";
 
+import { CUSTOMER_FLUTTERFIRE_SCRIPT_HASHES } from "./lib/hosting-config.mjs";
+
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
 const policy = JSON.parse(await read("firebase/security-policy.json"));
@@ -91,6 +93,12 @@ test("cada sitio publica una CSP sin comodín global", () => {
     }
     assert.doesNotMatch(csp, /default-src\s+\*/u, site.target);
     if (site.target !== "landing") assert.doesNotMatch(csp, /script-src[^;]*'unsafe-inline'/u);
+    if (site.target === "customer") {
+      assert.equal(CUSTOMER_FLUTTERFIRE_SCRIPT_HASHES.length, 5);
+      for (const hash of CUSTOMER_FLUTTERFIRE_SCRIPT_HASHES) {
+        assert.match(csp, new RegExp(hash.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"));
+      }
+    }
   }
 });
 
