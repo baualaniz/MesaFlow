@@ -1,10 +1,10 @@
 # Etapa 47 — Despliegue controlado a desarrollo
 
-Estado: **en progreso**. Los tres sitios Hosting de desarrollo existen, los
-targets están versionados, ambos clientes inicializan App Check y el usuario
-confirmó el registro de reCAPTCHA Enterprise junto con los dominios Auth del
-panel. Resta publicar y ejecutar el smoke cloud. Functions continúa fuera de
-alcance porque el usuario no autorizó Blaze.
+Estado: **en progreso**. Firestore Rules, índices y los tres sitios Hosting ya
+se publicaron en desarrollo, y el smoke HTTP cloud pasó. La verificación en
+navegador detectó que App Check aún no puede emitir tokens porque la API de
+reCAPTCHA Enterprise figura deshabilitada en `mesaflow-desarrollo`. Functions
+continúa fuera de alcance porque el usuario no autorizó Blaze.
 
 ## Recursos creados
 
@@ -17,7 +17,7 @@ dos secundarios y se fijó esta asociación exacta:
 | `admin` | `mesaflow-desarrollo-admin` | `https://mesaflow-desarrollo-admin.web.app` |
 | `landing` | `mesaflow-desarrollo-landing` | `https://mesaflow-desarrollo-landing.web.app` |
 
-No se creó ningún sitio de producción y no se publicó contenido todavía.
+No se creó ni publicó ningún sitio de producción.
 
 ## App Check
 
@@ -64,6 +64,15 @@ cuatro dominios anteriores. La landing no usa Firebase y no necesita App Check.
 El usuario confirmó ambos controles el 15 de octubre de 2026. La clave pública
 solo se entrega al proceso de build mediante variable de entorno y no se guarda
 en el repositorio.
+
+La consulta remota posterior confirmó que Firebase App Check tiene registrada
+exactamente la clave entregada para la app Web. Sin embargo, Google Cloud
+respondió que `recaptchaenterprise.googleapis.com` está deshabilitada en
+`mesaflow-desarrollo`; por eso el navegador recibe HTTP 400 al solicitar el
+token. Antes de considerar App Check operativo se debe comprobar que la clave
+fue creada con `mesaflow-desarrollo` seleccionado y habilitar allí la API. No se
+habilitó nada automáticamente para respetar la decisión de no activar servicios
+sin revisar su alcance.
 
 ## Guardas de despliegue
 
@@ -115,13 +124,21 @@ hasta autorizar y configurar el backend cloud.
 - 4 pruebas del ambiente administrativo aprobadas;
 - builds emulator y development de las tres interfaces aprobados;
 - regresión completa de Emulator Suite y navegador aprobada;
-- `deploy:check:dev` confirma el bloqueo de Functions y el pendiente App Check.
+- `deploy:check:dev` confirma las guardas y el bloqueo de Functions;
+- deploy gratuito completado: Rules, indexes y los tres targets Hosting;
+- smoke HTTP cloud aprobado en raíces, rutas profundas y 404 de landing;
+- panel cloud carga su pantalla de acceso;
+- verificación de App Check bloqueada por API de reCAPTCHA Enterprise
+  deshabilitada en el proyecto de desarrollo;
+- la revisión visual encontró CTAs locales en la landing; el build se corrigió
+  para inyectar las URLs cloud y recompilar si cambia la clave pública.
 
 ## Criterio de cierre restante
 
-- publicar rules, indexes y los tres sitios con la clave real;
-- ejecutar `npm.cmd run deploy:smoke:dev` y el recorrido de navegador sobre las
-  tres URLs;
+- habilitar la API de reCAPTCHA Enterprise en el proyecto correcto y volver a
+  comprobar la emisión de tokens;
+- republicar la corrección de enlaces de la landing y repetir el recorrido de
+  navegador sobre las tres URLs;
 - decidir explícitamente si Functions se mantiene local o se autoriza Blaze.
 
 ## Fuentes oficiales

@@ -5,10 +5,11 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–46 completadas y Etapa 47 en progreso. Los sitios de
-desarrollo, la integración App Check, su registro y los dominios Auth ya están
-preparados; resta publicar y validar las URLs. Functions continúa bloqueado sin
-consentimiento para Blaze.
+Estado actual: Etapas 1–46 completadas y Etapa 47 en progreso. Rules, índices y
+los tres sitios de desarrollo ya están publicados, y el smoke HTTP pasó. Resta
+corregir en Google Cloud la API deshabilitada de reCAPTCHA Enterprise, validar
+App Check en navegador y republicar los enlaces cloud de la landing. Functions
+continúa bloqueado sin consentimiento para Blaze.
 
 ## Fases 1–10: base y Firebase
 
@@ -135,7 +136,7 @@ consentimiento para Blaze.
 | 44 | Completa localmente: tres interfaces verificadas en Chrome y flujo QR→pedido→operación→pago simulado sobre Auth, Firestore, Functions, Storage y Hosting | `docs/stage-44-emulators-integration-e2e.md` |
 | 45 | Completa localmente: threat model, App Check cloud, CSP, XSS, logs redactados, reglas cruzadas y dependencias auditadas | `docs/stage-45-security-hardening.md` |
 | 46 | Completa: GitHub Actions de solo lectura con toolchain fijado, 338 pruebas, auditoría y Emulator Suite E2E por PR/main | `docs/stage-46-continuous-integration.md` |
-| 47 | En progreso: tres sitios dev creados, targets/política segura, App Check registrado, dominios Auth y builds cloud listos; deploy pendiente; Functions bloqueado sin Blaze | `docs/stage-47-development-deployment.md` |
+| 47 | En progreso: Rules, índices y tres sitios dev publicados; smoke HTTP aprobado; App Check bloqueado por API reCAPTCHA deshabilitada y Functions bloqueado sin Blaze | `docs/stage-47-development-deployment.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

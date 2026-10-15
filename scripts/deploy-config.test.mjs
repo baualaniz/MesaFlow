@@ -10,10 +10,11 @@ import {
   validateDeployConfig
 } from "./lib/deploy-config.mjs";
 
-const [policy, rc, hostingPolicy] = await Promise.all([
+const [policy, rc, hostingPolicy, buildHostingSource] = await Promise.all([
   readFile(new URL("../firebase/deploy-policy.json", import.meta.url), "utf8").then(JSON.parse),
   readFile(new URL("../.firebaserc", import.meta.url), "utf8").then(JSON.parse),
-  readFile(new URL("../firebase/hosting-policy.json", import.meta.url), "utf8").then(JSON.parse)
+  readFile(new URL("../firebase/hosting-policy.json", import.meta.url), "utf8").then(JSON.parse),
+  readFile(new URL("./build-hosting.mjs", import.meta.url), "utf8")
 ]);
 
 test("el deploy gratuito queda fijado solo a desarrollo", () => {
@@ -68,4 +69,13 @@ test("bloquea la publicación hasta completar App Check y confirmar el proyecto"
     confirmation: DEVELOPMENT_PROJECT_ID,
     siteKey: ""
   }), /MESAFLOW_RECAPTCHA/iu);
+});
+
+test("el build cloud enlaza la landing con los sitios publicados y renueva la clave compilada", () => {
+  assert.match(buildHostingSource, /PUBLIC_CUSTOMER_URL/u);
+  assert.match(buildHostingSource, /https:\/\/mesaflow-desarrollo\.web\.app/u);
+  assert.match(buildHostingSource, /PUBLIC_ADMIN_URL/u);
+  assert.match(buildHostingSource, /https:\/\/mesaflow-desarrollo-admin\.web\.app/u);
+  assert.match(buildHostingSource, /createHash\("sha256"\)/u);
+  assert.match(buildHostingSource, /appCheckKeyFingerprint/u);
 });

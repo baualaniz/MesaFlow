@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { createHash } from "node:crypto";
 import { access, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { constants } from "node:fs";
@@ -18,7 +19,13 @@ if (requestedEnvironment === "dev" && !cloudSiteKey) {
   );
 }
 const buildMode = requestedEnvironment === "dev" ? "development" : "emulator";
-const CUSTOMER_BUILD_PROFILE = `${buildMode}-csp-local-resources-app-check-v1`;
+const appCheckKeyFingerprint = cloudSiteKey
+  ? createHash("sha256").update(cloudSiteKey).digest("hex").slice(0, 12)
+  : "none";
+const CUSTOMER_BUILD_PROFILE =
+  `${buildMode}-csp-local-resources-app-check-v2-${appCheckKeyFingerprint}`;
+const developmentCustomerUrl = "https://mesaflow-desarrollo.web.app";
+const developmentAdminUrl = "https://mesaflow-desarrollo-admin.web.app";
 const developmentLandingUrl = "https://mesaflow-desarrollo-landing.web.app";
 
 async function newestMtime(target) {
@@ -128,6 +135,12 @@ function runLandingBuild() {
         stdio: "inherit",
         env: {
           ...process.env,
+          PUBLIC_CUSTOMER_URL: requestedEnvironment === "dev"
+            ? developmentCustomerUrl
+            : "http://127.0.0.1:5100",
+          PUBLIC_ADMIN_URL: requestedEnvironment === "dev"
+            ? developmentAdminUrl
+            : "http://127.0.0.1:5105",
           PUBLIC_LANDING_URL: requestedEnvironment === "dev"
             ? developmentLandingUrl
             : "http://127.0.0.1:5106"
