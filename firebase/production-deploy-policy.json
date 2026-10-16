@@ -27,7 +27,7 @@
       "mesaflow-produccion-admin.web.app",
       "mesaflow-produccion-admin.firebaseapp.com"
     ],
-    "domainsStatus": "pending-user-console"
+    "domainsStatus": "configured-in-firebase-console"
   },
   "firestore": {
     "databaseStatus": "verified-read-only",

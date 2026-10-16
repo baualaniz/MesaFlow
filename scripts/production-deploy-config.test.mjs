@@ -50,6 +50,7 @@ test("bloquea el deploy mientras falten sitios, App Check o dominios", () => {
     siteKey: "public-key"
   }), /App Check/u);
   ready.appCheck.registrationStatus = "configured-in-firebase-console";
+  ready.authentication.domainsStatus = "pending-user-console";
   assert.throws(() => assertProductionStaticReady({
     policy: ready,
     projectConfirmation: "mesaflow-produccion",
