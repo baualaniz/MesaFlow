@@ -1,10 +1,11 @@
 # Etapa 48 — Producción, dominios y rollback
 
-Estado: **en progreso, sin despliegues productivos**. El repositorio ya separa y
-protege el camino de publicación a `mesaflow-produccion`. La inspección remota de
-solo lectura confirmó Authentication, Firestore y los tres sitios Hosting; App
-Check y los dominios del panel quedaron validados. El preflight gratuito está
-listo y resta la confirmación explícita antes de publicar.
+Estado: **completa dentro del alcance gratuito autorizado**. El repositorio
+separa y protege el camino de publicación a `mesaflow-produccion`. Authentication,
+Firestore, los tres sitios Hosting, App Check y los dominios del panel quedaron
+validados. Rules, índices y Hosting se publicaron con confirmación explícita y
+pasaron el smoke productivo. Functions y el webhook permanecen diferidos sin
+Blaze.
 
 ## Estado remoto verificado
 
@@ -32,7 +33,7 @@ revisión.
 El MVP usará inicialmente los subdominios HTTPS gratuitos administrados por
 Firebase:
 
-| Aplicación | URL productiva prevista |
+| Aplicación | URL productiva publicada |
 |---|---|
 | Cliente | `https://mesaflow-produccion.web.app` |
 | Panel | `https://mesaflow-produccion-admin.web.app` |
@@ -109,10 +110,10 @@ agregá:
 
 No agregues `localhost`, IPs, esquemas `https://`, puertos ni comodines.
 
-## Publicación posterior
+## Publicación ejecutada
 
-Cuando las tres acciones anteriores estén confirmadas, se actualizará la
-política versionada y recién entonces se habilitará este comando:
+El 16 de octubre de 2026, con las tres acciones anteriores confirmadas y el
+árbol Git limpio, se ejecutó el flujo protegido:
 
 ```powershell
 $env:MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY = "ID_PUBLICO_PRODUCTIVO"
@@ -121,8 +122,33 @@ Remove-Item Env:MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY
 npm.cmd run deploy:smoke:prod
 ```
 
-No se debe ejecutar antes: las guardas fallarán de manera deliberada. La clave
-no debe guardarse en `.env`, documentación, capturas ni commits.
+La clave pública se entregó solo al proceso y se retiró de la sesión al terminar;
+no quedó guardada en `.env`, documentación, capturas ni commits. El despliegue
+publicó exclusivamente Rules, índices y los tres targets Hosting. Functions y
+secretos productivos quedaron excluidos.
+
+## Resultado del lanzamiento
+
+El mismo flujo ejecutó la validación integral, los builds productivos y la
+publicación. Después se comprobó:
+
+- cliente raíz y ruta profunda: HTTP 200;
+- panel raíz y ruta profunda: HTTP 200;
+- landing raíz: HTTP 200 y página inexistente: HTTP 404;
+- cabeceras de seguridad, CSP y políticas de caché esperadas;
+- renderizado real en navegador del cliente, login del panel y landing;
+- enlaces de la landing hacia las URLs productivas correctas.
+
+URLs verificadas:
+
+- `https://mesaflow-produccion.web.app`;
+- `https://mesaflow-produccion-admin.web.app`;
+- `https://mesaflow-produccion-landing.web.app`.
+
+Esta verificación demuestra la publicación estática y la navegación. No implica
+que los flujos cloud de QR, pedidos, asistencia o pagos estén habilitados: todos
+ellos dependen de Functions y siguen verificándose de punta a punta mediante la
+Emulator Suite.
 
 ## Functions, secretos y webhook
 
@@ -146,7 +172,7 @@ Si una publicación estática futura falla:
 Cada sitio conserva su historial y se revierte por separado. El rollback de
 Hosting no modifica Firestore ni Authentication.
 
-## Verificación automatizada actual
+## Verificación automatizada
 
 ```powershell
 npm.cmd run test:hosting-config
@@ -155,8 +181,8 @@ npm.cmd run test:deployment-smoke
 npm.cmd run deploy:check:prod
 ```
 
-Resultado: 22 pruebas aprobadas y preflight productivo bloqueado únicamente por
-los tres pasos manuales documentados.
+Resultado: controles locales aprobados, preflight productivo aprobado, despliegue
+completado y smoke cloud productivo aprobado.
 
 ## Criterio de cierre
 
@@ -166,8 +192,12 @@ los tres pasos manuales documentados.
 - [x] Sitios Hosting de panel y landing creados y verificados.
 - [x] App Check productivo registrado y validado sin enforcement.
 - [x] Dominios del panel autorizados y verificados en Authentication.
-- [ ] Rules, índices y tres sitios publicados y verificados.
+- [x] Rules, índices y tres sitios publicados y verificados.
 - [ ] Webhook productivo: diferido mientras Functions siga sin autorización.
+
+La etapa se considera cerrada en el alcance gratuito aprobado. El último punto
+es una ampliación futura con costo y requiere una autorización independiente
+para activar Blaze, cargar secretos y desplegar Functions.
 
 ## Fuentes oficiales
 

@@ -13,13 +13,15 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 47** están terminadas y la Etapa 48 está en progreso. Los dos proyectos
+Las **Etapas 1 a 48** están terminadas dentro del alcance gratuito autorizado. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Rules, índices y los tres sitios de desarrollo están publicados y verificados;
-Functions continúa local. Producción ya tiene Authentication y Firestore
-verificados en solo lectura, con tres sitios, App Check, dominios Auth, build,
-guardas y rollback listos para una publicación explícita. La app Flutter inicializa Firebase Core con apps Web
+Functions continúa local. Producción tiene Authentication y Firestore
+verificados, Rules, índices y sus tres sitios Hosting publicados, además de App
+Check, dominios Auth, guardas y rollback comprobados. Las raíces, rutas profundas,
+404 y renderizado visual de cliente, panel y landing pasaron el smoke productivo.
+La app Flutter inicializa Firebase Core con apps Web
 separadas para desarrollo y producción, y usa `demo-mesaflow` por defecto local.
 El sistema visual incluye Poppins/Inter empaquetadas, tokens y componentes
 semánticos probados en móvil y escritorio.
