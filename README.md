@@ -13,7 +13,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 48** están terminadas dentro del alcance gratuito autorizado. Los dos proyectos
+Las **Etapas 1 a 49** están terminadas dentro del alcance gratuito autorizado. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Rules, índices y los tres sitios de desarrollo están publicados y verificados;
@@ -160,6 +160,9 @@ encuentran en:
 - `docs/stage-46-continuous-integration.md`
 - `docs/stage-47-development-deployment.md`
 - `docs/stage-48-production-domain.md`
+- `docs/stage-49-documentation-demo.md`
+- `docs/user-guide.md`
+- `docs/demo-script.md`
 - `docs/threat-model.md`
 - `docs/tooling-security.md`
 - `SECURITY.md`
@@ -190,10 +193,10 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 357
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 362
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
-11 de despliegue, cuatro de smoke cloud, cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
+11 de despliegue, cuatro de smoke cloud, cinco de documentación, cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
 15 de contratos, 10 de landing, ocho de seguridad, ocho de CI, 77 del panel, 81 de Flutter y 62 de Functions), más los lint y builds
 TypeScript. Este comando no consulta servicios remotos.
 
@@ -215,6 +218,29 @@ pruebas Dart con los mismos fixtures, útil cuando solo cambia el contrato:
 ```powershell
 npm.cmd run contracts:check
 ```
+
+## Demostración reproducible
+
+El recorrido completo sin tarjeta ni recursos cloud está explicado paso a paso
+en `docs/user-guide.md`. Para preparar una presentación, el relato de 8 a 10
+minutos, sus tiempos y contingencias están en `docs/demo-script.md`.
+
+En resumen, desde la raíz se inicia Firebase local:
+
+```powershell
+npm.cmd run emulators
+```
+
+En una segunda terminal se cargan únicamente datos ficticios:
+
+```powershell
+npm.cmd run firebase:seed:demo
+```
+
+Luego se abren landing `http://127.0.0.1:5106`, cliente
+`http://127.0.0.1:5100`, panel `http://127.0.0.1:5105` y Firebase local
+`http://127.0.0.1:4000`. El acceso y el orden exacto del recorrido están en el
+manual; nunca se carga este seed en desarrollo o producción.
 
 ## Configuración Authentication en la nube
 

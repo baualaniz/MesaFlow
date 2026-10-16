@@ -1,104 +1,94 @@
-# Informe breve de avance — MesaFlow
+# Informe ejecutivo — MesaFlow
 
-**Fecha:** 17 de septiembre de 2026  
-**Repositorio público:** <https://github.com/baualaniz/MesaFlow>  
-**Rama principal:** `main`  
-**Último commit verificado:** `120f889` — configuración de tres sitios Hosting locales
+**Fecha:** 16 de octubre de 2026
 
-## 1. Descripción del proyecto
+**Repositorio público:** <https://github.com/baualaniz/MesaFlow>
 
-MesaFlow es un sistema para digitalizar la atención de mesas gastronómicas. El
-cliente accede desde un código QR, consulta el menú, arma su pedido y podrá seguir
-su estado, pedir asistencia y pagar. El personal contará con un panel separado
-para administrar mesas, productos, pedidos, usuarios y métricas.
+**Aplicación cliente:** <https://mesaflow-produccion.web.app>
 
-La solución se diseña como SaaS multiestablecimiento: los datos operativos de cada
-restaurante quedan aislados bajo su propio identificador.
+**Panel administrativo:** <https://mesaflow-produccion-admin.web.app>
 
-## 2. Qué funciona actualmente
+**Landing:** <https://mesaflow-produccion-landing.web.app>
 
-- Repositorio público y monorepo organizados para cliente, panel, landing,
-  backend, contratos, Firebase, pruebas y documentación.
-- Proyectos Firebase separados para desarrollo (`mesaflow-desarrollo`) y
-  producción (`mesaflow-produccion`).
-- Bases Cloud Firestore `(default)` creadas en ambos proyectos, edición Standard,
-  modo nativo y región `southamerica-east1` (São Paulo).
-- Dataset académico de 23 documentos ficticios cargado y verificado únicamente
-  en desarrollo; producción permanece sin datos de demostración.
-- Authentication configurado con Email/Password para el personal y acceso
-  anónimo previsto para clientes que ingresen desde una mesa.
-- Aplicación Flutter Web ejecutable con una primera experiencia visual: catálogo
-  de productos, imágenes locales, búsqueda, filtros, detalle y carrito
-  demostrativo.
-- Backend TypeScript para Cloud Functions 2nd gen con endpoint local de salud.
-- Tres destinos de Firebase Hosting probados localmente: cliente, panel y landing.
-- Emuladores integrados para Authentication, Firestore, Storage, Functions y
-  Hosting, sin utilizar datos reales ni producción.
-- Configuración pública, parámetros privados y secretos separados para evitar
-  credenciales dentro del repositorio.
-- Suite actual de 61 pruebas estáticas y unitarias, más pruebas integradas de
-  emuladores, rutas web y reglas de Storage.
+## 1. Descripción
 
-## 3. Estructura prevista en Firestore
+MesaFlow es un MVP SaaS multiestablecimiento para digitalizar la atención en
+locales gastronómicos. El cliente entra desde el QR de su mesa, consulta el menú,
+arma pedidos, sigue su estado, pide asistencia y revisa su cuenta. El personal
+opera pedidos, cocina, mesas, asistencia, catálogo, equipo, configuración y
+métricas desde un panel separado por roles.
 
-Las colecciones raíz principales son:
+## 2. Estado funcional
 
-- `users`: perfil global mínimo del usuario.
-- `establishmentSlugs`: resolución del establecimiento desde una URL o QR.
-- `establishments`: raíz de cada restaurante o tenant.
-- `webhookEvents`: idempotencia de notificaciones externas administradas por el
-  backend.
+- Cliente Flutter Web/PWA con QR, sesión anónima, menú dinámico, búsqueda,
+  detalle, carrito persistente, pedidos, seguimiento, asistencia y cuenta.
+- Panel React/TypeScript con autenticación, recuperación de contraseña, RBAC,
+  pedidos en tiempo real, mesas/QR, catálogo, equipo, asistencia, métricas y
+  configuración.
+- Landing Astro responsive con SEO, accesibilidad, recursos locales y enlaces a
+  los dos productos.
+- Backend Functions 2nd gen con validaciones privilegiadas, transacciones,
+  idempotencia, auditoría, Checkout Pro, webhook y alerta WhatsApp opcional.
+- Reglas e índices Firestore, reglas Storage opcionales, App Check y aislamiento
+  por establecimiento.
+- Suite unitaria, de componentes, reglas, integración y E2E con cobertura
+  automática y CI en GitHub Actions.
 
-Dentro de `establishments/{establishmentId}` se prevén las subcolecciones:
+## 3. Arquitectura y datos
 
-- `members`, `tables`, `tableSessions` y `participants`;
-- `categories`, `products` y `orders`;
-- `assistanceRequests`, `payments` y `dailyMetrics`;
-- `settings`, `qrExchanges` y `auditLogs`.
+El frontend se divide en Flutter para clientes, React para operación y Astro para
+la landing. Firebase aporta Authentication, Firestore, Functions, Hosting y App
+Check. Los contratos críticos existen en TypeScript y Dart.
 
-El esquema completo, las rutas y la estrategia de identificadores están
-versionados en `firebase/schema/firestore-schema.json` y `docs/architecture.md`.
+Las colecciones raíz son `users`, `establishmentSlugs`, `establishments` y
+`webhookEvents`. Cada `establishments/{establishmentId}` contiene `members`,
+`tables`, `tableSessions`, `categories`, `products`, `orders`,
+`assistanceRequests`, `payments`, `dailyMetrics`, `settings`, `qrExchanges` y
+`auditLogs`, entre otras colecciones técnicas. El esquema versionado está en
+`firebase/schema/firestore-schema.json`.
 
-## 4. APIs y servicios seleccionados
+## 4. APIs y servicios elegidos
 
-| Servicio | Uso previsto | Estado |
+| Servicio | Uso | Estado |
 |---|---|---|
-| Firebase Authentication | Personal con Email/Password y clientes anónimos | Configurado; integración UI pendiente |
-| Cloud Firestore | Menú, mesas, sesiones, pedidos, asistencia, pagos y métricas | Bases creadas y esquema definido |
-| Cloud Functions 2nd gen | Lógica privilegiada, pedidos, QR, pagos y webhooks | Base TypeScript y health local listos |
-| Firebase Hosting | Cliente Flutter, panel React y landing Astro | Tres destinos locales listos |
-| Firebase Storage | Extensión futura para imágenes dinámicas | Reglas probadas; el MVP usa imágenes empaquetadas |
-| Mercado Pago Checkout Pro | Pago alojado y confirmación por webhook | Seleccionado; sandbox pendiente |
-| WhatsApp Cloud API | Aviso opcional de solicitudes de asistencia | Seleccionado; integración posterior y no bloqueante |
+| Firebase Authentication | Personal Email/Password y clientes anónimos | Configurado en dev/prod y emulado |
+| Cloud Firestore | Menú, operación, sesiones, pedidos, pagos y métricas | Bases, reglas e índices publicados |
+| Cloud Functions 2nd gen | Lógica privilegiada y webhooks | Completo y probado en emulador; cloud diferido |
+| Firebase Hosting | Cliente, panel y landing | Publicado en desarrollo y producción |
+| Firebase App Check | Reducción de abuso en clientes web | Registrado; enforcement gradual pendiente |
+| Mercado Pago Checkout Pro | Checkout alojado y conciliación por webhook | Sandbox/emulador completo; producción diferida |
+| WhatsApp Cloud API | Aviso opt-in de asistencia | Adaptador y mock listos; credenciales diferidas |
+| Firebase Storage | Extensión para imágenes dinámicas | No requerido; el MVP empaqueta imágenes |
 
-## 5. Pendientes y bloqueos
+## 5. Seguridad y calidad
 
-No existe un bloqueo técnico para continuar el desarrollo local. Los pendientes
-principales son conectar el cliente Flutter con Firebase, implementar contratos y
-repositorios, completar las reglas Firestore, crear el dataset demostrativo y
-construir el panel administrativo.
+El sistema combina reglas multi-tenant, membresías, permisos por rol, validación
+de servidor, CSP, App Check, secretos fuera de Git, precios recalculados,
+idempotencia y logs redactados. Los pagos solo se acreditan después de validar la
+firma y consultar al proveedor; una URL de retorno no es autoritativa.
 
-El despliegue de Cloud Functions y Secret Manager requerirá habilitar el plan
-Blaze más adelante. Para evitar costos y el uso de tarjeta en esta instancia, el
-MVP actual funciona localmente con emuladores e imágenes empaquetadas. Mercado
-Pago y WhatsApp todavía no poseen credenciales cargadas ni llamadas reales.
+La validación local ejecuta 362 pruebas, lint, builds y umbrales de cobertura. El
+recorrido E2E adicional inicia la Emulator Suite y atraviesa
+QR → menú → pedido → operación → pago simulado sin acceder a los proyectos cloud.
 
-Para esta entrega se cargó un dataset acotado de demostración, sin datos
-personales y solo en `mesaflow-desarrollo`. Incluye un establecimiento, categorías,
-productos, mesas, una sesión, un pedido y estados operativos claramente ficticios.
-La carga es atómica, auditable y rechaza producción. `mesaflow-produccion`
-continúa sin datos de demostración.
+## 6. Despliegue y límites actuales
 
-## 6. Próximos pasos
+Authentication, Firestore, Rules, índices, App Check y los tres sitios Hosting
+están preparados o publicados en los proyectos separados de desarrollo y
+producción. Las URLs productivas, rutas profundas, 404 y cabeceras de seguridad
+fueron verificadas.
 
-1. Implementar contratos compartidos y validaciones de datos.
-2. Crear repositorios y consultas multiestablecimiento.
-3. Completar reglas Firestore y sus pruebas de aislamiento.
-4. Cargar un seed idempotente de demostración en desarrollo.
-5. Conectar el flujo Flutter de QR, menú, carrito y pedidos.
-6. Construir el panel React y luego integrar pagos sandbox.
+Cloud Functions, los secretos reales, el webhook público de Mercado Pago y el
+envío real de WhatsApp no están desplegados. Firebase exige Blaze para Functions
+y todavía no se autorizó facturación. Este límite no afecta la demostración
+local completa, pero significa que los sitios productivos muestran las
+interfaces y no ejecutan esos flujos privilegiados.
 
-## 7. Ejecución de la demostración local
+## 7. Demostración
+
+La demo usa exclusivamente el proyecto local `demo-mesaflow`, el establecimiento
+ficticio **Bistró MesaFlow**, diez mesas, dieciocho productos y cuatro usuarios
+con correos `.example.invalid`.
 
 Desde la raíz del repositorio:
 
@@ -106,11 +96,19 @@ Desde la raíz del repositorio:
 npm.cmd run emulators
 ```
 
-Después de `All emulators ready`, se pueden abrir:
+En otra terminal:
 
-- cliente: <http://127.0.0.1:5100>;
-- panel provisional: <http://127.0.0.1:5105>;
-- landing provisional: <http://127.0.0.1:5106>;
-- consola local Firebase: <http://127.0.0.1:4000>.
+```powershell
+npm.cmd run firebase:seed:demo
+```
 
-Los servicios se detienen con `Ctrl+C`.
+Después se abren cliente en <http://127.0.0.1:5100>, panel en
+<http://127.0.0.1:5105>, landing en <http://127.0.0.1:5106> y Firebase local en
+<http://127.0.0.1:4000>. El manual completo está en `docs/user-guide.md` y el
+relato de presentación en `docs/demo-script.md`.
+
+## 8. Próximo paso
+
+La Etapa 50 realizará la regresión final, consolidará evidencia para la
+Definition of Done y corregirá cualquier hallazgo antes de declarar el MVP
+cerrado.
