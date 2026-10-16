@@ -42,6 +42,7 @@ test("bloquea el deploy mientras falten sitios, App Check o dominios", () => {
   }), /sitios Hosting/u);
 
   const ready = structuredClone(policy);
+  ready.appCheck.registrationStatus = "pending-user-console";
   assert.throws(() => assertProductionStaticReady({
     policy: ready,
     projectConfirmation: "mesaflow-produccion",

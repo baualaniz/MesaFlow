@@ -2,8 +2,8 @@
 
 Estado: **en progreso, sin despliegues productivos**. El repositorio ya separa y
 protege el camino de publicación a `mesaflow-produccion`. La inspección remota de
-solo lectura confirmó Authentication, Firestore y los tres sitios Hosting; resta
-configurar App Check productivo y autorizar los dominios del panel.
+solo lectura confirmó Authentication, Firestore y los tres sitios Hosting; App
+Check productivo quedó validado y resta autorizar los dominios del panel.
 
 ## Estado remoto verificado
 
@@ -17,6 +17,9 @@ La revisión del 15 de octubre de 2026 confirmó:
 - sitio Hosting principal existente: `mesaflow-produccion`;
 - sitios `mesaflow-produccion-admin` y `mesaflow-produccion-landing` creados y
   verificados el 16 de octubre de 2026.
+- clave `mesaflow-prod-web` validada en el proyecto productivo, de tipo `SCORE`,
+  limitada a los cuatro dominios previstos;
+- App Check registrado con umbral `0.5`, TTL de una hora y enforcement apagado.
 
 No se crearon sitios, usuarios, documentos, índices ni reglas durante esa
 revisión.
@@ -55,7 +58,7 @@ Comprobación local, sin acceso cloud:
 npm.cmd run deploy:check:prod
 ```
 
-La salida actual muestra dos pendientes intencionales y bloquea la
+La salida actual muestra un pendiente intencional y bloquea la
 publicación.
 
 ## ACCIÓN MANUAL 1 — crear los dos sitios faltantes
@@ -158,7 +161,7 @@ los tres pasos manuales documentados.
 - [x] Targets, build, smoke, doble confirmación y rollback preparados.
 - [x] Estrategia HTTPS gratuita sin dominio propio definida.
 - [x] Sitios Hosting de panel y landing creados y verificados.
-- [ ] App Check productivo registrado y validado sin enforcement.
+- [x] App Check productivo registrado y validado sin enforcement.
 - [ ] Dominios del panel autorizados en Authentication.
 - [ ] Rules, índices y tres sitios publicados y verificados.
 - [ ] Webhook productivo: diferido mientras Functions siga sin autorización.

@@ -19,7 +19,7 @@
   "appCheck": {
     "provider": "recaptcha-enterprise",
     "siteKeyEnvironmentVariable": "MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY",
-    "registrationStatus": "pending-user-console"
+    "registrationStatus": "configured-in-firebase-console"
   },
   "authentication": {
     "baseConfigurationStatus": "verified-read-only",

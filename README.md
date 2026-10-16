@@ -18,8 +18,8 @@ Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Rules, índices y los tres sitios de desarrollo están publicados y verificados;
 Functions continúa local. Producción ya tiene Authentication y Firestore
-verificados en solo lectura, con tres sitios, build, guardas y rollback preparados;
-faltan App Check y dominios Auth antes de publicar. La app Flutter inicializa Firebase Core con apps Web
+verificados en solo lectura, con tres sitios, App Check, build, guardas y rollback;
+faltan los dominios Auth del panel antes de publicar. La app Flutter inicializa Firebase Core con apps Web
 separadas para desarrollo y producción, y usa `demo-mesaflow` por defecto local.
 El sistema visual incluye Poppins/Inter empaquetadas, tokens y componentes
 semánticos probados en móvil y escritorio.
