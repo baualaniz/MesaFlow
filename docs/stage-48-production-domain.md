@@ -2,8 +2,8 @@
 
 Estado: **en progreso, sin despliegues productivos**. El repositorio ya separa y
 protege el camino de publicación a `mesaflow-produccion`. La inspección remota de
-solo lectura confirmó Authentication y Firestore; resta crear dos sitios
-Hosting, configurar App Check productivo y autorizar los dominios del panel.
+solo lectura confirmó Authentication, Firestore y los tres sitios Hosting; resta
+configurar App Check productivo y autorizar los dominios del panel.
 
 ## Estado remoto verificado
 
@@ -15,8 +15,8 @@ La revisión del 15 de octubre de 2026 confirmó:
 - producción sin `localhost` ni otros dominios loopback;
 - Firestore `(default)` nativo, Standard, en `southamerica-east1`;
 - sitio Hosting principal existente: `mesaflow-produccion`;
-- sitios `mesaflow-produccion-admin` y `mesaflow-produccion-landing` todavía
-  inexistentes.
+- sitios `mesaflow-produccion-admin` y `mesaflow-produccion-landing` creados y
+  verificados el 16 de octubre de 2026.
 
 No se crearon sitios, usuarios, documentos, índices ni reglas durante esa
 revisión.
@@ -55,7 +55,7 @@ Comprobación local, sin acceso cloud:
 npm.cmd run deploy:check:prod
 ```
 
-La salida actual muestra tres pendientes intencionales y bloquea la
+La salida actual muestra dos pendientes intencionales y bloquea la
 publicación.
 
 ## ACCIÓN MANUAL 1 — crear los dos sitios faltantes
@@ -157,7 +157,7 @@ los tres pasos manuales documentados.
 - [x] Authentication y Firestore productivos verificados en solo lectura.
 - [x] Targets, build, smoke, doble confirmación y rollback preparados.
 - [x] Estrategia HTTPS gratuita sin dominio propio definida.
-- [ ] Sitios Hosting de panel y landing creados.
+- [x] Sitios Hosting de panel y landing creados y verificados.
 - [ ] App Check productivo registrado y validado sin enforcement.
 - [ ] Dominios del panel autorizados en Authentication.
 - [ ] Rules, índices y tres sitios publicados y verificados.

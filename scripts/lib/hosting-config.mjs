@@ -139,7 +139,7 @@ export function validateHostingConfig(config, rc, policy) {
 
   if (policy?.version !== 1 || policy?.localProjectId !== "demo-mesaflow" ||
       policy?.cloudStatus?.development !== "sites-created-targets-configured" ||
-      policy?.cloudStatus?.production !== "targets-configured-pending-cloud-sites" ||
+      policy?.cloudStatus?.production !== "sites-created-targets-configured" ||
       policy?.targets?.length !== HOSTING_TARGETS.length) {
     throw new Error("La política Hosting no declara el entorno local o difiere del esquema esperado.");
   }

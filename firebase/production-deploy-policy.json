@@ -14,7 +14,7 @@
   "freeDeployment": ["firestore:rules", "firestore:indexes", "hosting"],
   "paidDeployment": ["functions"],
   "hosting": {
-    "sitesStatus": "pending-admin-and-landing"
+    "sitesStatus": "sites-created-targets-configured"
   },
   "appCheck": {
     "provider": "recaptcha-enterprise",

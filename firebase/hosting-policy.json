@@ -39,6 +39,6 @@
   },
   "cloudStatus": {
     "development": "sites-created-targets-configured",
-    "production": "targets-configured-pending-cloud-sites"
+    "production": "sites-created-targets-configured"
   }
 }

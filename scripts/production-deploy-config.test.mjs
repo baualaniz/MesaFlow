@@ -20,7 +20,7 @@ const [policy, rc, hostingPolicy, buildHostingSource] = await Promise.all([
 test("la política productiva queda fijada a su proyecto y targets", () => {
   const result = validateProductionDeployConfig(policy, rc, hostingPolicy);
   assert.equal(result.projectId, "mesaflow-produccion");
-  assert.equal(result.sitesStatus, "pending-admin-and-landing");
+  assert.equal(result.sitesStatus, "sites-created-targets-configured");
   assert.equal(result.functionsStatus, "blocked-no-user-consent");
   assert.equal(result.webhookStatus, "blocked-requires-functions-and-secrets");
 });
@@ -32,15 +32,16 @@ test("rechaza mezclar targets de desarrollo en producción", () => {
 });
 
 test("bloquea el deploy mientras falten sitios, App Check o dominios", () => {
+  const pendingSites = structuredClone(policy);
+  pendingSites.hosting.sitesStatus = "pending-admin-and-landing";
   assert.throws(() => assertProductionStaticReady({
-    policy,
+    policy: pendingSites,
     projectConfirmation: "mesaflow-produccion",
     releaseConfirmation: PRODUCTION_CONFIRMATION_PHRASE,
     siteKey: "public-key"
   }), /sitios Hosting/u);
 
   const ready = structuredClone(policy);
-  ready.hosting.sitesStatus = "sites-created-targets-configured";
   assert.throws(() => assertProductionStaticReady({
     policy: ready,
     projectConfirmation: "mesaflow-produccion",
