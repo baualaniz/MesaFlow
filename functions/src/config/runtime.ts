@@ -6,6 +6,13 @@ export const mercadoPagoAccessToken = defineSecret(
 export const mercadoPagoWebhookSecret = defineSecret(
   "MERCADO_PAGO_WEBHOOK_SECRET"
 );
+export const mercadoPagoEnvironment = defineString(
+  "MERCADO_PAGO_ENVIRONMENT",
+  {
+    default: "sandbox",
+    description: "Ambiente explícito de Checkout Pro: sandbox o production"
+  }
+);
 export const whatsappAccessToken = defineSecret("WHATSAPP_ACCESS_TOKEN");
 export const whatsappVerifyToken = defineSecret("WHATSAPP_VERIFY_TOKEN");
 

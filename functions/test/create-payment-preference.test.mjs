@@ -6,7 +6,11 @@ import {
   buildPaymentIntentId,
   createPaymentPreference
 } from "../lib/create-payment-preference.js";
-import { MercadoPagoProvider } from "../lib/payments/mercado-pago-provider.js";
+import {
+  mercadoPagoLiveMode,
+  MercadoPagoProvider,
+  parseMercadoPagoEnvironment
+} from "../lib/payments/mercado-pago-provider.js";
 
 const input = Object.freeze({
   establishmentId: "mesa-flow-demo",
@@ -67,7 +71,7 @@ test("rechaza identidad ausente y campos manipulados", async () => {
 
 test("construye la preferencia con importe servidor y retornos públicos", async () => {
   const requests = [];
-  const provider = new MercadoPagoProvider("TEST-token-seguro-123", async (url, init) => {
+  const provider = new MercadoPagoProvider("TEST-token-seguro-123", "sandbox", async (url, init) => {
     requests.push({ url: url.toString(), init });
     if (init.method === "GET") {
       return new Response(JSON.stringify({ elements: [], total: 0 }), { status: 200 });
@@ -113,7 +117,7 @@ test("rechaza credenciales vacías y URLs de checkout ajenas", async () => {
       error.reason === "provider-unavailable"
   );
   let call = 0;
-  const provider = new MercadoPagoProvider("TEST-token-seguro-123", async () => {
+  const provider = new MercadoPagoProvider("TEST-token-seguro-123", "sandbox", async () => {
     call += 1;
     if (call === 1) {
       return new Response(JSON.stringify({ elements: [] }), { status: 200 });
@@ -139,7 +143,7 @@ test("rechaza credenciales vacías y URLs de checkout ajenas", async () => {
 
 test("recupera por external_reference antes de crear otra preferencia", async () => {
   const requests = [];
-  const provider = new MercadoPagoProvider("APP_USR-token-seguro-123", async (url, init) => {
+  const provider = new MercadoPagoProvider("APP_USR-token-seguro-123", "sandbox", async (url, init) => {
     requests.push({ url: url.toString(), init });
     if (requests.length === 1) {
       return new Response(JSON.stringify({
@@ -163,4 +167,32 @@ test("recupera por external_reference antes de crear otra preferencia", async ()
   assert.equal(result.preferenceId, "pref-recuperada");
   assert.equal(requests.length, 2);
   assert.equal(requests.some(({ init }) => init.method === "POST"), false);
+});
+
+test("producción usa init_point y nunca redirige al checkout sandbox", async () => {
+  assert.equal(mercadoPagoLiveMode(parseMercadoPagoEnvironment("production")), true);
+  assert.equal(mercadoPagoLiveMode(parseMercadoPagoEnvironment("sandbox")), false);
+  assert.throws(() => parseMercadoPagoEnvironment("auto"));
+  const provider = new MercadoPagoProvider(
+    "APP_USR-token-productivo-123",
+    "production",
+    async (_url, init) => init.method === "GET"
+      ? new Response(JSON.stringify({ elements: [] }), { status: 200 })
+      : new Response(JSON.stringify({
+        id: "pref-prod",
+        init_point: "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=pref-prod",
+        sandbox_init_point:
+          "https://sandbox.mercadopago.com/checkout/v1/redirect?pref_id=pref-prod"
+      }), { status: 201 })
+  );
+  const result = await provider.createOrRecover({
+    intentId: "intent-prod",
+    title: "Cuenta productiva",
+    amountMinor: 100,
+    currency: "ARS",
+    returnBaseUrl: "https://mesaflow-produccion.web.app",
+    returnPath: "/e/restaurante/table/mesa-01"
+  });
+  assert.match(result.checkoutUrl, /^https:\/\/www\.mercadopago\.com\.ar\//u);
+  assert.doesNotMatch(result.checkoutUrl, /sandbox/u);
 });

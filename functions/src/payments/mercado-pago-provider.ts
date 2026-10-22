@@ -15,6 +15,8 @@ export interface ProviderPreferenceResult {
   readonly checkoutUrl: string;
 }
 
+export type MercadoPagoEnvironment = "sandbox" | "production";
+
 export interface PaymentProvider {
   createOrRecover(input: ProviderPreferenceInput): Promise<ProviderPreferenceResult>;
 }
@@ -37,13 +39,27 @@ function providerFailure(): PaymentPreferenceError {
   );
 }
 
-function providerResult(value: unknown): ProviderPreferenceResult {
+export function parseMercadoPagoEnvironment(value: string): MercadoPagoEnvironment {
+  if (value === "sandbox" || value === "production") return value;
+  throw providerFailure();
+}
+
+export function mercadoPagoLiveMode(environment: MercadoPagoEnvironment): boolean {
+  return environment === "production";
+}
+
+function providerResult(
+  value: unknown,
+  environment: MercadoPagoEnvironment
+): ProviderPreferenceResult {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     throw providerFailure();
   }
   const record = value as Record<string, unknown>;
   const preferenceId = record.id;
-  const checkoutUrl = record.sandbox_init_point ?? record.init_point;
+  const checkoutUrl = environment === "production"
+    ? record.init_point
+    : record.sandbox_init_point;
   if (typeof preferenceId !== "string" || preferenceId.length < 1 ||
       typeof checkoutUrl !== "string") {
     throw providerFailure();
@@ -54,8 +70,8 @@ function providerResult(value: unknown): ProviderPreferenceResult {
   } catch {
     throw providerFailure();
   }
-  if (url.protocol !== "https:" ||
-      !(url.hostname === "mercadopago.com" || url.hostname.endsWith(".mercadopago.com"))) {
+  const mercadoPagoHost = /^(?:[a-z0-9-]+\.)*mercadopago\.com(?:\.ar)?$/u;
+  if (url.protocol !== "https:" || !mercadoPagoHost.test(url.hostname)) {
     throw providerFailure();
   }
   return Object.freeze({ preferenceId, checkoutUrl: url.toString() });
@@ -64,6 +80,7 @@ function providerResult(value: unknown): ProviderPreferenceResult {
 export class MercadoPagoProvider implements PaymentProvider {
   constructor(
     private readonly accessToken: string,
+    private readonly environment: MercadoPagoEnvironment = "sandbox",
     private readonly fetcher: typeof fetch = fetch
   ) {}
 
@@ -108,7 +125,7 @@ export class MercadoPagoProvider implements PaymentProvider {
           if (!getResponse.ok) throw providerFailure();
           return providerResult(await getResponse.json().catch(() => {
             throw providerFailure();
-          }));
+          }), this.environment);
         }
       }
     }
@@ -140,7 +157,7 @@ export class MercadoPagoProvider implements PaymentProvider {
     if (!response.ok) throw providerFailure();
     return providerResult(await response.json().catch(() => {
       throw providerFailure();
-    }));
+    }), this.environment);
   }
 }
 

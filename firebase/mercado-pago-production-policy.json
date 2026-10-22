@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "provider": "mercado_pago",
+  "checkoutProduct": "checkout_pro",
+  "checkoutApi": "preferences",
+  "credentialMode": "production",
+  "country": "AR",
+  "siteId": "MLA",
+  "merchantModel": "single_pilot_seller",
+  "multiTenantFutureModel": "oauth_per_establishment",
+  "environmentParameter": "MERCADO_PAGO_ENVIRONMENT",
+  "environmentValue": "production",
+  "accessTokenSecret": "MERCADO_PAGO_ACCESS_TOKEN",
+  "webhookSecret": "MERCADO_PAGO_WEBHOOK_SECRET",
+  "checkoutUrlField": "init_point",
+  "paymentLiveMode": true,
+  "productionEnabled": true,
+  "activationStatus": "prepared-awaiting-provider-credentials"
+}

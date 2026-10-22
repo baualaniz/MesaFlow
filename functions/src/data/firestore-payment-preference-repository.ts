@@ -45,6 +45,7 @@ export class FirestorePaymentPreferenceRepository implements PaymentPreferenceRe
   constructor(
     private readonly provider: PaymentProvider,
     private readonly returnBaseUrl: string,
+    private readonly liveMode: boolean = false,
     private readonly firestore: Firestore = getFirestore()
   ) {}
 
@@ -125,7 +126,7 @@ export class FirestorePaymentPreferenceRepository implements PaymentPreferenceRe
             preferenceId: result.preferenceId,
             amountMinor,
             currency,
-            liveMode: false,
+            liveMode: this.liveMode,
             createdAt: existingData.createdAt ?? Timestamp.fromDate(command.createdAt),
             updatedAt: Timestamp.fromDate(command.createdAt)
           }, { merge: true });
@@ -170,7 +171,7 @@ export class FirestorePaymentPreferenceRepository implements PaymentPreferenceRe
         preferenceId: null,
         amountMinor,
         currency,
-        liveMode: false,
+        liveMode: this.liveMode,
         createdAt: existing.exists ? existing.data()?.createdAt ?? timestamp : timestamp,
         updatedAt: timestamp
       });

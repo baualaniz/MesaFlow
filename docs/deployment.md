@@ -18,6 +18,12 @@ El alcance cloud actual no requiere Blaze. QR, pedidos, asistencia, Mercado Pago
 y WhatsApp se ejecutan de punta a punta en Emulator Suite hasta que exista una
 autorización separada para facturación y secretos.
 
+El código para esa ampliación ya está preparado y documentado en
+`docs/stage-51-production-backend-preparation.md`. Separa pagos sandbox/reales,
+valida parámetros y secretos, publica 14 Functions en grupos, comprueba `health`
+y ofrece un alta inicial productiva que no reutiliza el seed demo. Su existencia
+no implica que Blaze, secretos o Functions ya estén activos.
+
 ## Builds
 
 ```powershell
@@ -48,6 +54,12 @@ Functions accidentalmente.
 ```powershell
 npm.cmd run deploy:smoke:dev
 npm.cmd run deploy:smoke:prod
+```
+
+Una vez autorizado y completado el despliegue pago, se agrega:
+
+```powershell
+npm.cmd run deploy:smoke:functions:prod
 ```
 
 Además se comprueba visualmente:

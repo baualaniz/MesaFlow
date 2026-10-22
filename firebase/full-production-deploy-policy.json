@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "environment": "production",
+  "projectId": "mesaflow-produccion",
+  "forbiddenProjectIds": ["mesaflow-desarrollo", "demo-mesaflow"],
+  "confirmationPhrase": "ACTIVAR-BACKEND-MESAFLOW-PRODUCCION",
+  "billingConfirmationPhrase": "ACEPTO-COSTOS-BLAZE",
+  "paymentsConfirmationPhrase": "CONFIRMO-CREDENCIALES-PRODUCTIVAS",
+  "components": ["firestore:rules", "firestore:indexes", "hosting", "functions"],
+  "runtimeEnvironmentFile": "functions/.env.mesaflow-produccion",
+  "requiredRuntimeParameters": [
+    "MERCADO_PAGO_ENVIRONMENT",
+    "WHATSAPP_PHONE_NUMBER_ID",
+    "WHATSAPP_GRAPH_API_VERSION",
+    "WHATSAPP_TEMPLATE_NAME",
+    "WHATSAPP_TEMPLATE_LANGUAGE",
+    "CUSTOMER_PUBLIC_BASE_URL"
+  ],
+  "requiredSecrets": [
+    "MERCADO_PAGO_ACCESS_TOKEN",
+    "MERCADO_PAGO_WEBHOOK_SECRET",
+    "WHATSAPP_ACCESS_TOKEN"
+  ],
+  "expectedFunctionNames": [
+    "health",
+    "exchangeQrSession",
+    "restoreQrSession",
+    "createOrder",
+    "updateOrderStatus",
+    "createAssistanceRequest",
+    "cancelAssistanceRequest",
+    "updateAssistanceStatus",
+    "manageTable",
+    "manageTeam",
+    "getSessionConsumption",
+    "createPaymentPreference",
+    "mercadoPagoWebhook",
+    "sendWhatsAppAssistance"
+  ],
+  "billingStatus": "requires-user-activation",
+  "secretsStatus": "requires-user-configuration",
+  "deploymentStatus": "prepared-not-executed"
+}

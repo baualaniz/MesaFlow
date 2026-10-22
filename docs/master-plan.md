@@ -5,7 +5,8 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–50 completadas dentro del alcance gratuito autorizado.
+Estado actual: Etapas 1–50 completadas dentro del alcance gratuito autorizado y
+Etapa 51 completa en código, pendiente de activación cloud por el usuario.
 Producción tiene Authentication, Firestore, Rules, índices y los tres sitios
 Hosting publicados y verificados; App Check, dominios Auth, build, smoke y
 rollback también quedaron comprobados. Functions permanece local y diferido
@@ -13,6 +14,8 @@ porque no hubo autorización para activar Blaze. El manual de uso, el guion de
 presentación y el mapa documental permiten reproducir la demo desde cero.
 La regresión final documenta evidencia para los 20 puntos de la Definition of
 Done, seguridad, smoke productivo y recuperación sin activar costos.
+El camino productivo pago ahora separa Mercado Pago sandbox/real, protege el
+deploy de 14 Functions y prepara el alta inicial sin tocar producción.
 
 ## Fases 1–10: base y Firebase
 
@@ -88,6 +91,7 @@ Done, seguridad, smoke productivo y recuperación sin activar costos.
 | 48 | Producción/dominio | Proyectos/secretos prod, dominios, DNS y rollback | 47 | Sí: cuentas, DNS y posibles costos | Sí: config/docs | HTTPS, webhooks y rutas profundas prod pasan |
 | 49 | Documentación/demo | README, arquitectura, esquema, seguridad, pruebas, deploy, usuario y guion | 48 | Sí: validar datos/marca de presentación | Sí: `docs/**` | Persona nueva reproduce demo con la guía |
 | 50 | QA/DoD | Regresión final de los 20 puntos, backups y checklist | 49 | Sí: aceptación final | Sí: reporte/correcciones | Los 20 puntos Definition of Done tienen evidencia |
+| 51 | Backend productivo | Separar pagos reales, deploy completo, smoke y alta inicial | 50 | Sí: Blaze, proveedores y secretos | Sí: políticas/scripts/tests | Código listo sin desplegar ni escribir producción |
 
 ## Estado de ejecución
 
@@ -143,6 +147,7 @@ Done, seguridad, smoke productivo y recuperación sin activar costos.
 | 48 | Completa en alcance gratuito: Rules, índices y tres sitios prod publicados; smoke HTTP, rutas profundas y renderizado visual aprobados; Functions/webhook diferidos sin Blaze | `docs/stage-48-production-domain.md` |
 | 49 | Completa: manual de uso, guion de 8–10 minutos, informe ejecutivo, mapa documental y cinco controles de consistencia | `docs/stage-49-documentation-demo.md` |
 | 50 | Completa: 20/20 puntos DoD con evidencia, regresión rápida/E2E, seguridad, smoke cloud y estrategia de recuperación | `docs/stage-50-final-qa.md` |
+| 51 | Completa en código: ambiente de pago explícito, deploy de 14 Functions con cuatro guardas, smoke cloud y bootstrap atómico; Blaze/secretos/deploy pendientes | `docs/stage-51-production-backend-preparation.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

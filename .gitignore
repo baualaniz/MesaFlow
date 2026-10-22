@@ -54,6 +54,7 @@ build/
 # Firebase local state
 .firebase/
 firebase-export/
+firebase/bootstrap-production.local.json
 
 # Test artifacts
 test-results/

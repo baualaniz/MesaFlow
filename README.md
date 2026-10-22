@@ -162,6 +162,7 @@ encuentran en:
 - `docs/stage-48-production-domain.md`
 - `docs/stage-49-documentation-demo.md`
 - `docs/stage-50-final-qa.md`
+- `docs/stage-51-production-backend-preparation.md`
 - `docs/firestore-schema.md`
 - `docs/security.md`
 - `docs/testing.md`
@@ -199,11 +200,11 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 367
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 380
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
-11 de despliegue, cuatro de smoke cloud, cinco de documentación, cinco de cierre final, cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
-15 de contratos, 10 de landing, ocho de seguridad, ocho de CI, 77 del panel, 81 de Flutter y 62 de Functions), más los lint y builds
+22 de despliegue/activación, cuatro de smoke cloud, seis de documentación, cinco de cierre final, cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
+15 de contratos, 10 de landing, ocho de seguridad, ocho de CI, 77 del panel, 81 de Flutter y 63 de Functions), más los lint y builds
 TypeScript. Este comando no consulta servicios remotos.
 
 Para ejecutar únicamente la suite crítica y sus umbrales de cobertura:

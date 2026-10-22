@@ -8,6 +8,7 @@ const requiredDocuments = [
   "docs/user-guide.md",
   "docs/demo-script.md",
   "docs/stage-49-documentation-demo.md",
+  "docs/stage-51-production-backend-preparation.md",
   "docs/architecture.md",
   "docs/product-spec.md",
   "docs/threat-model.md",
@@ -59,5 +60,22 @@ test("la etapa 49 cubre el mapa documental y figura completa", async () => {
     assert.match(stage, new RegExp(topic, "u"));
   }
   assert.match(plan, /\| 49 \| Completa:/u);
+});
+
+test("la etapa 51 distingue preparación local de activación cloud", async () => {
+  const [stage, readme, plan] = await Promise.all([
+    read("docs/stage-51-production-backend-preparation.md"),
+    read("README.md"),
+    read("docs/master-plan.md")
+  ]);
+  for (const value of [
+    "MERCADO_PAGO_ENVIRONMENT",
+    "deploy:prod:full",
+    "deploy:smoke:functions:prod",
+    "bootstrap:prod",
+    "no despliega Functions"
+  ]) assert.match(stage, new RegExp(value.replaceAll(".", "\\."), "u"));
+  assert.match(readme, /docs\/stage-51-production-backend-preparation\.md/u);
+  assert.match(plan, /\| 51 \| Completa en código:/u);
 });
 

@@ -5,11 +5,17 @@ import {
   createPaymentPreference as createPreferenceService,
   type PaymentPreferenceResult
 } from "./create-payment-preference.js";
-import { customerPublicBaseUrl, mercadoPagoAccessToken } from "./config/runtime.js";
+import {
+  customerPublicBaseUrl,
+  mercadoPagoAccessToken,
+  mercadoPagoEnvironment
+} from "./config/runtime.js";
 import { FirestorePaymentPreferenceRepository } from "./data/firestore-payment-preference-repository.js";
 import {
   EmulatorPaymentProvider,
-  MercadoPagoProvider
+  mercadoPagoLiveMode,
+  MercadoPagoProvider,
+  parseMercadoPagoEnvironment
 } from "./payments/mercado-pago-provider.js";
 import { CALLABLE_SECURITY_OPTIONS, logInternalError } from "./security.js";
 
@@ -26,15 +32,19 @@ async function handleCreatePaymentPreference(
 ): Promise<PaymentPreferenceResult> {
   try {
     const emulator = process.env.FUNCTIONS_EMULATOR === "true";
+    const environment = emulator
+      ? "sandbox"
+      : parseMercadoPagoEnvironment(mercadoPagoEnvironment.value());
     const provider = emulator
       ? new EmulatorPaymentProvider()
-      : new MercadoPagoProvider(mercadoPagoAccessToken.value());
+      : new MercadoPagoProvider(mercadoPagoAccessToken.value(), environment);
     return await createPreferenceService(
       request.data,
       request.auth?.uid,
       new FirestorePaymentPreferenceRepository(
         provider,
-        customerPublicBaseUrl.value()
+        customerPublicBaseUrl.value(),
+        mercadoPagoLiveMode(environment)
       )
     );
   } catch (error) {

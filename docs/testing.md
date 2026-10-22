@@ -23,7 +23,7 @@ npm.cmd ci --ignore-scripts
 npm.cmd run check
 ```
 
-`check` no consulta servicios remotos. Ejecuta 367 pruebas, lint, builds y
+`check` no consulta servicios remotos. Ejecuta 380 pruebas, lint, builds y
 umbrales de cobertura. El panel exige la cobertura configurada por Vitest;
 Flutter exige al menos 75% global y 80% en lógica/widgets críticos.
 
@@ -56,6 +56,14 @@ npm.cmd run deploy:smoke:prod
 
 Comprueba raíces, rutas profundas, 404, CSP y caché de los tres sitios. No crea ni
 modifica documentos.
+
+Después de un futuro despliegue pago del backend, el control adicional es:
+
+```powershell
+npm.cmd run deploy:smoke:functions:prod
+```
+
+Enumera las 14 Functions esperadas y consulta únicamente el endpoint `health`.
 
 ## Criterio ante fallos
 

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "environment": "production",
+  "projectId": "mesaflow-produccion",
+  "databaseId": "(default)",
+  "owner": {
+    "uid": "REEMPLAZAR_UID_DE_FIREBASE_AUTH",
+    "email": "propietario@restaurante.com",
+    "displayName": "Nombre del propietario"
+  },
+  "establishment": {
+    "id": "mi-restaurante",
+    "name": "Mi Restaurante",
+    "slug": "mi-restaurante",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "currency": "ARS"
+  },
+  "publicSettings": {
+    "contactEmail": "contacto@restaurante.com",
+    "contactPhone": "+54 11 0000-0000",
+    "addressLine": "Dirección comercial"
+  }
+}
