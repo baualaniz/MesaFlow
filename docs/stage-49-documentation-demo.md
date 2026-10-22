@@ -68,6 +68,6 @@ Este control forma parte de `npm.cmd run check` y de CI.
 - [x] Identidad ficticia y ausencia de datos personales documentadas.
 - [x] Consistencia documental protegida por pruebas automáticas.
 
-La Etapa 50 realizará la regresión final y reunirá evidencia para cada punto de
-la Definition of Done.
+La Etapa 50 completó posteriormente la regresión final y reunió evidencia para
+cada punto de la Definition of Done.
 

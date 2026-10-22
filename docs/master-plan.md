@@ -5,12 +5,14 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–49 completadas dentro del alcance gratuito autorizado.
+Estado actual: Etapas 1–50 completadas dentro del alcance gratuito autorizado.
 Producción tiene Authentication, Firestore, Rules, índices y los tres sitios
 Hosting publicados y verificados; App Check, dominios Auth, build, smoke y
 rollback también quedaron comprobados. Functions permanece local y diferido
 porque no hubo autorización para activar Blaze. El manual de uso, el guion de
 presentación y el mapa documental permiten reproducir la demo desde cero.
+La regresión final documenta evidencia para los 20 puntos de la Definition of
+Done, seguridad, smoke productivo y recuperación sin activar costos.
 
 ## Fases 1–10: base y Firebase
 
@@ -140,6 +142,7 @@ presentación y el mapa documental permiten reproducir la demo desde cero.
 | 47 | Completa en alcance gratuito: Rules, índices y tres sitios dev publicados; smoke HTTP, enlaces y App Check aprobados; Functions diferido sin Blaze | `docs/stage-47-development-deployment.md` |
 | 48 | Completa en alcance gratuito: Rules, índices y tres sitios prod publicados; smoke HTTP, rutas profundas y renderizado visual aprobados; Functions/webhook diferidos sin Blaze | `docs/stage-48-production-domain.md` |
 | 49 | Completa: manual de uso, guion de 8–10 minutos, informe ejecutivo, mapa documental y cinco controles de consistencia | `docs/stage-49-documentation-demo.md` |
+| 50 | Completa: 20/20 puntos DoD con evidencia, regresión rápida/E2E, seguridad, smoke cloud y estrategia de recuperación | `docs/stage-50-final-qa.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

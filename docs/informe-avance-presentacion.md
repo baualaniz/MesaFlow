@@ -67,7 +67,7 @@ de servidor, CSP, App Check, secretos fuera de Git, precios recalculados,
 idempotencia y logs redactados. Los pagos solo se acreditan después de validar la
 firma y consultar al proveedor; una URL de retorno no es autoritativa.
 
-La validación local ejecuta 362 pruebas, lint, builds y umbrales de cobertura. El
+La validación local ejecuta 367 pruebas, lint, builds y umbrales de cobertura. El
 recorrido E2E adicional inicia la Emulator Suite y atraviesa
 QR → menú → pedido → operación → pago simulado sin acceder a los proyectos cloud.
 
@@ -107,8 +107,10 @@ Después se abren cliente en <http://127.0.0.1:5100>, panel en
 <http://127.0.0.1:4000>. El manual completo está en `docs/user-guide.md` y el
 relato de presentación en `docs/demo-script.md`.
 
-## 8. Próximo paso
+## 8. Cierre del MVP
 
-La Etapa 50 realizará la regresión final, consolidará evidencia para la
-Definition of Done y corregirá cualquier hallazgo antes de declarar el MVP
-cerrado.
+La Etapa 50 consolidó evidencia para los 20 puntos de la Definition of Done,
+completó los documentos canónicos, definió recuperación/backup y repitió la
+regresión rápida, E2E, seguridad y smoke productivo. MesaFlow queda listo para
+entrega y demostración dentro del alcance gratuito; el siguiente hito opcional
+es habilitar la operación cloud real con Blaze, secretos y controles de costo.

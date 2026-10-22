@@ -13,7 +13,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 49** están terminadas dentro del alcance gratuito autorizado. Los dos proyectos
+Las **Etapas 1 a 50** están terminadas dentro del alcance gratuito autorizado. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Rules, índices y los tres sitios de desarrollo están publicados y verificados;
@@ -161,6 +161,12 @@ encuentran en:
 - `docs/stage-47-development-deployment.md`
 - `docs/stage-48-production-domain.md`
 - `docs/stage-49-documentation-demo.md`
+- `docs/stage-50-final-qa.md`
+- `docs/firestore-schema.md`
+- `docs/security.md`
+- `docs/testing.md`
+- `docs/deployment.md`
+- `docs/backup-recovery.md`
 - `docs/user-guide.md`
 - `docs/demo-script.md`
 - `docs/threat-model.md`
@@ -193,10 +199,10 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 362
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 367
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
-11 de despliegue, cuatro de smoke cloud, cinco de documentación, cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
+11 de despliegue, cuatro de smoke cloud, cinco de documentación, cinco de cierre final, cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,
 15 de contratos, 10 de landing, ocho de seguridad, ocho de CI, 77 del panel, 81 de Flutter y 62 de Functions), más los lint y builds
 TypeScript. Este comando no consulta servicios remotos.
 
