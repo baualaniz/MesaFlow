@@ -396,7 +396,6 @@ class _MenuPageState extends State<MenuPage> {
               child: _Header(
                 orderCount: _orderTrackingController.orders.length,
                 assistanceActive: _assistanceController.hasActiveRequest,
-                establishmentName: widget.sessionAccess.establishmentName,
                 tableLabel: widget.sessionAccess.tableName,
                 onOrders: _showOrderTracking,
                 onAssistance: _showAssistance,
@@ -645,7 +644,6 @@ class _Header extends StatelessWidget {
   const _Header({
     required this.orderCount,
     required this.assistanceActive,
-    required this.establishmentName,
     required this.tableLabel,
     required this.onOrders,
     required this.onAssistance,
@@ -654,7 +652,6 @@ class _Header extends StatelessWidget {
 
   final int orderCount;
   final bool assistanceActive;
-  final String establishmentName;
   final String tableLabel;
   final VoidCallback onOrders;
   final VoidCallback onAssistance;
@@ -713,27 +710,31 @@ class _Header extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 28),
-                Text(
-                  'Bienvenidos a\n$establishmentName',
-                  style: Theme.of(context).textTheme.displaySmall,
-                ),
-                const SizedBox(height: 14),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+                const SizedBox(height: 20),
+                Row(
                   children: [
-                    _InfoPill(
-                      icon: Icons.table_restaurant_outlined,
-                      label: tableLabel,
+                    Expanded(
+                      flex: 8,
+                      child: _InfoPill(
+                        icon: Icons.table_restaurant_outlined,
+                        label: tableLabel,
+                      ),
                     ),
-                    const _InfoPill(
-                      icon: Icons.schedule_rounded,
-                      label: '20–30 min',
+                    const SizedBox(width: 6),
+                    const Expanded(
+                      flex: 9,
+                      child: _InfoPill(
+                        icon: Icons.schedule_rounded,
+                        label: '20–30 min',
+                      ),
                     ),
-                    const _InfoPill(
-                      icon: Icons.circle,
-                      label: 'Cocina abierta',
+                    const SizedBox(width: 6),
+                    const Expanded(
+                      flex: 12,
+                      child: _InfoPill(
+                        icon: Icons.circle,
+                        label: 'Cocina abierta',
+                      ),
                     ),
                   ],
                 ),
@@ -795,13 +796,22 @@ class _InfoPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(99),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 15, color: MesaFlowColors.success),
-            const SizedBox(width: 7),
-            Text(label, style: Theme.of(context).textTheme.labelMedium),
+            Icon(icon, size: 13, color: MesaFlowColors.success),
+            const SizedBox(width: 4),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+              ),
+            ),
           ],
         ),
       ),

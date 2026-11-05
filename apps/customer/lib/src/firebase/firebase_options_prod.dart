@@ -21,10 +21,7 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for ios - '
@@ -60,5 +57,13 @@ class DefaultFirebaseOptions {
     authDomain: 'mesaflow-produccion.firebaseapp.com',
     storageBucket: 'mesaflow-produccion.firebasestorage.app',
     measurementId: 'G-RVV0CG3Z79',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyAw-PCMWhhje4P8A81lnk7yN48HGVScIsg',
+    appId: '1:619377674437:android:9a59bdffe51ea7b2a288ac',
+    messagingSenderId: '619377674437',
+    projectId: 'mesaflow-produccion',
+    storageBucket: 'mesaflow-produccion.firebasestorage.app',
   );
 }

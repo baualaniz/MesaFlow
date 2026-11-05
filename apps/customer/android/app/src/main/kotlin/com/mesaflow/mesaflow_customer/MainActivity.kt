@@ -1,0 +1,5 @@
+package com.mesaflow.mesaflow_customer
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()

@@ -100,7 +100,7 @@ try {
   await customer.goto(customerUrl, { waitUntil: "domcontentloaded" });
   try {
     await enableFlutterSemantics(customer);
-    await customer.getByText("Bistró MesaFlow", { exact: false }).first().waitFor({ timeout: 30000 });
+    await customer.getByText("Mesa 1", { exact: true }).first().waitFor({ timeout: 30000 });
   } catch (error) {
     const visibleText = (await customer.locator("body").innerText()).replace(/\s+/gu, " ").trim();
     throw new Error(

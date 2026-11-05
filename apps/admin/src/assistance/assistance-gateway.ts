@@ -1,8 +1,10 @@
 import type { AssistanceStatus } from "@mesaflow/contracts";
 import { FirebaseError } from "firebase/app";
+import { Timestamp, doc, runTransaction } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 
-import { adminFunctions } from "../firebase/firebase";
+import { adminEnvironment } from "../config/environment";
+import { adminFirestore, adminFunctions } from "../firebase/firebase";
 
 interface UpdateAssistanceStatusResult {
   readonly requestId: string;
@@ -29,6 +31,21 @@ export async function updateAssistanceStatus(
   expectedStatus: AssistanceStatus,
   nextStatus: AssistanceStatus
 ): Promise<UpdateAssistanceStatusResult> {
+  if (adminEnvironment !== "emulator") {
+    const updatedAt = Timestamp.now();
+    await runTransaction(adminFirestore, async (transaction) => {
+      const reference = doc(
+        adminFirestore, "establishments", establishmentId,
+        "assistanceRequests", requestId
+      );
+      const snapshot = await transaction.get(reference);
+      if (!snapshot.exists() || snapshot.data().status !== expectedStatus) {
+        throw new Error("La solicitud cambió en otro dispositivo. Revisá su estado actualizado.");
+      }
+      transaction.update(reference, { status: nextStatus, updatedAt });
+    });
+    return { requestId, status: nextStatus, updatedAt: updatedAt.toDate().toISOString() };
+  }
   try {
     const result = await transition({
       establishmentId,

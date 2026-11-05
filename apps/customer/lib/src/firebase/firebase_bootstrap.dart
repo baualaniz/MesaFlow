@@ -3,6 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 
 import '../config/app_environment.dart';
 import 'app_check_config.dart';
@@ -25,9 +26,11 @@ final class MesaFlowFirebaseServices {
 
 FirebaseOptions cloudFirebaseOptionsFor(AppEnvironment environment) {
   final options = switch (environment) {
-    AppEnvironment.development => development.DefaultFirebaseOptions.web,
-    AppEnvironment.production => production.DefaultFirebaseOptions.web,
-    AppEnvironment.emulator => throw StateError(
+    AppEnvironment.academic || AppEnvironment.development =>
+      _developmentOptions(),
+    AppEnvironment.academicProduction || AppEnvironment.production =>
+      _productionOptions(),
+    AppEnvironment.demo || AppEnvironment.emulator => throw StateError(
       'El emulador usa demoProjectId y no opciones de un proyecto cloud.',
     ),
   };
@@ -40,10 +43,29 @@ FirebaseOptions cloudFirebaseOptionsFor(AppEnvironment environment) {
   return options;
 }
 
+FirebaseOptions _developmentOptions() {
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    return development.DefaultFirebaseOptions.android;
+  }
+  // Los tests de Flutter se ejecutan como Linux; la configuración web permite
+  // validar el contrato sin habilitar una tercera aplicación Firebase.
+  return development.DefaultFirebaseOptions.web;
+}
+
+FirebaseOptions _productionOptions() {
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    return production.DefaultFirebaseOptions.android;
+  }
+  return production.DefaultFirebaseOptions.web;
+}
+
 Future<MesaFlowFirebaseServices> initializeMesaFlowFirebase(
   AppEnvironment environment,
 ) async {
   late final FirebaseApp app;
+  if (environment == AppEnvironment.demo) {
+    throw StateError('La demo académica no inicializa Firebase.');
+  }
   if (environment == AppEnvironment.emulator) {
     app = await Firebase.initializeApp(demoProjectId: environment.projectId);
   } else {
@@ -52,7 +74,7 @@ Future<MesaFlowFirebaseServices> initializeMesaFlowFirebase(
     );
   }
   final appCheckSiteKey = appCheckSiteKeyFor(environment);
-  if (appCheckSiteKey != null) {
+  if (appCheckSiteKey != null && kIsWeb) {
     final appCheck = FirebaseAppCheck.instanceFor(app: app);
     await appCheck.activate(
       providerWeb: ReCaptchaEnterpriseProvider(appCheckSiteKey),

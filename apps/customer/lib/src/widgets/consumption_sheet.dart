@@ -64,7 +64,12 @@ class ConsumptionSheet extends StatelessWidget {
                       key: const ValueKey('start-mercado-pago'),
                       onPressed: paymentController.busy
                           ? null
-                          : paymentController.start,
+                          : () async {
+                              await paymentController.start();
+                              if (paymentController.failure == null) {
+                                await controller.load();
+                              }
+                            },
                       icon: paymentController.busy
                           ? const SizedBox.square(
                               dimension: 18,
@@ -92,6 +97,15 @@ class ConsumptionSheet extends StatelessWidget {
                         ],
                       ),
                     ],
+                    const SizedBox(height: 18),
+                  ],
+                  if (summary.balanceMinor == 0) ...[
+                    const MesaFlowFeedbackPanel(
+                      title: 'Cuenta al día',
+                      message:
+                          'El pago fue registrado y la mesa no tiene saldo pendiente.',
+                      tone: MesaFlowFeedbackTone.success,
+                    ),
                     const SizedBox(height: 18),
                   ],
                   _BillAction(controller: assistanceController),

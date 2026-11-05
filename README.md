@@ -13,7 +13,7 @@ tokens, cuentas de servicio y archivos `.env` reales permanecen fuera de Git.
 
 ## Estado
 
-Las **Etapas 1 a 50** están terminadas dentro del alcance gratuito autorizado. Los dos proyectos
+Las **Etapas 1 a 54** están terminadas dentro del alcance académico autorizado. Los dos proyectos
 Firebase existen, Authentication y Firestore fueron preparados, y Auth,
 Firestore, Storage, Functions y tres sitios Hosting se prueban con emuladores.
 Rules, índices y los tres sitios de desarrollo están publicados y verificados;
@@ -43,6 +43,22 @@ dependencias y sinks frontend mediante controles automáticos.
 GitHub Actions repite en cada pull request y actualización de `main` los lint,
 tests, coberturas, builds, auditoría de dependencias y el recorrido E2E completo
 contra emuladores, sin secretos ni acceso a los proyectos Firebase reales.
+La **Etapa 54** publica la entrega académica definitiva contra
+`mesaflow-produccion`: cliente/PWA, panel, reglas, datos persistentes, QR
+revocables y un APK Android asociado al dominio productivo. Mercado Pago se
+mantiene en sandbox para demostrar Checkout Pro sin realizar cobros reales.
+
+## Entrega productiva para la presentación
+
+- Cliente/PWA iOS: `https://mesaflow-produccion.web.app`
+- Panel: `https://mesaflow-produccion-admin.web.app`
+- Landing: `https://mesaflow-produccion-landing.web.app`
+- APK Android: `dist/MesaFlow-Produccion-Android.apk`
+- QR vigentes: `dist/academic-firebase-production/`
+- Usuarios productivos por rol: `dist/academic-firebase-production/usuarios-panel.txt`
+
+Las credenciales del panel y los tokens QR están ignorados por Git. La guía y la
+evidencia de verificación están en `docs/stage-54-academic-production-release.md`.
 La aplicación reconoce enlaces QR `/e/:slug/table/:tableId`, conserva la ruta al
 recargar y rechaza contextos de mesa mal formados sin tratarlos como autorización.
 El token QR se canjea mediante Auth anónima y Functions, se elimina de la URL y
@@ -163,6 +179,8 @@ encuentran en:
 - `docs/stage-49-documentation-demo.md`
 - `docs/stage-50-final-qa.md`
 - `docs/stage-51-production-backend-preparation.md`
+- `docs/stage-52-academic-demo-apk.md`
+- `docs/stage-53-firebase-persistence-qr.md`
 - `docs/firestore-schema.md`
 - `docs/security.md`
 - `docs/testing.md`
@@ -200,7 +218,7 @@ En macOS/Linux se usa `npm run check`. En Windows, `npm.cmd` evita el bloqueo de
 `npm.ps1` por la política de PowerShell sin modificarla.
 
 La validación confirma la estructura canónica, los workspaces, los alias Firebase
-y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 380
+y la ausencia de archivos o valores con forma de secreto. Además, ejecuta 391
 pruebas (14 de configuración, cinco de herramientas, nueve de Authentication,
 ocho de Firestore, seis de índices, ocho de Storage, cuatro de secretos, siete de Hosting,
 22 de despliegue/activación, cuatro de smoke cloud, seis de documentación, cinco de cierre final, cinco de Mercado Pago, cinco del seed de presentación, siete del seed demo, tres de FlutterFire,

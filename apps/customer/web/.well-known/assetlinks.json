@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.mesaflow.demo",
+      "sha256_cert_fingerprints": [
+        "25:7C:81:1A:F1:D8:6A:D8:D9:D9:AC:DD:65:2A:32:84:08:19:5E:AA:EA:54:5E:6B:F6:0B:BC:EC:E3:CB:55:96"
+      ]
+    }
+  }
+]

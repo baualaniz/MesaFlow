@@ -46,7 +46,9 @@ final class PaymentPreference {
       final checkoutUrl = Uri.parse(data['checkoutUrl'] as String);
       if (checkoutUrl.scheme != 'https' ||
           !(checkoutUrl.host == 'mercadopago.com' ||
-              checkoutUrl.host.endsWith('.mercadopago.com'))) {
+              checkoutUrl.host.endsWith('.mercadopago.com') ||
+              checkoutUrl.host == 'mercadopago.com.ar' ||
+              checkoutUrl.host.endsWith('.mercadopago.com.ar'))) {
         throw const FormatException();
       }
       return PaymentPreference(

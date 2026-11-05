@@ -1,0 +1,13 @@
+{
+  "name": "@mesaflow/payment-demo-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --test ./test/**/*.test.mjs",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "4.156.0"
+  }
+}

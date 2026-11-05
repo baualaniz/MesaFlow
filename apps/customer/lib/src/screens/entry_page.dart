@@ -54,7 +54,8 @@ class EntryPage extends StatelessWidget {
                         'No escribas una dirección manualmente. Si el QR no funciona, pedí ayuda al personal.',
                     tone: MesaFlowFeedbackTone.info,
                   ),
-                  if (environment == AppEnvironment.emulator) ...[
+                  if (environment == AppEnvironment.demo ||
+                      environment == AppEnvironment.emulator) ...[
                     const SizedBox(height: MesaFlowSpacing.lg),
                     FilledButton.icon(
                       key: const ValueKey('open-demo-table'),

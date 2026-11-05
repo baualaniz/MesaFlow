@@ -38,7 +38,8 @@ GoRouter createCustomerRouter({
     overridePlatformDefaultLocation: initialLocation != null,
     redirect: (context, state) {
       if (state.uri.path == CustomerRoutes.entry &&
-          environment == AppEnvironment.emulator) {
+          (environment == AppEnvironment.demo ||
+              environment == AppEnvironment.emulator)) {
         return CustomerRoutes.demoQrLocation;
       }
       return null;

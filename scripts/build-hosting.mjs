@@ -9,8 +9,8 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const customer = path.join(root, "apps/customer");
 const requestedEnvironment = process.argv[2] ?? "emulator";
-if (!["emulator", "dev", "prod"].includes(requestedEnvironment)) {
-  throw new Error("hosting:build solo admite emulator, dev o prod.");
+if (!["emulator", "academic", "academic-prod", "dev", "prod"].includes(requestedEnvironment)) {
+  throw new Error("hosting:build solo admite emulator, academic, academic-prod, dev o prod.");
 }
 const cloudSiteKey = process.env.MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY?.trim() ?? "";
 if (requestedEnvironment !== "emulator" && !cloudSiteKey) {
@@ -20,7 +20,16 @@ if (requestedEnvironment !== "emulator" && !cloudSiteKey) {
 }
 const buildMode = requestedEnvironment === "prod"
   ? "production"
-  : requestedEnvironment === "dev" ? "development" : "emulator";
+  : requestedEnvironment === "academic-prod"
+    ? "academic-production"
+  : requestedEnvironment === "academic"
+    ? "academic"
+    : requestedEnvironment === "dev" ? "development" : "emulator";
+const adminBuildMode = requestedEnvironment === "academic"
+  ? "development"
+  : requestedEnvironment === "academic-prod" ? "production" : buildMode;
+const academicPaymentEndpoint =
+  "https://mesaflow-payment-demo.mesaflow-payment-demo-worker.workers.dev/preferences";
 const appCheckKeyFingerprint = cloudSiteKey
   ? createHash("sha256").update(cloudSiteKey).digest("hex").slice(0, 12)
   : "none";
@@ -34,8 +43,8 @@ const productionAdminUrl = "https://mesaflow-produccion-admin.web.app";
 const productionLandingUrl = "https://mesaflow-produccion-landing.web.app";
 
 function publicUrl(environment, developmentUrl, productionUrl, emulatorUrl) {
-  if (environment === "dev") return developmentUrl;
-  if (environment === "prod") return productionUrl;
+  if (environment === "dev" || environment === "academic") return developmentUrl;
+  if (environment === "prod" || environment === "academic-prod") return productionUrl;
   return emulatorUrl;
 }
 
@@ -77,6 +86,9 @@ function runFlutterBuild() {
   if (cloudSiteKey) {
     args.push(`--dart-define=MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY=${cloudSiteKey}`);
   }
+  if (requestedEnvironment === "academic" || requestedEnvironment === "academic-prod") {
+    args.push(`--dart-define=MESAFLOW_DEMO_PAYMENT_API_URL=${academicPaymentEndpoint}`);
+  }
   let env = process.env;
   if (windows) {
     const flutterBin = (process.env.Path ?? process.env.PATH ?? "")
@@ -96,6 +108,9 @@ function runFlutterBuild() {
     if (cloudSiteKey) {
       args.push(`--dart-define=MESAFLOW_RECAPTCHA_ENTERPRISE_SITE_KEY=${cloudSiteKey}`);
     }
+    if (requestedEnvironment === "academic" || requestedEnvironment === "academic-prod") {
+      args.push(`--dart-define=MESAFLOW_DEMO_PAYMENT_API_URL=${academicPaymentEndpoint}`);
+    }
     env = { ...process.env, FLUTTER_ROOT: flutterRoot };
   }
   return new Promise((resolve, reject) => {
@@ -114,7 +129,7 @@ function runAdminBuild() {
   return new Promise((resolve, reject) => {
     const child = spawn(
       process.execPath,
-      [npmCli, "run", "build", "--workspace", "@mesaflow/admin", "--", "--mode", buildMode],
+      [npmCli, "run", "build", "--workspace", "@mesaflow/admin", "--", "--mode", adminBuildMode],
       {
         cwd: root,
         stdio: "inherit",

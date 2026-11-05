@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "619377674437",
+    "project_id": "mesaflow-produccion",
+    "storage_bucket": "mesaflow-produccion.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619377674437:android:9a59bdffe51ea7b2a288ac",
+        "android_client_info": {
+          "package_name": "com.mesaflow.demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAw-PCMWhhje4P8A81lnk7yN48HGVScIsg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

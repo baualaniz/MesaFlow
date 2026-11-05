@@ -26,7 +26,7 @@ final class _Gateway implements PaymentGateway {
       'intentId': 'a' * 64,
       'preferenceId': 'pref-123',
       'checkoutUrl':
-          'https://sandbox.mercadopago.com/checkout/v1/redirect?pref_id=pref-123',
+          'https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id=pref-123',
       'amountMinor': 1940000,
       'currency': 'ARS',
       'status': 'ready',
@@ -35,9 +35,9 @@ final class _Gateway implements PaymentGateway {
 }
 
 final class _Launcher implements CheckoutLauncher {
-  _Launcher({this.opened = true});
+  _Launcher();
 
-  final bool opened;
+  final bool opened = true;
   Uri? url;
 
   @override
@@ -52,13 +52,13 @@ void main() {
     final preference = PaymentPreference.fromCallableData({
       'intentId': 'a' * 64,
       'preferenceId': 'pref-123',
-      'checkoutUrl': 'https://sandbox.mercadopago.com/checkout/v1/redirect',
+      'checkoutUrl': 'https://sandbox.mercadopago.com.ar/checkout/v1/redirect',
       'amountMinor': 1940000,
       'currency': 'ARS',
       'status': 'ready',
     });
     expect(preference.amountMinor, 1940000);
-    expect(preference.checkoutUrl.host, 'sandbox.mercadopago.com');
+    expect(preference.checkoutUrl.host, 'sandbox.mercadopago.com.ar');
 
     expect(
       () => PaymentPreference.fromCallableData({
@@ -83,7 +83,7 @@ void main() {
     );
     await controller.start();
     expect(gateway.calls, 1);
-    expect(launcher.url?.host, 'sandbox.mercadopago.com');
+    expect(launcher.url?.host, 'sandbox.mercadopago.com.ar');
     expect(controller.failure, isNull);
   });
 

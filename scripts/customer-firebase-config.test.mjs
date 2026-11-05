@@ -10,11 +10,11 @@ const config = JSON.parse(await readFile(
 ));
 const projects = { dev: "mesaflow-desarrollo", prod: "mesaflow-produccion" };
 
-test("FlutterFire separa las apps Web de desarrollo y producción", () => {
+test("FlutterFire separa Web/Android de desarrollo y producción", () => {
   const result = validateCustomerFirebaseConfig(config, projects);
   assert.equal(result.devProjectId, projects.dev);
   assert.equal(result.prodProjectId, projects.prod);
-  assert.equal(new Set(result.appIds).size, 2);
+  assert.equal(new Set(result.appIds).size, 4);
 });
 
 test("rechaza proyectos cruzados y apps Web repetidas", () => {
@@ -29,10 +29,10 @@ test("rechaza proyectos cruzados y apps Web repetidas", () => {
 });
 
 test("rechaza plataformas o archivos adicionales", () => {
-  const android = structuredClone(config);
-  android.flutter.platforms.dart["lib/src/firebase/firebase_options_dev.dart"].configurations.android =
-    "1:123456789:web:0123456789abcdef";
-  assert.throws(() => validateCustomerFirebaseConfig(android, projects), /inválida/);
+  const ios = structuredClone(config);
+  ios.flutter.platforms.dart["lib/src/firebase/firebase_options_dev.dart"].configurations.ios =
+    "1:123456789:ios:0123456789abcdef";
+  assert.throws(() => validateCustomerFirebaseConfig(ios, projects), /inválida/);
 
   const extra = structuredClone(config);
   extra.flutter.platforms.dart["lib/firebase_options.dart"] = structuredClone(

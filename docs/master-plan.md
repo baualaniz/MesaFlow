@@ -5,7 +5,7 @@ resultado y aceptación. `Código: sí` significa que Codex puede generar la par
 local; las cuentas, términos, credenciales y decisiones con costo pertenecen al
 usuario.
 
-Estado actual: Etapas 1–50 completadas dentro del alcance gratuito autorizado y
+Estado actual: Etapas 1–54 completadas dentro del alcance académico autorizado y
 Etapa 51 completa en código, pendiente de activación cloud por el usuario.
 Producción tiene Authentication, Firestore, Rules, índices y los tres sitios
 Hosting publicados y verificados; App Check, dominios Auth, build, smoke y
@@ -148,6 +148,9 @@ deploy de 14 Functions y prepara el alta inicial sin tocar producción.
 | 49 | Completa: manual de uso, guion de 8–10 minutos, informe ejecutivo, mapa documental y cinco controles de consistencia | `docs/stage-49-documentation-demo.md` |
 | 50 | Completa: 20/20 puntos DoD con evidencia, regresión rápida/E2E, seguridad, smoke cloud y estrategia de recuperación | `docs/stage-50-final-qa.md` |
 | 51 | Completa en código: ambiente de pago explícito, deploy de 14 Functions con cuatro guardas, smoke cloud y bootstrap atómico; Blaze/secretos/deploy pendientes | `docs/stage-51-production-backend-preparation.md` |
+| 52 | Completa: demo pública y APK Android con imágenes locales y checkout sandbox sin facturación Firebase | `docs/stage-52-academic-demo-apk.md` |
+| 53 | Completa y publicada en dev: persistencia Firestore, panel compartido, QR por mesa, rotación/revocación inmediata, App Link y APK académica | `docs/stage-53-firebase-persistence-qr.md` |
+| 54 | Completa y publicada en prod: PWA, panel, Firestore persistente, QR revocables y APK Android vinculados a `mesaflow-produccion`; pago sandbox | `docs/stage-54-academic-production-release.md` |
 
 ## Acciones manuales inmediatas — Etapa 1
 

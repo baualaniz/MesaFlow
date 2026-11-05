@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mesaflow-payment-demo",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-29",
+  "workers_dev": true,
+  "vars": {
+    "CUSTOMER_PUBLIC_BASE_URL": "https://mesaflow-desarrollo.web.app"
+  }
+}

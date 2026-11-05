@@ -15,6 +15,7 @@ canjea el token y otra recupera la participación al recargar.
 
 | Valor | Proyecto esperado |
 |---|---|
+| `demo` | Demo académica autocontenida, sin Firebase |
 | `emulator` | `demo-mesaflow` |
 | `dev` | `mesaflow-desarrollo` |
 | `prod` | `mesaflow-produccion` |
@@ -25,6 +26,31 @@ Poppins e Inter también están empaquetadas en `assets/fonts` con sus licencias
 OFL, por lo que la identidad visual no descarga tipografías en tiempo de ejecución.
 
 ## Ejecutar
+
+### Demo académica y APK Android
+
+La variante `demo` funciona sin emuladores ni Firebase. Conserva el flujo de QR,
+menú, carrito, pedido, seguimiento, asistencia y consumo. Si se define
+`MESAFLOW_DEMO_PAYMENT_API_URL`, el pago usa el Worker académico para crear una
+preferencia sandbox y abrir el checkout oficial de Mercado Pago.
+
+```powershell
+flutter.bat run -d chrome `
+  --dart-define=MESAFLOW_ENV=demo `
+  --dart-define=MESAFLOW_DEMO_PAYMENT_API_URL=https://mesaflow-payment-demo.mesaflow-payment-demo-worker.workers.dev/preferences
+flutter.bat build apk --release `
+  --dart-define=MESAFLOW_ENV=demo `
+  --dart-define=MESAFLOW_DEMO_PAYMENT_API_URL=https://mesaflow-payment-demo.mesaflow-payment-demo-worker.workers.dev/preferences
+```
+
+La guía de instalación y exposición está en
+`docs/stage-52-academic-demo-apk.md`.
+
+La PWA académica para iPhone, iPad y navegadores de escritorio está publicada en
+`https://mesaflow-desarrollo.web.app/`. En iOS se instala desde Safari con
+**Compartir → Agregar a pantalla de inicio**.
+
+### Entorno completo con emuladores
 
 Para usar el flujo completo, desde la raíz abrí dos PowerShell. En la primera:
 

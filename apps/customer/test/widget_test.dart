@@ -24,7 +24,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Casa Jacarandá'), findsOneWidget);
+    expect(find.textContaining('Bienvenidos'), findsNothing);
     expect(find.text('Burger de la casa'), findsOneWidget);
     expect(find.text('Ver pedido'), findsNothing);
 
@@ -36,6 +36,30 @@ void main() {
 
     expect(find.text('Ver pedido'), findsOneWidget);
     expect(find.text('\$ 12.900'), findsWidgets);
+  });
+
+  testWidgets('mantiene los indicadores del encabezado en una sola fila', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      const MesaFlowApp(
+        environment: AppEnvironment.demo,
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Bienvenidos'), findsNothing);
+    expect(find.text('DEMO ACADÉMICA'), findsNothing);
+    final tableY = tester.getCenter(find.text('Mesa 1')).dy;
+    final waitY = tester.getCenter(find.text('20–30 min')).dy;
+    final kitchenY = tester.getCenter(find.text('Cocina abierta')).dy;
+    expect(waitY, closeTo(tableY, 1));
+    expect(kitchenY, closeTo(tableY, 1));
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('filtra productos con la búsqueda', (tester) async {

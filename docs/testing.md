@@ -23,7 +23,7 @@ npm.cmd ci --ignore-scripts
 npm.cmd run check
 ```
 
-`check` no consulta servicios remotos. Ejecuta 380 pruebas, lint, builds y
+`check` no consulta servicios remotos. Ejecuta 391 pruebas, lint, builds y
 umbrales de cobertura. El panel exige la cobertura configurada por Vitest;
 Flutter exige al menos 75% global y 80% en lógica/widgets críticos.
 

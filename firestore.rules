@@ -22,6 +22,28 @@ service cloud.firestore {
         && get(membershipPath(establishmentId)).data.role in roles;
     }
 
+    function academicDeploymentPath(establishmentId) {
+      return /databases/$(database)/documents/academicDeployments/$(establishmentId);
+    }
+
+    function isAcademicDemo(establishmentId) {
+      return exists(academicDeploymentPath(establishmentId))
+        && get(academicDeploymentPath(establishmentId)).data.active == true
+        && get(academicDeploymentPath(establishmentId)).data.establishmentId == establishmentId;
+    }
+
+    function academicQrPath(establishmentId, qrHash) {
+      return /databases/$(database)/documents/establishments/$(establishmentId)/qrAccess/$(qrHash);
+    }
+
+    function tablePath(establishmentId, tableId) {
+      return /databases/$(database)/documents/establishments/$(establishmentId)/tables/$(tableId);
+    }
+
+    function tableSessionPath(establishmentId, sessionId) {
+      return /databases/$(database)/documents/establishments/$(establishmentId)/tableSessions/$(sessionId);
+    }
+
     function participantPath(establishmentId, sessionId) {
       return /databases/$(database)/documents/establishments/$(establishmentId)/tableSessions/$(sessionId)/participants/$(request.auth.uid);
     }
@@ -32,7 +54,58 @@ service cloud.firestore {
         && get(participantPath(establishmentId, sessionId)).data.active == true
         && get(participantPath(establishmentId, sessionId)).data.establishmentId == establishmentId
         && get(participantPath(establishmentId, sessionId)).data.sessionId == sessionId
-        && get(participantPath(establishmentId, sessionId)).data.uid == request.auth.uid;
+        && get(participantPath(establishmentId, sessionId)).data.uid == request.auth.uid
+        && (!isAcademicDemo(establishmentId)
+          || validAcademicParticipant(establishmentId, sessionId));
+    }
+
+    function validAcademicParticipant(establishmentId, sessionId) {
+      let participant = get(participantPath(establishmentId, sessionId)).data;
+      let qr = get(academicQrPath(establishmentId, participant.qrHash)).data;
+      let table = get(tablePath(establishmentId, participant.tableId)).data;
+      let session = get(tableSessionPath(establishmentId, sessionId)).data;
+      return participant.qrHash is string
+        && participant.qrHash.matches('^[a-f0-9]{64}$')
+        && participant.qrVersion is int
+        && qr.active == true
+        && qr.establishmentId == establishmentId
+        && qr.tableId == participant.tableId
+        && qr.qrVersion == participant.qrVersion
+        && qr.sessionId == sessionId
+        && table.active == true
+        && table.qrTokenHash == participant.qrHash
+        && table.qrVersion == participant.qrVersion
+        && table.currentSessionId == sessionId
+        && session.status == 'open'
+        && session.tableId == participant.tableId;
+    }
+
+    function validAcademicParticipantCreate(establishmentId, sessionId, uid, data) {
+      let qr = get(academicQrPath(establishmentId, data.qrHash)).data;
+      let table = get(tablePath(establishmentId, data.tableId)).data;
+      let session = get(tableSessionPath(establishmentId, sessionId)).data;
+      return isAcademicDemo(establishmentId)
+        && signedIn() && request.auth.uid == uid
+        && data.keys().hasOnly([
+          'active', 'establishmentId', 'joinedAt', 'qrHash', 'qrVersion',
+          'revokedAt', 'sessionId', 'tableId', 'uid'
+        ])
+        && data.keys().hasAll([
+          'active', 'establishmentId', 'joinedAt', 'qrHash', 'qrVersion',
+          'revokedAt', 'sessionId', 'tableId', 'uid'
+        ])
+        && data.active == true && data.establishmentId == establishmentId
+        && data.sessionId == sessionId && data.uid == uid
+        && data.joinedAt == request.time && data.revokedAt == null
+        && data.qrHash is string && data.qrHash.matches('^[a-f0-9]{64}$')
+        && data.qrVersion is int && data.qrVersion >= 1
+        && qr.active == true && qr.establishmentId == establishmentId
+        && qr.tableId == data.tableId && qr.qrVersion == data.qrVersion
+        && qr.sessionId == sessionId
+        && table.active == true && table.qrTokenHash == data.qrHash
+        && table.qrVersion == data.qrVersion
+        && table.currentSessionId == sessionId
+        && session.status == 'open' && session.tableId == data.tableId;
     }
 
     function validCategory(establishmentId, data) {
@@ -150,6 +223,10 @@ service cloud.firestore {
       allow list, write: if false;
     }
 
+    match /academicDeployments/{establishmentId} {
+      allow read, write: if false;
+    }
+
     match /establishmentSlugs/{slug} {
       allow get: if resource.data.active == true;
       allow list, write: if false;
@@ -206,7 +283,18 @@ service cloud.firestore {
         allow get: if resource.data.establishmentId == establishmentId
           && isActiveMember(establishmentId);
         allow list: if isActiveMember(establishmentId);
-        allow write: if false;
+        allow write: if isAcademicDemo(establishmentId)
+          && hasRole(establishmentId, ['owner', 'manager']);
+      }
+
+      match /qrAccess/{qrHash} {
+        allow get: if resource.data.establishmentId == establishmentId
+          && (isActiveMember(establishmentId)
+            || (signedIn() && resource.data.active == true
+              && qrHash.matches('^[a-f0-9]{64}$')));
+        allow list: if isActiveMember(establishmentId);
+        allow write: if isAcademicDemo(establishmentId)
+          && hasRole(establishmentId, ['owner', 'manager']);
       }
 
       match /tableSessions/{sessionId} {
@@ -214,7 +302,18 @@ service cloud.firestore {
           && (isActiveMember(establishmentId)
             || isActiveParticipant(establishmentId, sessionId));
         allow list: if isActiveMember(establishmentId);
-        allow write: if false;
+        allow create, delete: if isAcademicDemo(establishmentId)
+          && hasRole(establishmentId, ['owner', 'manager']);
+        allow update: if (isAcademicDemo(establishmentId)
+            && hasRole(establishmentId, ['owner', 'manager']))
+          || (isAcademicDemo(establishmentId)
+            && isActiveParticipant(establishmentId, sessionId)
+            && request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(['subtotalMinor', 'balanceMinor', 'updatedAt'])
+            && request.resource.data.subtotalMinor >= resource.data.subtotalMinor
+            && request.resource.data.balanceMinor >= resource.data.balanceMinor
+            && request.resource.data.subtotalMinor - resource.data.subtotalMinor
+              == request.resource.data.balanceMinor - resource.data.balanceMinor);
 
         match /participants/{uid} {
           allow read: if resource.data.establishmentId == establishmentId
@@ -222,7 +321,10 @@ service cloud.firestore {
             && (isActiveMember(establishmentId)
               || (signedIn() && request.auth.uid == uid
                 && isActiveParticipant(establishmentId, sessionId)));
-          allow write: if false;
+          allow create: if validAcademicParticipantCreate(
+            establishmentId, sessionId, uid, request.resource.data
+          );
+          allow update, delete: if false;
         }
       }
 
@@ -232,16 +334,50 @@ service cloud.firestore {
             || isActiveParticipant(establishmentId, resource.data.sessionId));
         allow list: if isActiveMember(establishmentId)
           || isActiveParticipant(establishmentId, resource.data.sessionId);
-        allow write: if false;
+        allow create: if isAcademicDemo(establishmentId)
+          && isActiveParticipant(establishmentId, request.resource.data.sessionId)
+          && request.resource.data.establishmentId == establishmentId
+          && request.resource.data.customerUid == request.auth.uid
+          && request.resource.data.tableId
+            == get(participantPath(establishmentId, request.resource.data.sessionId)).data.tableId
+          && request.resource.data.status == 'created'
+          && request.resource.data.createdAt == request.resource.data.updatedAt;
+        allow update: if isAcademicDemo(establishmentId)
+          && hasRole(establishmentId, ['owner', 'manager', 'staff', 'kitchen'])
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['status', 'statusTimestamps', 'updatedAt']);
+        allow delete: if false;
       }
 
       match /assistanceRequests/{requestId} {
-        allow get: if resource.data.establishmentId == establishmentId
-          && (isActiveMember(establishmentId)
-            || isActiveParticipant(establishmentId, resource.data.sessionId));
+        allow get: if isActiveParticipant(establishmentId, requestId)
+          || (resource.data.establishmentId == establishmentId
+            && isActiveMember(establishmentId));
         allow list: if isActiveMember(establishmentId)
           || isActiveParticipant(establishmentId, resource.data.sessionId);
-        allow write: if false;
+        allow create: if isAcademicDemo(establishmentId)
+          && requestId == request.resource.data.sessionId
+          && isActiveParticipant(establishmentId, request.resource.data.sessionId)
+          && request.resource.data.establishmentId == establishmentId
+          && request.resource.data.customerUid == request.auth.uid
+          && request.resource.data.status == 'pending';
+        allow update: if isAcademicDemo(establishmentId)
+          && ((request.auth.uid == resource.data.customerUid
+              && isActiveParticipant(establishmentId, resource.data.sessionId)
+              && request.resource.data.diff(resource.data).affectedKeys()
+                .hasOnly(['status', 'updatedAt'])
+              && request.resource.data.status == 'cancelled')
+            || (request.auth.uid == resource.data.customerUid
+              && requestId == request.resource.data.sessionId
+              && resource.data.status in ['cancelled', 'resolved']
+              && request.resource.data.establishmentId == establishmentId
+              && request.resource.data.customerUid == request.auth.uid
+              && request.resource.data.status == 'pending'
+              && isActiveParticipant(
+                establishmentId, request.resource.data.sessionId
+              ))
+            || hasRole(establishmentId, ['owner', 'manager', 'staff']));
+        allow delete: if false;
       }
 
       match /payments/{paymentId} {

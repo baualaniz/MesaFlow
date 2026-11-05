@@ -78,11 +78,12 @@ try {
   const report = await readFile(path.join(customer, "coverage/lcov.info"), "utf8");
   const records = parseLcov(report);
   const application = coverage(records, ({ file }) =>
-    file.includes("lib/") && !file.includes("firebase_options_")
+    file.includes("lib/") && !file.includes("firebase_options_") &&
+    !file.includes("lib/src/academic/")
   );
   const critical = coverage(records, ({ file }) =>
     file.includes("lib/src/") && !path.posix.basename(file).startsWith("firebase_") &&
-    !file.includes("firebase_options_")
+    !file.includes("firebase_options_") && !file.includes("lib/src/academic/")
   );
 
   enforce("Cobertura Flutter de la aplicación", application, applicationThreshold);

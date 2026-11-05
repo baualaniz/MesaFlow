@@ -1,8 +1,10 @@
 import type { OrderStatus } from "@mesaflow/contracts";
 import { FirebaseError } from "firebase/app";
+import { Timestamp, doc, runTransaction } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 
-import { adminFunctions } from "../firebase/firebase";
+import { adminEnvironment } from "../config/environment";
+import { adminFirestore, adminFunctions } from "../firebase/firebase";
 
 interface UpdateOrderStatusResult {
   readonly orderId: string;
@@ -29,6 +31,24 @@ export async function updateOrderStatus(
   expectedStatus: OrderStatus,
   nextStatus: OrderStatus
 ): Promise<UpdateOrderStatusResult> {
+  if (adminEnvironment !== "emulator") {
+    const updatedAt = Timestamp.now();
+    await runTransaction(adminFirestore, async (transaction) => {
+      const reference = doc(
+        adminFirestore, "establishments", establishmentId, "orders", orderId
+      );
+      const snapshot = await transaction.get(reference);
+      if (!snapshot.exists() || snapshot.data().status !== expectedStatus) {
+        throw new Error("El pedido cambió en otro dispositivo. Revisá su estado actualizado.");
+      }
+      transaction.update(reference, {
+        status: nextStatus,
+        [`statusTimestamps.${nextStatus}`]: updatedAt,
+        updatedAt
+      });
+    });
+    return { orderId, status: nextStatus, updatedAt: updatedAt.toDate().toISOString() };
+  }
   try {
     const result = await transition({
       establishmentId,
