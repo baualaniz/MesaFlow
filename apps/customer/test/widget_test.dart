@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mesaflow_customer/main.dart';
 import 'package:mesaflow_customer/src/config/app_environment.dart';
+import 'package:mesaflow_customer/src/consumption/consumption_gateway.dart';
 import 'package:mesaflow_customer/src/contracts/domain_contracts.dart';
 import 'package:mesaflow_customer/src/order/order_gateway.dart';
 
@@ -495,5 +496,52 @@ void main() {
     await tester.tap(refresh);
     await tester.pumpAndSettle();
     expect(consumption.calls, 2);
+  });
+
+  testWidgets('actualiza la cuenta cuando el panel completa un pedido', (
+    tester,
+  ) async {
+    final consumption = TestConsumptionGateway();
+    final tracking = TestOrderTrackingRepository([testTrackedOrder()]);
+    addTearDown(tracking.dispose);
+    await tester.pumpWidget(
+      MesaFlowApp(
+        qrSessionGateway: TestQrSessionGateway.active,
+        menuRepository: TestMenuRepository.published,
+        consumptionGateway: consumption,
+        orderTrackingRepository: tracking,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('open-consumption')));
+    await tester.pumpAndSettle();
+    expect(consumption.calls, 1);
+
+    consumption.summary = ConsumptionSummary(
+      sessionId: 'sesion-prueba',
+      tableId: 'mesa-01',
+      sessionStatus: TableSessionStatus.paid,
+      currency: 'ARS',
+      orderCount: 1,
+      itemCount: 1,
+      subtotalMinor: 1290000,
+      paidMinor: 1290000,
+      balanceMinor: 0,
+      calculatedAt: DateTime.utc(2026, 9, 17, 12, 20),
+    );
+    tracking.emit([
+      testTrackedOrder(
+        status: 'completed',
+        statusTimestamps: {
+          'created': '2026-09-17T12:15:00.000Z',
+          'completed': '2026-09-17T12:20:00.000Z',
+        },
+      ),
+    ]);
+    await tester.pumpAndSettle();
+
+    expect(consumption.calls, 2);
+    expect(find.text(r'$ 0'), findsOneWidget);
+    expect(find.text('Cuenta al día'), findsOneWidget);
   });
 }

@@ -218,9 +218,73 @@ service cloud.firestore {
         && data.updatedAt == request.time;
     }
 
+    function validAcademicUserProfile(establishmentId, data) {
+      return data.keys().hasOnly([
+          'createdAt', 'displayName', 'email', 'establishmentIds', 'updatedAt'
+        ])
+        && data.keys().hasAll([
+          'createdAt', 'displayName', 'email', 'establishmentIds', 'updatedAt'
+        ])
+        && data.displayName is string && data.displayName.size() >= 2
+        && data.displayName.size() <= 120
+        && data.email is string && data.email.size() >= 3 && data.email.size() <= 254
+        && data.establishmentIds is list && data.establishmentIds.size() == 1
+        && data.establishmentIds[0] == establishmentId
+        && data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    function validAcademicMembership(establishmentId, uid, data) {
+      return data.keys().hasOnly([
+          'active', 'createdAt', 'establishmentId', 'permissions', 'role', 'uid',
+          'updatedAt'
+        ])
+        && data.keys().hasAll([
+          'active', 'createdAt', 'establishmentId', 'permissions', 'role', 'uid',
+          'updatedAt'
+        ])
+        && data.active is bool && data.establishmentId == establishmentId
+        && data.uid == uid && data.role in ['owner', 'manager', 'staff', 'kitchen']
+        && data.permissions is list && data.permissions.size() <= 6
+        && data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    function validAcademicTeamProfile(establishmentId, uid, data) {
+      return data.keys().hasOnly([
+          'createdAt', 'displayName', 'email', 'establishmentId', 'uid', 'updatedAt'
+        ])
+        && data.keys().hasAll([
+          'createdAt', 'displayName', 'email', 'establishmentId', 'uid', 'updatedAt'
+        ])
+        && data.establishmentId == establishmentId && data.uid == uid
+        && data.displayName is string && data.displayName.size() >= 2
+        && data.displayName.size() <= 120
+        && data.email is string && data.email.size() >= 3 && data.email.size() <= 254
+        && data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    function canManageAcademicTeam(establishmentId, targetRole) {
+      return isAcademicDemo(establishmentId)
+        && hasRole(establishmentId, ['owner', 'manager'])
+        && (get(membershipPath(establishmentId)).data.role == 'owner'
+          || targetRole in ['staff', 'kitchen']);
+    }
+
+    function canUpdateAcademicTeam(establishmentId, currentRole, targetRole) {
+      return canManageAcademicTeam(establishmentId, targetRole)
+        && (get(membershipPath(establishmentId)).data.role == 'owner'
+          || currentRole in ['staff', 'kitchen']);
+    }
+
     match /users/{uid} {
       allow get: if signedIn() && request.auth.uid == uid;
-      allow list, write: if false;
+      allow create: if signedIn()
+        && request.resource.data.establishmentIds is list
+        && request.resource.data.establishmentIds.size() == 1
+        && canManageAcademicTeam(request.resource.data.establishmentIds[0], 'staff')
+        && validAcademicUserProfile(
+          request.resource.data.establishmentIds[0], request.resource.data
+        );
+      allow list, update, delete: if false;
     }
 
     match /academicDeployments/{establishmentId} {
@@ -237,16 +301,39 @@ service cloud.firestore {
       allow list, write: if false;
 
       match /members/{uid} {
-        allow get: if resource.data.establishmentId == establishmentId
-          && signedIn()
-          && (request.auth.uid == uid || hasRole(establishmentId, ['owner', 'manager']));
+        allow get: if signedIn()
+          && ((request.auth.uid == uid
+              && resource.data.establishmentId == establishmentId)
+            || hasRole(establishmentId, ['owner', 'manager']));
         allow list: if hasRole(establishmentId, ['owner', 'manager']);
-        allow write: if false;
+        allow create: if canManageAcademicTeam(establishmentId, request.resource.data.role)
+          && validAcademicMembership(establishmentId, uid, request.resource.data);
+        allow update: if canUpdateAcademicTeam(
+            establishmentId, resource.data.role, request.resource.data.role
+          )
+          && validAcademicMembership(establishmentId, uid, request.resource.data)
+          && request.resource.data.establishmentId == resource.data.establishmentId
+          && request.resource.data.uid == resource.data.uid
+          && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if false;
+      }
+
+      match /teamProfiles/{uid} {
+        allow read: if hasRole(establishmentId, ['owner', 'manager']);
+        allow create: if canManageAcademicTeam(establishmentId, 'staff')
+          && validAcademicTeamProfile(establishmentId, uid, request.resource.data);
+        allow update: if canManageAcademicTeam(establishmentId, 'staff')
+          && validAcademicTeamProfile(establishmentId, uid, request.resource.data)
+          && request.resource.data.establishmentId == resource.data.establishmentId
+          && request.resource.data.uid == resource.data.uid
+          && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if false;
       }
 
       match /categories/{categoryId} {
-        allow get: if resource.data.establishmentId == establishmentId
-          && (resource.data.active == true || isActiveMember(establishmentId));
+        allow get: if isActiveMember(establishmentId)
+          || (resource.data.establishmentId == establishmentId
+            && resource.data.active == true);
         allow list: if resource.data.active == true || isActiveMember(establishmentId);
         allow create: if hasRole(establishmentId, ['owner', 'manager'])
           && validCategory(establishmentId, request.resource.data);
@@ -280,8 +367,7 @@ service cloud.firestore {
       }
 
       match /tables/{tableId} {
-        allow get: if resource.data.establishmentId == establishmentId
-          && isActiveMember(establishmentId);
+        allow get: if isActiveMember(establishmentId);
         allow list: if isActiveMember(establishmentId);
         allow write: if isAcademicDemo(establishmentId)
           && hasRole(establishmentId, ['owner', 'manager']);
@@ -306,6 +392,21 @@ service cloud.firestore {
           && hasRole(establishmentId, ['owner', 'manager']);
         allow update: if (isAcademicDemo(establishmentId)
             && hasRole(establishmentId, ['owner', 'manager']))
+          || (isAcademicDemo(establishmentId)
+            && hasRole(establishmentId, ['owner', 'manager', 'staff'])
+            && request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(['paidMinor', 'balanceMinor', 'status', 'updatedAt'])
+            && request.resource.data.paidMinor >= resource.data.paidMinor
+            && request.resource.data.balanceMinor <= resource.data.balanceMinor
+            && request.resource.data.paidMinor - resource.data.paidMinor
+              == resource.data.balanceMinor - request.resource.data.balanceMinor
+            && request.resource.data.paidMinor + request.resource.data.balanceMinor
+              == resource.data.subtotalMinor
+            && request.resource.data.balanceMinor >= 0
+            && ((request.resource.data.balanceMinor == 0
+                && request.resource.data.status == 'paid')
+              || (request.resource.data.balanceMinor > 0
+                && request.resource.data.status == 'open')))
           || (isAcademicDemo(establishmentId)
             && isActiveParticipant(establishmentId, sessionId)
             && request.resource.data.diff(resource.data).affectedKeys()
@@ -350,9 +451,9 @@ service cloud.firestore {
       }
 
       match /assistanceRequests/{requestId} {
-        allow get: if isActiveParticipant(establishmentId, requestId)
-          || (resource.data.establishmentId == establishmentId
-            && isActiveMember(establishmentId));
+        allow get: if resource.data.establishmentId == establishmentId
+          && (isActiveMember(establishmentId)
+            || isActiveParticipant(establishmentId, resource.data.sessionId));
         allow list: if isActiveMember(establishmentId)
           || isActiveParticipant(establishmentId, resource.data.sessionId);
         allow create: if isAcademicDemo(establishmentId)

@@ -1,6 +1,11 @@
 import type { OrderStatus } from "@mesaflow/contracts";
 import { FirebaseError } from "firebase/app";
-import { Timestamp, doc, runTransaction } from "firebase/firestore";
+import {
+  Timestamp,
+  doc,
+  runTransaction,
+  type DocumentReference
+} from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 
 import { adminEnvironment } from "../config/environment";
@@ -38,14 +43,49 @@ export async function updateOrderStatus(
         adminFirestore, "establishments", establishmentId, "orders", orderId
       );
       const snapshot = await transaction.get(reference);
-      if (!snapshot.exists() || snapshot.data().status !== expectedStatus) {
+      const order = snapshot.data();
+      if (!snapshot.exists() || !order || order.status !== expectedStatus) {
         throw new Error("El pedido cambió en otro dispositivo. Revisá su estado actualizado.");
+      }
+      let sessionReference: DocumentReference | null = null;
+      let sessionPatch: {
+        readonly paidMinor: number;
+        readonly balanceMinor: number;
+        readonly status: "open" | "paid";
+        readonly updatedAt: Timestamp;
+      } | null = null;
+      if (nextStatus === "completed") {
+        sessionReference = doc(
+          adminFirestore, "establishments", establishmentId,
+          "tableSessions", String(order.sessionId)
+        );
+        const session = (await transaction.get(sessionReference)).data();
+        if (!session || session.tableId !== order.tableId ||
+            !Number.isSafeInteger(session.subtotalMinor) ||
+            !Number.isSafeInteger(session.paidMinor) ||
+            !Number.isSafeInteger(order.totalMinor)) {
+          throw new Error("La cuenta de la mesa cambió o ya no está disponible.");
+        }
+        const paidMinor = Math.min(
+          session.subtotalMinor as number,
+          (session.paidMinor as number) + (order.totalMinor as number)
+        );
+        const balanceMinor = (session.subtotalMinor as number) - paidMinor;
+        sessionPatch = {
+          paidMinor,
+          balanceMinor,
+          status: balanceMinor === 0 ? "paid" : "open",
+          updatedAt
+        };
       }
       transaction.update(reference, {
         status: nextStatus,
         [`statusTimestamps.${nextStatus}`]: updatedAt,
         updatedAt
       });
+      if (sessionReference !== null && sessionPatch !== null) {
+        transaction.update(sessionReference, sessionPatch);
+      }
     });
     return { orderId, status: nextStatus, updatedAt: updatedAt.toDate().toISOString() };
   }

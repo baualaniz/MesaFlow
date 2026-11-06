@@ -16,6 +16,7 @@ import {
   getDocs,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -120,6 +121,17 @@ async function seed() {
       ["establishments/restaurantA/members/kitchenA", { establishmentId: "restaurantA", uid: "kitchenA", role: "kitchen", active: true }],
       ["establishments/restaurantA/members/inactiveA", { establishmentId: "restaurantA", uid: "inactiveA", role: "owner", active: false }],
       ["establishments/restaurantB/members/ownerB", { establishmentId: "restaurantB", uid: "ownerB", role: "owner", active: true }],
+      ["academicDeployments/academicA", { active: true, establishmentId: "academicA" }],
+      ["establishments/academicA", { establishmentId: "academicA", active: true }],
+      ["establishments/academicA/members/academicOwner", {
+        active: true,
+        createdAt: now,
+        establishmentId: "academicA",
+        permissions: ["establishment.manage", "menu.manage", "orders.manage", "metrics.read"],
+        role: "owner",
+        uid: "academicOwner",
+        updatedAt: now
+      }],
       ["establishments/restaurantA/categories/active", category()],
       ["establishments/restaurantA/categories/inactive", category("restaurantA", { active: false, sortOrder: 2 })],
       ["establishments/restaurantA/products/public", product()],
@@ -246,6 +258,52 @@ test("categorías conservan tenant y createdAt", async () => {
   await assertSucceeds(setDoc(ref, category()));
   await assertSucceeds(updateDoc(ref, { name: "Nueva categoría", updatedAt: later }));
   await assertFails(updateDoc(ref, { createdAt: later, updatedAt: later }));
+});
+
+test("demo académica puede leer y crear categorías y mesas inexistentes en transacción", async () => {
+  const db = environment.authenticatedContext("academicOwner").firestore();
+  const categoryRef = doc(db, "establishments/academicA/categories/new-category");
+  await assertSucceeds(runTransaction(db, async (transaction) => {
+    const current = await transaction.get(categoryRef);
+    if (current.exists()) throw new Error("La categoría de prueba ya existía.");
+    transaction.set(categoryRef, category("academicA"));
+  }));
+
+  const tableRef = doc(db, "establishments/academicA/tables/new-table");
+  await assertSucceeds(runTransaction(db, async (transaction) => {
+    const current = await transaction.get(tableRef);
+    if (current.exists()) throw new Error("La mesa de prueba ya existía.");
+    transaction.set(tableRef, {
+      active: true,
+      createdAt: now,
+      currentSessionId: null,
+      establishmentId: "academicA",
+      name: "Mesa nueva",
+      number: 99,
+      qrTokenHash: "0".repeat(64),
+      qrVersion: 1,
+      updatedAt: now
+    });
+  }));
+});
+
+test("owner académico administra perfiles del equipo sin exponerlos al personal", async () => {
+  const owner = environment.authenticatedContext("academicOwner").firestore();
+  const profileRef = doc(owner, "establishments/academicA/teamProfiles/newMember");
+  await assertSucceeds(setDoc(profileRef, {
+    createdAt: now,
+    displayName: "Nueva Persona",
+    email: "persona@example.test",
+    establishmentId: "academicA",
+    uid: "newMember",
+    updatedAt: now
+  }));
+  await assertSucceeds(getDoc(profileRef));
+
+  const stranger = environment.authenticatedContext("staffA").firestore();
+  await assertFails(getDoc(doc(
+    stranger, "establishments/academicA/teamProfiles/newMember"
+  )));
 });
 
 test("manager lista membresías pero miembro común solo lee la propia", async () => {

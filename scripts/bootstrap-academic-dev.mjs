@@ -152,6 +152,17 @@ try {
         updatedAt: timestamp()
       }
     },
+    {
+      path: `establishments/${establishmentId}/teamProfiles/${uid}`,
+      data: {
+        createdAt: timestamp(),
+        displayName: "Administrador MesaFlow",
+        email,
+        establishmentId,
+        uid,
+        updatedAt: timestamp()
+      }
+    },
     ...reusable,
   ];
 

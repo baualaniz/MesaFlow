@@ -7,7 +7,7 @@ final class TestConsumptionGateway implements ConsumptionGateway {
     : summary = summary ?? testConsumptionSummary();
 
   final ConsumptionFailure? failure;
-  final ConsumptionSummary summary;
+  ConsumptionSummary summary;
   int calls = 0;
 
   @override

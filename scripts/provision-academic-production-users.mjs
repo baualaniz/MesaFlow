@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -13,6 +13,7 @@ const establishmentId = "mesa-flow-demo";
 const adminUrl = "https://mesaflow-produccion-admin.web.app/login";
 const outputDirectory = path.join(root, "dist", "academic-firebase-production");
 const credentialsPath = path.join(outputDirectory, "usuarios-panel.txt");
+const presentationCredentialsPath = path.join(outputDirectory, "acceso-panel.txt");
 const password = process.env.MESAFLOW_ACADEMIC_PASSWORD?.trim() ?? "";
 
 if (process.argv.slice(2).some((argument) => argument !== "--production")) {
@@ -121,10 +122,16 @@ async function ensureIdentity(user) {
 async function verifyFirestoreAccess(identity) {
   const prefix = `https://firestore.googleapis.com/v1/projects/${projectId}` +
     "/databases/(default)/documents";
-  for (const documentPath of [
+  const documentPaths = [
     `users/${identity.uid}`,
     `establishments/${establishmentId}/members/${identity.uid}`
-  ]) {
+  ];
+  if (["owner", "manager"].includes(identity.role)) {
+    documentPaths.push(
+      `establishments/${establishmentId}/teamProfiles/${identity.uid}`
+    );
+  }
+  for (const documentPath of documentPaths) {
     const response = await fetch(`${prefix}/${documentPath}`, {
       headers: { authorization: `Bearer ${identity.idToken}` }
     });
@@ -139,8 +146,33 @@ function timestamp() {
 }
 
 try {
-  const identities = [];
-  for (const user of users) identities.push(await ensureIdentity(user));
+  const roleIdentities = [];
+  for (const user of users) roleIdentities.push(await ensureIdentity(user));
+  const presentationCredentials = await readFile(presentationCredentialsPath, "utf8");
+  const presentationEmail = presentationCredentials.match(/^Email: (.+)$/mu)?.[1]?.trim();
+  const presentationPassword = presentationCredentials.match(/^Contraseña: (.+)$/mu)?.[1];
+  if (!presentationEmail || !presentationPassword) {
+    throw new Error("El acceso de presentación local está incompleto.");
+  }
+  const presentationLogin = await identityRequest("signInWithPassword", {
+    email: presentationEmail,
+    password: presentationPassword,
+    returnSecureToken: true
+  });
+  const identities = [
+    {
+      created: false,
+      displayName: "Administrador MesaFlow",
+      email: presentationEmail,
+      idToken: presentationLogin.idToken,
+      permissions: [
+        "establishment.manage", "menu.manage", "orders.manage", "metrics.read"
+      ],
+      role: "owner",
+      uid: presentationLogin.localId
+    },
+    ...roleIdentities
+  ];
 
   const { getProjectDefaultAccount } = require("firebase-tools/lib/auth");
   const { requireAuth } = require("firebase-tools/lib/requireAuth");
@@ -177,6 +209,17 @@ try {
         uid: identity.uid,
         updatedAt: timestamp()
       }
+    },
+    {
+      path: `establishments/${establishmentId}/teamProfiles/${identity.uid}`,
+      data: {
+        createdAt: timestamp(),
+        displayName: identity.displayName,
+        email: identity.email,
+        establishmentId,
+        uid: identity.uid,
+        updatedAt: timestamp()
+      }
     }
   ]);
   const prefix = `projects/${projectId}/databases/(default)/documents/`;
@@ -206,7 +249,7 @@ try {
     "MesaFlow · usuarios académicos de producción",
     adminUrl,
     "",
-    ...identities.flatMap(({ displayName, email, role }) => [
+    ...roleIdentities.flatMap(({ displayName, email, role }) => [
       `${displayName} (${role})`,
       `Email: ${email}`,
       `Contraseña provisoria: ${password}`,
@@ -216,7 +259,7 @@ try {
   ];
   await writeFile(credentialsPath, `${credentialLines.join("\n")}\n`, "utf8");
 
-  for (const identity of identities) {
+  for (const identity of roleIdentities) {
     console.log(
       `[OK] ${identity.email}: ${identity.role}, ` +
       `${identity.created ? "creado" : "reutilizado"} y acceso Firestore verificado.`

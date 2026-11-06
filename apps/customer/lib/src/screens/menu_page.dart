@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../cart/cart_controller.dart';
@@ -79,13 +81,13 @@ class _MenuPageState extends State<MenuPage> {
     super.initState();
     _cartController = _createCartController();
     _cartController.addListener(_onCartChanged);
+    _consumptionController = _createConsumptionController();
     _orderTrackingController = _createOrderTrackingController();
     _orderTrackingController.addListener(_onOrderTrackingChanged);
     _orderTrackingController.start();
     _assistanceController = _createAssistanceController();
     _assistanceController.addListener(_onAssistanceChanged);
     _assistanceController.start();
-    _consumptionController = _createConsumptionController();
     _paymentController = _createPaymentController();
     _loadMenu();
   }
@@ -103,6 +105,11 @@ class _MenuPageState extends State<MenuPage> {
       _cartController.dispose();
       _cartController = _createCartController();
       _cartController.addListener(_onCartChanged);
+    }
+    if (cartScopeChanged ||
+        oldWidget.consumptionGateway != widget.consumptionGateway) {
+      _consumptionController.dispose();
+      _consumptionController = _createConsumptionController();
     }
     if (cartScopeChanged ||
         oldWidget.orderTrackingRepository != widget.orderTrackingRepository) {
@@ -123,11 +130,6 @@ class _MenuPageState extends State<MenuPage> {
     }
     if (cartScopeChanged || oldWidget.menuRepository != widget.menuRepository) {
       _loadMenu();
-    }
-    if (cartScopeChanged ||
-        oldWidget.consumptionGateway != widget.consumptionGateway) {
-      _consumptionController.dispose();
-      _consumptionController = _createConsumptionController();
     }
     if (cartScopeChanged ||
         oldWidget.paymentGateway != widget.paymentGateway ||
@@ -174,6 +176,10 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   void _onOrderTrackingChanged() {
+    if (_consumptionController.summary != null &&
+        !_consumptionController.loading) {
+      unawaited(_consumptionController.load());
+    }
     if (mounted) setState(() {});
   }
 
