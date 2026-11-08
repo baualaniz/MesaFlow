@@ -14,6 +14,15 @@ const [config, rc, policy] = await Promise.all([
   readFile(new URL("../firebase/hosting-policy.json", import.meta.url), "utf8").then(JSON.parse)
 ]);
 
+const [customerManifest, customerIndex, adminManifest, adminIndex, adminWorker] =
+  await Promise.all([
+    readFile(new URL("../apps/customer/web/manifest.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../apps/customer/web/index.html", import.meta.url), "utf8"),
+    readFile(new URL("../apps/admin/public/manifest.webmanifest", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../apps/admin/index.html", import.meta.url), "utf8"),
+    readFile(new URL("../apps/admin/public/service-worker.js", import.meta.url), "utf8")
+  ]);
+
 test("declara tres destinos locales coherentes", () => {
   const result = validateHostingConfig(config, rc, policy);
   assert.deepEqual(result.targets, HOSTING_TARGETS);
@@ -94,4 +103,22 @@ test("el panel y la landing declaran builds reales", () => {
   assert.equal(admin.build, "react-typescript-vite");
   assert.equal(landing.kind, "static");
   assert.equal(landing.build, "astro-static");
+});
+
+test("cliente y panel publican identidad instalable compatible con iOS", () => {
+  for (const [manifest, index] of [
+    [customerManifest, customerIndex],
+    [adminManifest, adminIndex]
+  ]) {
+    assert.equal(manifest.display, "standalone");
+    assert.ok(manifest.icons.some(({ sizes, purpose }) =>
+      sizes === "512x512" && (purpose === undefined || purpose === "any")));
+    assert.ok(manifest.icons.some(({ sizes, purpose }) =>
+      sizes === "512x512" && purpose === "maskable"));
+    assert.match(index, /apple-mobile-web-app-capable/u);
+    assert.match(index, /apple-touch-icon/u);
+    assert.match(index, /rel="manifest"/u);
+  }
+  assert.match(adminWorker, /self\.addEventListener\("install"/u);
+  assert.match(adminWorker, /self\.addEventListener\("fetch"/u);
 });

@@ -1,3 +1,4 @@
+import { cp } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, URL } from "node:url";
 
@@ -7,7 +8,15 @@ import { defineConfig } from "vitest/config";
 const root = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: "mesaflow-admin-pwa-assets",
+      async closeBundle() {
+        await cp(resolve(root, "public"), resolve(root, "hosting"), { recursive: true });
+      }
+    }
+  ],
   publicDir: resolve(root, "../customer/assets/fonts"),
   build: {
     emptyOutDir: true,

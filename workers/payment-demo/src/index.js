@@ -1,5 +1,6 @@
 const allowedWebOrigins = new Set([
-  "https://mesaflow-desarrollo.web.app"
+  "https://mesaflow-desarrollo.web.app",
+  "https://mesaflow-produccion.web.app"
 ]);
 
 const allowedSandboxCheckoutHosts = new Set([
@@ -70,7 +71,10 @@ export function parsePaymentRequest(value) {
       !exactKeys(value, ["items", "sessionId", "tableId"])) {
     throw new Error("invalid-request");
   }
-  if (value.sessionId !== "sesion-demo-android" || value.tableId !== "mesa-01" ||
+  if (typeof value.sessionId !== "string" ||
+      !value.sessionId.match(/^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/u) ||
+      typeof value.tableId !== "string" ||
+      !value.tableId.match(/^mesa-[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/u) ||
       !Array.isArray(value.items) || value.items.length < 1 || value.items.length > 18) {
     throw new Error("invalid-request");
   }
@@ -150,14 +154,19 @@ async function providerJson(response, stage) {
   });
 }
 
-export async function createOrRecoverPreference(input, env, fetcher = fetch) {
+export async function createOrRecoverPreference(
+  input,
+  env,
+  fetcher = fetch,
+  requestOrigin = null
+) {
   if (typeof env.MERCADO_PAGO_ACCESS_TOKEN !== "string" ||
       env.MERCADO_PAGO_ACCESS_TOKEN.trim().length < 16) {
     throw new Error("provider-unavailable");
   }
-  const customerBaseUrl = new URL(env.CUSTOMER_PUBLIC_BASE_URL);
+  const customerBaseUrl = new URL(requestOrigin ?? env.CUSTOMER_PUBLIC_BASE_URL);
   if (customerBaseUrl.protocol !== "https:" ||
-      customerBaseUrl.hostname !== "mesaflow-desarrollo.web.app") {
+      !allowedWebOrigins.has(customerBaseUrl.origin)) {
     throw new Error("provider-unavailable");
   }
   const normalizedItems = [...input.items]
@@ -165,7 +174,7 @@ export async function createOrRecoverPreference(input, env, fetcher = fetch) {
     .map((item) => `${item.productId}:${item.quantity}`)
     .join("|");
   const intentId = await sha256(
-    `${input.sessionId}|${input.tableId}|${normalizedItems}`
+    `${customerBaseUrl.origin}|${input.sessionId}|${input.tableId}|${normalizedItems}`
   );
   const headers = {
     Authorization: `Bearer ${env.MERCADO_PAGO_ACCESS_TOKEN}`,
@@ -251,8 +260,16 @@ export async function handleRequest(request, env, fetcher = fetch) {
         !request.headers.get("Content-Type")?.toLowerCase().startsWith("application/json")) {
       throw new Error("invalid-request");
     }
+    if (request.headers.get("X-MesaFlow-Client") !== "demo-v1") {
+      throw new Error("invalid-request");
+    }
     const input = parsePaymentRequest(await request.json());
-    const preference = await createOrRecoverPreference(input, env, fetcher);
+    const preference = await createOrRecoverPreference(
+      input,
+      env,
+      fetcher,
+      request.headers.get("Origin")
+    );
     return jsonResponse(request, 200, {
       intentId: preference.intentId,
       preferenceId: preference.preferenceId,

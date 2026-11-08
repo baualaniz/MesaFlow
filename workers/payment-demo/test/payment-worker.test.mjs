@@ -31,6 +31,14 @@ test("calcula el importe desde el catálogo y rechaza precios del cliente", () =
     }),
     /invalid-request/u
   );
+  assert.equal(
+    parsePaymentRequest({ ...validBody, sessionId: "sesion-academica-01" }).sessionId,
+    "sesion-academica-01"
+  );
+  assert.throws(
+    () => parsePaymentRequest({ ...validBody, sessionId: "sesión con espacios" }),
+    /invalid-request/u
+  );
   assert.throws(
     () => parsePaymentRequest({
       ...validBody,
@@ -109,6 +117,7 @@ test("expone CORS solo al sitio académico y no filtra el secreto", async () => 
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-MesaFlow-Client": "demo-v1",
       Origin: "https://mesaflow-desarrollo.web.app"
     },
     body: JSON.stringify(validBody)
@@ -121,11 +130,28 @@ test("expone CORS solo al sitio académico y no filtra el secreto", async () => 
   );
   assert.ok(!(await response.text()).includes(env.MERCADO_PAGO_ACCESS_TOKEN));
 
+  const productionRequest = new Request("https://worker.example/preferences", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-MesaFlow-Client": "demo-v1",
+      Origin: "https://mesaflow-produccion.web.app"
+    },
+    body: JSON.stringify({ ...validBody, sessionId: "sesion-academica-01" })
+  });
+  const productionResponse = await handleRequest(productionRequest, env, provider);
+  assert.equal(productionResponse.status, 200);
+  assert.equal(
+    productionResponse.headers.get("Access-Control-Allow-Origin"),
+    "https://mesaflow-produccion.web.app"
+  );
+
   const rejected = await handleRequest(
     new Request("https://worker.example/preferences", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-MesaFlow-Client": "demo-v1",
         Origin: "https://evil.example"
       },
       body: JSON.stringify(validBody)
@@ -134,4 +160,18 @@ test("expone CORS solo al sitio académico y no filtra el secreto", async () => 
     provider
   );
   assert.equal(rejected.status, 403);
+
+  const missingClient = await handleRequest(
+    new Request("https://worker.example/preferences", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://mesaflow-produccion.web.app"
+      },
+      body: JSON.stringify(validBody)
+    }),
+    env,
+    provider
+  );
+  assert.equal(missingClient.status, 400);
 });

@@ -10,7 +10,7 @@ Authentication y Firestore de `mesaflow-produccion`. El proyecto
 ## Sitios definitivos
 
 - Cliente y PWA para iPhone: `https://mesaflow-produccion.web.app`
-- Panel: `https://mesaflow-produccion-admin.web.app`
+- Panel/PWA: `https://mesaflow-produccion-admin.web.app`
 - Landing: `https://mesaflow-produccion-landing.web.app`
 - Mesas: `https://mesaflow-produccion-admin.web.app/operacion/mesas`
 - Pedidos: `https://mesaflow-produccion-admin.web.app/operacion/pedidos`
@@ -64,6 +64,12 @@ cliente productivo en Safari, tocar **Compartir** y luego **Agregar a inicio**.
 Los QR de producción abren esa misma aplicación. Una IPA nativa requeriría macOS,
 Xcode, firma de Apple y otro proceso de distribución.
 
+El cliente y el panel administrativo publican manifiestos independientes,
+service workers y el icono oficial de MesaFlow. Para instalar cualquiera de
+los dos en iPhone o iPad, se abre su URL en Safari y se elige **Compartir →
+Agregar a inicio**. Si ya existía un acceso con el icono anterior, hay que
+eliminarlo y volver a agregarlo para que iOS renueve la imagen.
+
 ## Alcance del pago
 
 La aplicación está conectada a Firebase producción, pero Checkout Pro permanece
@@ -81,6 +87,8 @@ cobrar dinero real ni requerir credenciales productivas de pago.
    mostró.
 5. `assetlinks.json` confirmó el paquete Android asociado al dominio productivo.
 6. Flutter aprobó análisis y 90 pruebas; el panel aprobó 77 pruebas.
+7. Chrome verificó el manifiesto, service worker e icono iOS del panel, y creó
+   una preferencia oficial de Mercado Pago sandbox desde el dominio productivo.
 
 Controles repetibles:
 
@@ -88,6 +96,7 @@ Controles repetibles:
 npm.cmd run academic:smoke:revocation:prod
 npm.cmd run academic:smoke:hosting:prod
 npm.cmd run academic:smoke:users:prod
+npm.cmd run academic:smoke:pwa-payment:prod
 ```
 
 El primer control rota Mesa 1 y reemplaza su PNG/enlace productivo. Después de

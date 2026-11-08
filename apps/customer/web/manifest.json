@@ -1,7 +1,9 @@
 {
     "name": "MesaFlow",
     "short_name": "MesaFlow",
+    "id": "/",
     "start_url": ".",
+    "scope": "/",
     "display": "standalone",
     "background_color": "#F5F4EF",
     "theme_color": "#91A88C",

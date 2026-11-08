@@ -2,13 +2,14 @@
 
 Backend temporal de Cloudflare Workers que crea preferencias reales de Mercado
 Pago en ambiente sandbox. Su único consumidor permitido en navegador es
-`https://mesaflow-desarrollo.web.app`.
+`https://mesaflow-desarrollo.web.app` y
+`https://mesaflow-produccion.web.app`.
 
 ## Seguridad y alcance
 
 - recalcula el importe a partir de los 18 productos y precios versionados;
 - rechaza precios, nombres y totales enviados por el cliente;
-- acepta únicamente la sesión académica de Mesa 1;
+- acepta únicamente identificadores canónicos de sesiones y mesas académicas;
 - recupera preferencias por referencia externa para evitar duplicados;
 - guarda `MERCADO_PAGO_ACCESS_TOKEN` como secreto cifrado de Cloudflare;
 - devuelve únicamente IDs, importe y URL HTTPS oficial de Mercado Pago;

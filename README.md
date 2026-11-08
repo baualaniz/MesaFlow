@@ -44,14 +44,14 @@ GitHub Actions repite en cada pull request y actualización de `main` los lint,
 tests, coberturas, builds, auditoría de dependencias y el recorrido E2E completo
 contra emuladores, sin secretos ni acceso a los proyectos Firebase reales.
 La **Etapa 54** publica la entrega académica definitiva contra
-`mesaflow-produccion`: cliente/PWA, panel, reglas, datos persistentes, QR
+`mesaflow-produccion`: cliente/PWA, panel/PWA, reglas, datos persistentes, QR
 revocables y un APK Android asociado al dominio productivo. Mercado Pago se
 mantiene en sandbox para demostrar Checkout Pro sin realizar cobros reales.
 
 ## Entrega productiva para la presentación
 
 - Cliente/PWA iOS: `https://mesaflow-produccion.web.app`
-- Panel: `https://mesaflow-produccion-admin.web.app`
+- Panel/PWA: `https://mesaflow-produccion-admin.web.app`
 - Landing: `https://mesaflow-produccion-landing.web.app`
 - APK Android: `dist/MesaFlow-Produccion-Android.apk`
 - QR vigentes: `dist/academic-firebase-production/`
@@ -80,9 +80,10 @@ Firestore después de recargar la aplicación.
 El botón **Tu cuenta** solicita al servidor un resumen recalculado desde pedidos
 no cancelados y pagos aprobados. Muestra consumo, pagos y saldo, y permite pedir
 la cuenta reutilizando el canal seguro de asistencia de la mesa.
-La aplicación **MesaFlow Desarrollo** de Mercado Pago usa Checkout Pro mediante
-Preferences API con un vendedor argentino de prueba validado. Su Access Token
-permanece únicamente en un archivo local ignorado; producción sigue deshabilitada.
+El backend académico de Mercado Pago usa Checkout Pro mediante Preferences API
+con una cuenta argentina de prueba validada. Su Access Token permanece cifrado
+en Cloudflare y solo admite los sitios oficiales de desarrollo y producción;
+siempre devuelve el checkout sandbox y nunca realiza cobros reales.
 Desde **Tu cuenta**, el cliente puede pedir una preferencia cuyo importe se
 recalcula en el backend y abrir el checkout externo. El intento es idempotente,
 se recupera por referencia externa y queda guardado en una colección solo

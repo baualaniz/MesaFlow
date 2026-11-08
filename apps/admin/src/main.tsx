@@ -10,6 +10,12 @@ import "./styles.css";
 const root = document.getElementById("root");
 if (root === null) throw new Error("No se encontró el contenedor principal.");
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    void navigator.serviceWorker.register("/service-worker.js").catch(() => undefined);
+  });
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
